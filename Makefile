@@ -52,6 +52,23 @@ install-all:
 	@echo "Installing dependencies for both frontend and backend..."
 	@make frontend-install && make backend-install
 
+# Build targets
+
+.PHONY: build-frontend
+build-frontend:
+	@echo "Building frontend..."
+	@cd $(FRONTEND_DIR) && npm run build
+
+.PHONY: build-backend
+build-backend:
+	@echo "Building backend..."
+	@cd $(BACKEND_DIR) && go build -o main .
+
+.PHONY: build-all
+build-all: build-frontend build-backend
+	@echo "Building both frontend and backend..."
+
+
 # Clean target (optional)
 .PHONY: clean
 clean:
