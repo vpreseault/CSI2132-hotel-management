@@ -1,12 +1,16 @@
 package main
 
 import (
+	"cmp"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
+	"github.com/go-chi/chi/v5"
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
@@ -38,10 +42,25 @@ func main() {
 		log.Fatal("Database connection error:", err)
 	}
 
-	http.HandleFunc("/api/hello", helloHandler)
+	r := chi.NewRouter()
 
-	fmt.Println("Backend server listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	r.Get("/api/hello", helloHandler)
+
+	port := cmp.Or(os.Getenv("PORT"), "3000")
+
+	var s = &http.Server{
+		Addr:              ":" + port,
+		Handler:           r,
+		ReadTimeout:       5 * time.Minute,
+		WriteTimeout:      5 * time.Minute,
+		ReadHeaderTimeout: 1 * time.Second,
+	}
+
+	fmt.Printf("starting server %v", s.Addr)
+
+	if err := s.ListenAndServe(); err != nil {
+		fmt.Printf("server exited with error: %v", err)
+	}
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {

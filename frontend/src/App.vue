@@ -10,7 +10,7 @@ const items = ref<Item[]>([]); // items is now an array of Item
 
 const callApi = async () => {
     try {
-        const response = await fetch('http://localhost:8080/api/hello');
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hello`);
         const data: Item[] = await response.json(); // Type the response as Item[]
         items.value = data;
     } catch (error) {
