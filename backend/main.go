@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
@@ -47,6 +48,10 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+	fmt.Print("cors.AllowedOrigins: ", []string{os.Getenv("ALLOWED_ORIGINS")})
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{os.Getenv("ALLOWED_ORIGINS")},
+	}))
 
 	r.Get("/api/hello", helloHandler)
 
