@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
@@ -28,10 +29,13 @@ var db *sql.DB
 
 func main() {
 	var err error
-	// Database connection details (replace with your own)
-	connStr := "postgres://tuser:password123@localhost:5432/testdb?sslmode=disable" // Update!
-	// connStr := "postgres://user:password@host:port/database?sslmode=disable" // Update!
-	db, err = sql.Open("postgres", connStr)
+
+	err = godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
