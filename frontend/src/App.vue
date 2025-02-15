@@ -7,6 +7,7 @@ interface Item {
 }
 
 const items = ref<Item[]>([]); // items is now an array of Item
+const testRes = ref<string>('');
 
 const callApi = async () => {
     try {
@@ -17,10 +18,20 @@ const callApi = async () => {
         console.error('Error calling API:', error);
     }
 };
+const callTest = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/test`);
+        console.log(response)
+        testRes.value = await response.text();
+    } catch (error) {
+        console.error('Error calling API:', error);
+    }
+};
 </script>
 
 <template>
     <div>
+        <button @click="callTest">Call Test</button>
         <button @click="callApi">Call API</button>
         <div v-if="items.length > 0">
             <ul>
