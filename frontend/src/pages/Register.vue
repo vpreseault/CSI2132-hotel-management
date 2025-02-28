@@ -1,19 +1,14 @@
 <template>
     <div class="card">
-        <Tabs value="0">
+        <Tabs v-model:value="tabValue">
             <TabList>
-                <Tab value="0">Customer</Tab>
-                <Tab value="1">Employee</Tab>
+                <Tab value="customer">Customer</Tab>
+                <Tab value="employee">Employee</Tab>
             </TabList>
             <TabPanels class="d-flex flex-align-center">
-                <TabPanel value="0">
-                    <LoginUser v-if="mode === 'login'" />
-                    <RegisterCustomer v-else />
-                </TabPanel>
-                <TabPanel value="1">
-                    <LoginUser v-if="mode === 'login'" />
-                    <RegisterEmployee v-else />
-                </TabPanel>
+                <h2>{{ headerText }}</h2>
+                <LoginUser v-if="mode === 'login'" :employee="tabValue === 'employee'" />
+                <RegisterUser v-else :employee="tabValue === 'employee'" />
             </TabPanels>
         </Tabs>
         <p class="my-3">{{ modeToggleText }} <Button :label="modeToggleButtonText" variant="link" @click="handleModeToggle" class="!p-0" /> instead.</p>
@@ -21,8 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue'
-import RegisterCustomer from "../components/Account/RegisterCustomer.vue";
+import { computed, ref } from 'vue'
+import RegisterUser from "../components/Account/RegisterUser.vue";
+import LoginUser from "../components/Account/LoginUser.vue";
+import { Tabs } from 'primevue';
+
+type Tabs = 'employee'|'customer'
+const tabValue = ref<Tabs>('customer')
 
 type AuthModes = 'login'|'register'
 
@@ -37,4 +37,6 @@ function handleModeToggle() {
         mode.value = 'login'
     }
 }
+
+const headerText = computed(() => `${tabValue.value ==='employee' ? "Employee":"Customer"} ${mode.value === 'login' ? "login":"registration"}`)
 </script>
