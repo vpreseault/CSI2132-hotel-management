@@ -23,11 +23,17 @@
 import { ref } from 'vue';
 import { type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms';
 
+const props = defineProps<{
+    employee: boolean
+}>()
+
 const idTypes = ref([
     { type: 'SSN' },
     { type: 'SIN' },
-    { type: 'Drivers License' },
 ]);
+if (!props.employee) {
+    idTypes.value.push({ type: 'Drivers License' })
+}
 
 interface Error {
     type: string;
