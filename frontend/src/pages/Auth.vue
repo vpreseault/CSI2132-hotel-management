@@ -1,17 +1,19 @@
 <template>
-    <div class="card">
-        <Tabs v-model:value="tabValue">
-            <TabList>
-                <Tab value="customer">Customer</Tab>
-                <Tab value="employee">Employee</Tab>
-            </TabList>
-            <TabPanels class="d-flex flex-align-center">
-                <h2>{{ headerText }}</h2>
-                <LoginUser v-if="mode === 'login'" :employee="tabValue === 'employee'" />
-                <RegisterUser v-else :employee="tabValue === 'employee'" />
-            </TabPanels>
-        </Tabs>
-        <p class="my-3">{{ modeToggleText }} <Button :label="modeToggleButtonText" variant="link" @click="handleModeToggle" class="!p-0" /> instead.</p>
+    <div class="w-100 m-auto">
+        <div class="card">
+            <Tabs v-model:value="tabValue">
+                <TabList>
+                    <Tab value="customer">Customer</Tab>
+                    <Tab value="employee">Employee</Tab>
+                </TabList>
+                <TabPanels class="flex flex-col items-center">
+                    <h1 class="text-xl mb-5 my-2">{{ headerText }}</h1>
+                    <LoginUser v-if="mode === 'login'" :employee="tabValue === 'employee'" />
+                    <RegisterUser v-else :employee="tabValue === 'employee'" />
+                </TabPanels>
+            </Tabs>
+            <p class="my-3">{{ modeToggleText }} <Button :label="modeToggleButtonText" variant="link" @click="handleModeToggle" class="!p-0" /> instead.</p>
+        </div>
     </div>
 </template>
 
