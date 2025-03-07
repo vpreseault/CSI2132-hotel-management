@@ -12,7 +12,7 @@ INSERT INTO Customer (
 `
 
 var CreateEmployee = `
-INSERT INTO Customer (
+INSERT INTO Employee (
 	fullname, 
 	address, 
 	ID_type, 

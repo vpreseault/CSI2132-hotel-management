@@ -76,9 +76,19 @@ const resolver = ({ values }: FormResolverOptions) => {
     };
 };
 
-function onFormSubmit(e: FormSubmitEvent) {
+async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
-        console.log('Form submitted:', e.values);
+        await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    fullname: e.values.fullname,
+                    address: e.values.address,
+                    "ID_type": e.values.idType.type,
+                    "ID_number": e.values.idNumber,
+                })
+            }
+        )
     }
 }
 </script>

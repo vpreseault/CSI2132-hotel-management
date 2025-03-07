@@ -20,7 +20,7 @@ func createCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		registrationDate := time.Now().UTC().Format("2025-01-02")
+		registrationDate := time.Now().UTC().Format("2006-01-02")
 
 		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.Fullname, customer.Address, customer.IDType, customer.IDNumber, registrationDate).Scan(&customer.ID)
 		if err != nil {
