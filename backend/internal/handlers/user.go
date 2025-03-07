@@ -31,3 +31,24 @@ func createCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 		json.NewEncoder(w).Encode(customer)
 	}
 }
+
+func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var employee internal.Employee
+		err := json.NewDecoder(r.Body).Decode(&employee)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.Fullname, employee.Address, employee.IDType, employee.IDNumber).Scan(&employee.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(employee)
+	}
+}
