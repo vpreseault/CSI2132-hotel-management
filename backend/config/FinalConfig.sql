@@ -159,23 +159,23 @@ INSERT INTO Employee (hotel_ID, full_name, address, SSN_SIN, role) VALUES
 CREATE TABLE Customer (
     customer_ID SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
-    ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('Passport', 'Driver License', 'National ID')),
+    ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN', 'Driver License')),
     ID_number VARCHAR(255) UNIQUE NOT NULL,
     registration_date VARCHAR(255) UNIQUE NOT NULL
 );
 
 -- Insert into Customer
 INSERT INTO Customer (full_name, ID_type, ID_number, registration_date) VALUES
-('Alice Johnson', 'Passport', 'A12345678', '2024-01-15'),
+('Alice Johnson', 'SSN', 'A12345678', '2024-01-15'),
 ('Bob Williams', 'Driver License', 'B98765432', '2024-02-10'),
-('Charlie Davis', 'National ID', 'C56789012', '2024-03-05'),
-('Diana White', 'Passport', 'D11223344', '2024-04-20'),
+('Charlie Davis', 'SIN', 'C56789012', '2024-03-05'),
+('Diana White', 'SSN', 'D11223344', '2024-04-20'),
 ('Eric Harris', 'Driver License', 'E22334455', '2024-05-18'),
-('Fiona Lewis', 'National ID', 'F33445566', '2024-06-25'),
-('George Clark', 'Passport', 'G44556677', '2024-07-12'),
+('Fiona Lewis', 'SIN', 'F33445566', '2024-06-25'),
+('George Clark', 'SSN', 'G44556677', '2024-07-12'),
 ('Hannah Young', 'Driver License', 'H55667788', '2024-08-30'),
-('Ian Hall', 'National ID', 'I66778899', '2024-09-10'),
-('Jessica Allen', 'Passport', 'J77889900', '2024-10-22');
+('Ian Hall', 'SIN', 'I66778899', '2024-09-10'),
+('Jessica Allen', 'SSN', 'J77889900', '2024-10-22');
 
 
 -- Room Table
