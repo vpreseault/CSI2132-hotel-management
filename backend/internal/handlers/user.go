@@ -3,28 +3,31 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/vpreseault/csi2132-project/backend/internal"
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
-func createUserHandler(ctx *internal.AppContext) http.HandlerFunc {
+func createCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var user internal.User
-		err := json.NewDecoder(r.Body).Decode(&user)
+		var customer internal.Customer
+		err := json.NewDecoder(r.Body).Decode(&customer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = ctx.DB.QueryRow(queries.CreateUser, user.Fullname, user.Address, user.IDType, user.IDNumber).Scan(&user.ID)
+		registrationDate := time.Now().UTC().Format("2025-01-02")
+
+		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.Fullname, customer.Address, customer.IDType, customer.IDNumber, registrationDate).Scan(&customer.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		json.NewEncoder(w).Encode(user)
+		json.NewEncoder(w).Encode(customer)
 	}
 }

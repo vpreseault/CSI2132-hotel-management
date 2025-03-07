@@ -11,7 +11,7 @@ import (
 func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/hello", helloHandler(ctx))
 	r.Get("/api/test", testHandler)
-	r.Post("/api/users", createUserHandler(ctx))
+	r.Post("/api/customers", createCustomerHandler(ctx))
 }
 
 type Message struct {

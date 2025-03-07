@@ -1,11 +1,12 @@
 package queries
 
 // Users
-var CreateUser = `
-INSERT INTO users (
+var CreateCustomer = `
+INSERT INTO Customer (
 	fullname, 
 	address, 
-	id_type, 
-	id_number
-) VALUES ($1, $2, $3, $4)
+	ID_type, 
+	ID_number
+	registration_date
+) VALUES ($1, $2, $3, $4, $5)
 `
