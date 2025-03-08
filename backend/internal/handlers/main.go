@@ -12,7 +12,9 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/hello", helloHandler(ctx))
 	r.Get("/api/test", testHandler)
 	r.Post("/api/customers", createCustomerHandler(ctx))
+	r.Get("/api/customers/{name}", getCustomerHandler(ctx))
 	r.Post("/api/employees", createEmployeeHandler(ctx))
+	r.Get("/api/employees/{name}", getEmployeeHandler(ctx))
 }
 
 type Message struct {

@@ -11,6 +11,8 @@ INSERT INTO Customer (
 ) VALUES ($1, $2, $3, $4, $5)
 `
 
+var GetCustomerByName = `SELECT * FROM customer WHERE full_name = $1`
+
 var CreateEmployee = `
 INSERT INTO Employee (
 	fullname, 
@@ -19,3 +21,5 @@ INSERT INTO Employee (
 	ID_number
 ) VALUES ($1, $2, $3, $4)
 `
+
+var GetEmployeeByName = `SELECT * FROM employee WHERE full_name = $1`
