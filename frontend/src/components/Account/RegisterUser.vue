@@ -1,8 +1,8 @@
 <template>
 <Form v-slot="$form" :resolver="resolver" @submit="onFormSubmit" class="flex flex-col gap-4 w-full sm:w-56">
     <div class="flex flex-col gap-1">
-        <InputText name="fullname" type="text" placeholder="Full name" fluid />
-        <Message v-if="$form.fullname?.invalid" severity="error" size="small" variant="simple">{{ $form.fullname.error?.message }}</Message>
+        <InputText name="fullName" type="text" placeholder="Full name" fluid />
+        <Message v-if="$form.fullName?.invalid" severity="error" size="small" variant="simple">{{ $form.fullName.error?.message }}</Message>
     </div>
     <div class="flex flex-col gap-1">
         <InputText name="address" type="text" placeholder="Address" fluid />
@@ -43,16 +43,14 @@ interface Error {
 
 const resolver = ({ values }: FormResolverOptions) => {
     const errors: Record<string, Error[]> = {
-        fullname: [],
+        fullName: [],
         address: [],
         idType: [],
         idNumber: [],
     }
 
-    console.log(values);
-
-    if (!values.fullname) {
-        errors.fullname.push({ type: 'required', message: 'Full name is required.' });
+    if (!values.fullName) {
+        errors.fullName.push({ type: 'required', message: 'Full name is required.' });
     }
 
     if (!values.address) {
@@ -79,7 +77,6 @@ const resolver = ({ values }: FormResolverOptions) => {
 
 async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
-        
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}`,
                 {
@@ -92,8 +89,9 @@ async function onFormSubmit(e: FormSubmitEvent) {
                     })
                 }
             )
+            
             if (res.ok) {
-                setAuthCookie(e.values.fullname)
+                setAuthCookie(e.values.fullName)
             }
         } catch (error) {
             console.error('Error calling API:', error);
