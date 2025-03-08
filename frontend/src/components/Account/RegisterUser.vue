@@ -22,6 +22,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms';
+import { setAuthCookie } from '../../utils/auth';
 
 const props = defineProps<{
     employee: boolean
@@ -89,6 +90,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
                 })
             }
         )
+        setAuthCookie(e.values.fullname)
     }
 }
 </script>

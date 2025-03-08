@@ -9,6 +9,7 @@
 </template>
 <script setup lang="ts">
 import { type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms';
+import { setAuthCookie } from '../../utils/auth';
 
 const props = defineProps<{
     employee: boolean
@@ -32,9 +33,14 @@ const resolver = ({ values }: FormResolverOptions) => {
     };
 };
 
-function onFormSubmit(e: FormSubmitEvent) {
+async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
-        console.log('Form submitted:', e.values);
+        try {
+            await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}/${e.values.fullname}`)
+            setAuthCookie(e.values.fullname)
+        } catch (error) {
+            console.error('Error calling API:', error);
+        }
     }
 }
 </script>
