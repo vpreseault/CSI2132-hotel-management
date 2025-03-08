@@ -1,25 +1,29 @@
-DROP TABLE IF EXISTS Archive CASCADE;
-DROP TABLE IF EXISTS Renting CASCADE;
-DROP TABLE IF EXISTS Booking CASCADE;
+DROP TABLE IF EXISTS Archives CASCADE;
+DROP TABLE IF EXISTS Rentings CASCADE;
+DROP TABLE IF EXISTS Bookings CASCADE;
 DROP TABLE IF EXISTS Room_Has_Amenities CASCADE;
 DROP TABLE IF EXISTS Amenities CASCADE;
-DROP TABLE IF EXISTS Room CASCADE;
-DROP TABLE IF EXISTS Employee CASCADE;
-DROP TABLE IF EXISTS Hotel CASCADE;
-DROP TABLE IF EXISTS HotelChain CASCADE;
-DROP TABLE IF EXISTS Customer CASCADE;
+DROP TABLE IF EXISTS Roomss CASCADE;
+DROP TABLE IF EXISTS Employees CASCADE;
+DROP TABLE IF EXISTS HotelEmails CASCADE;
+DROP TABLE IF EXISTS HotelPhones CASCADE;
+DROP TABLE IF EXISTS ChainEmails CASCADE;
+DROP TABLE IF EXISTS ChainPhones CASCADE;
+DROP TABLE IF EXISTS Hotels CASCADE;
+DROP TABLE IF EXISTS HotelChains CASCADE;
+DROP TABLE IF EXISTS Customers CASCADE;
 
 /* Create tables without connecting the foreign keys */
 
 -- HotelChain Table
-CREATE TABLE HotelChain (
+CREATE TABLE HotelChains (
     chain_ID SERIAL PRIMARY KEY,
     central_office_address VARCHAR(255) NOT NULL, 
     number_of_hotels INT NOT NULL CHECK (number_of_hotels > 0)
 );
 
 -- Insert into HotelChain
-INSERT INTO HotelChain (central_office_address, number_of_hotels) VALUES
+INSERT INTO HotelChains (central_office_address, number_of_hotels) VALUES
 ('123 Main St, New York, NY', 10),
 ('456 Elm St, Los Angeles, CA', 7),
 ('789 Oak St, Chicago, IL', 5),
@@ -31,18 +35,18 @@ INSERT INTO HotelChain (central_office_address, number_of_hotels) VALUES
 ('606 Cherry St, Atlanta, GA', 5),
 ('707 Aspen St, San Francisco, CA', 7);
 
--- Hotel Table
-CREATE TABLE Hotel (
+-- Hotels Table
+CREATE TABLE Hotels (
     hotel_ID SERIAL PRIMARY KEY, 
     chain_ID INT NOT NULL,
-    manager_ID INT UNIQUE,  
+    manager_ID INT UNIQUE NOT NULL,  
     number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
     hotel_address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
 -- Insert into Hotel
-INSERT INTO Hotel (chain_ID, manager_ID, number_of_rooms, hotel_address, category) VALUES
+INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_address, category) VALUES
 (1, NULL, 100, '1001 Broadway, New York, NY', 5),
 (2, NULL, 80, '2022 Sunset Blvd, Los Angeles, CA', 4),
 (3, NULL, 50, '3033 Lakeshore Dr, Chicago, IL', 3),
@@ -55,14 +59,14 @@ INSERT INTO Hotel (chain_ID, manager_ID, number_of_rooms, hotel_address, categor
 (10, NULL, 95, '1010 Market St, San Francisco, CA', 4);
 
 -- Phone and Emails for hotel and hotelchain
-CREATE TABLE ChainPhone (
+CREATE TABLE ChainPhones (
     chain_ID INT NOT NULL,
     c_phone VARCHAR(20) UNIQUE NOT NULL CHECK (c_phone ~ '^[0-9-]+$'),
     PRIMARY KEY (chain_ID, c_phone)
 );
 
 -- Insert into ChainPhone
-INSERT INTO ChainPhone (chain_ID, c_phone) VALUES
+INSERT INTO ChainPhones (chain_ID, c_phone) VALUES
 (1, '212-555-1234'),
 (2, '310-555-5678'),
 (3, '312-555-9012'),
@@ -74,14 +78,14 @@ INSERT INTO ChainPhone (chain_ID, c_phone) VALUES
 (9, '404-555-8888'),
 (10, '415-555-9999');
 
-CREATE TABLE ChainEmail (
+CREATE TABLE ChainEmails (
     chain_ID INT NOT NULL,
     c_email VARCHAR(255) UNIQUE NOT NULL CHECK (c_email ~* '^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'),
     PRIMARY KEY (chain_ID, c_email)
 );
 
 -- Insert into ChainEmail
-INSERT INTO ChainEmail (chain_ID, c_email) VALUES
+INSERT INTO ChainEmails (chain_ID, c_email) VALUES
 (1, 'info@chain1.com'),
 (2, 'contact@chain2.com'),
 (3, 'support@chain3.com'),
@@ -93,14 +97,14 @@ INSERT INTO ChainEmail (chain_ID, c_email) VALUES
 (9, 'support@chain9.com'),
 (10, 'info@chain10.com');
 
-CREATE TABLE HotelPhone (
+CREATE TABLE HotelPhones (
     hotel_ID INT NOT NULL,
     h_phone VARCHAR(20) UNIQUE NOT NULL CHECK (h_phone ~ '^[0-9-]+$'),
     PRIMARY KEY (hotel_ID, h_phone)
 );
 
 -- Insert into HotelPhone
-INSERT INTO HotelPhone (hotel_ID, h_phone) VALUES
+INSERT INTO HotelPhones (hotel_ID, h_phone) VALUES
 (1, '212-555-1111'),
 (2, '310-555-2222'),
 (3, '312-555-3333'),
@@ -112,14 +116,14 @@ INSERT INTO HotelPhone (hotel_ID, h_phone) VALUES
 (9, '404-555-9999'),
 (10, '415-555-0000');
 
-CREATE TABLE HotelEmail (
+CREATE TABLE HotelEmails (
     hotel_ID INT NOT NULL,
     h_email VARCHAR(255) UNIQUE NOT NULL CHECK (h_email ~* '^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$'),
     PRIMARY KEY (hotel_ID, h_email)
 );
 
 -- Insert into HotelEmail
-INSERT INTO HotelEmail (hotel_ID, h_email) VALUES
+INSERT INTO HotelEmails (hotel_ID, h_email) VALUES
 (1, 'nyc@hotel1.com'),
 (2, 'la@hotel2.com'),
 (3, 'chicago@hotel3.com'),
@@ -131,8 +135,8 @@ INSERT INTO HotelEmail (hotel_ID, h_email) VALUES
 (9, 'atlanta@hotel9.com'),
 (10, 'sf@hotel10.com');
 
--- Employee Table
-CREATE TABLE Employee (
+-- Employees Table
+CREATE TABLE Employees (
     employee_ID SERIAL PRIMARY KEY,
     hotel_ID INT NOT NULL,
     full_name VARCHAR(255) NOT NULL,
@@ -143,7 +147,7 @@ CREATE TABLE Employee (
 );
 
 -- Insert into Employee
-INSERT INTO Employee (hotel_ID, full_name, address, SSN_SIN, role) VALUES
+INSERT INTO Employees (hotel_ID, full_name, address, SSN_SIN, role) VALUES
 (1, 'John Doe', '500 Fifth Ave, New York, NY', '123-45-6789', 'Manager'),
 (2, 'Jane Smith', '123 Hollywood Blvd, Los Angeles, CA', '987-65-4321', 'Manager'),
 (3, 'Michael Brown', '789 Michigan Ave, Chicago, IL', '567-89-1234', 'Manager'),
@@ -156,17 +160,18 @@ INSERT INTO Employee (hotel_ID, full_name, address, SSN_SIN, role) VALUES
 (10, 'Sophia Thomas', '1010 Market St, San Francisco, CA', '777-88-9999', 'Manager');
 
 
--- Customer Table
-CREATE TABLE Customer (
+-- Customers Table
+CREATE TABLE Customers (
     customer_ID SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
     ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN', 'Driver License')),
     ID_number VARCHAR(255) UNIQUE NOT NULL,
+    customer_address VARCHAR(255) NOT NULL,
     registration_date VARCHAR(255) UNIQUE NOT NULL
 );
 
--- Insert into Customer
-INSERT INTO Customer (full_name, ID_type, ID_number, registration_date) VALUES
+-- Insert into Customers
+INSERT INTO Customers (full_name, ID_type, ID_number, registration_date) VALUES
 ('Alice Johnson', 'SSN', 'A12345678', '2024-01-15'),
 ('Bob Williams', 'Driver License', 'B98765432', '2024-02-10'),
 ('Charlie Davis', 'SIN', 'C56789012', '2024-03-05'),
@@ -179,8 +184,8 @@ INSERT INTO Customer (full_name, ID_type, ID_number, registration_date) VALUES
 ('Jessica Allen', 'SSN', 'J77889900', '2024-10-22');
 
 
--- Room Table
-CREATE TABLE Room (
+-- Rooms Table
+CREATE TABLE Rooms (
     room_ID SERIAL PRIMARY KEY,
     hotel_ID INT NOT NULL,
     room_number VARCHAR(10) NOT NULL,
@@ -191,8 +196,8 @@ CREATE TABLE Room (
     damaged BOOLEAN NOT NULL
 );
 
--- Insert into Room
-INSERT INTO Room (hotel_ID, room_number, capacity, price, view_type, extendable, damaged) VALUES
+-- Insert into Rooms
+INSERT INTO Rooms (hotel_ID, room_number, capacity, price, view_type, extendable, damaged) VALUES
 (1, '101', 2, 150.00, 'Sea', TRUE, FALSE),
 (2, '202', 3, 200.00, 'Mountain', FALSE, FALSE),
 (3, '303', 2, 175.00, 'Sea', TRUE, FALSE),
@@ -238,27 +243,29 @@ INSERT INTO Room_Has_Amenities (room_ID, amenity_ID) VALUES
 (4, 2), (4, 8), (4, 9),
 (5, 3), (5, 4), (5, 10);
 
--- Booking Table
-CREATE TABLE Booking (
+-- Bookings Table
+CREATE TABLE Bookings (
     booking_ID SERIAL PRIMARY KEY,
     customer_ID INT NOT NULL,
     room_ID INT NOT NULL,
+    booking_date DATE NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
+    CHECK (booking_date < start_Date),
     CHECK (start_Date < end_Date)
 );
 
--- Insert into Booking
-INSERT INTO Booking (customer_ID, room_ID, start_date, end_date, total_price) VALUES
+-- Insert into Bookings
+INSERT INTO Bookings (customer_ID, room_ID, start_date, end_date, total_price) VALUES
 (1, 1, '2025-04-01', '2025-04-05', 600.00),
 (2, 2, '2025-05-10', '2025-05-15', 1000.00),
 (3, 3, '2025-06-20', '2025-06-25', 875.00),
 (4, 4, '2025-07-15', '2025-07-20', 1250.00),
 (5, 5, '2025-08-05', '2025-08-10', 800.00);
 
--- Renting Table
-CREATE TABLE Renting (
+-- Rentings Table
+CREATE TABLE Rentings (
     renting_ID SERIAL PRIMARY KEY,
     employee_ID INT NOT NULL,
     customer_ID INT NOT NULL,
@@ -266,20 +273,21 @@ CREATE TABLE Renting (
     booking_ID INT UNIQUE,
     check_in_date DATE NOT NULL,
     check_out_date DATE NOT NULL,
+    payment BOOLEAN NOT NULL,
     total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
     CHECK (check_in_date <= check_out_date)
 );
 
--- Insert into Renting
-INSERT INTO Renting (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, total_price) VALUES
+-- Insert into Rentings
+INSERT INTO Rentings (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, total_price) VALUES
 (1, 1, 1, 1, '2025-04-01', '2025-04-05', 600.00),
 (2, 2, 2, 2, '2025-05-10', '2025-05-15', 1000.00),
 (3, 3, 3, 3, '2025-06-20', '2025-06-25', 875.00),
 (4, 4, 4, 4, '2025-07-15', '2025-07-20', 1250.00),
 (5, 5, 5, 5, '2025-08-05', '2025-08-10', 800.00);
 
--- Archive Table  
-CREATE TABLE Archive (
+-- Archives Table  
+CREATE TABLE Archives (
     archive_ID SERIAL PRIMARY KEY,
     renting_ID INT,
     booking_ID INT,
@@ -290,8 +298,8 @@ CREATE TABLE Archive (
     archive_date DATE NOT NULL
 );
 
--- Insert into Archive
-INSERT INTO Archive (renting_ID, booking_ID, total_price) VALUES
+-- Insert into Archives
+INSERT INTO Archives (renting_ID, booking_ID, total_price) VALUES
 (1, 1, 600.00),
 (2, 2, 1000.00),
 (3, 3, 875.00),
@@ -302,52 +310,52 @@ INSERT INTO Archive (renting_ID, booking_ID, total_price) VALUES
 /* Alters tables to connect the foreign keys */
 
 -- Hotel references HotelChain and Employee (Manager)
-ALTER TABLE Hotel
+ALTER TABLE Hotels
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE,
     ADD FOREIGN KEY (manager_ID) REFERENCES Employee(employee_ID) ON DELETE SET NULL;
 
 -- ChainPhone references HotelChain 
-ALTER TABLE ChainPhone
+ALTER TABLE ChainPhones
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE;
 
 -- ChainEmail references HotelChain 
 ALTER TABLE ChainEmail
-    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE;
+    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE;
 
 -- HotelPhone references HotelChain 
-ALTER TABLE HotelPhone
-    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotel(hotel_ID) ON DELETE CASCADE;
+ALTER TABLE HotelPhones
+    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 
 -- HotelEmail references HotelChain 
-ALTER TABLE HotelEmail
-    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotel(hotel_ID) ON DELETE CASCADE;
+ALTER TABLE HotelEmails
+    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 
 -- Employee references Hotel
-ALTER TABLE Employee
-    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotel(hotel_ID) ON DELETE CASCADE;
+ALTER TABLE Employees
+    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 
 -- Room references Hotel
-ALTER TABLE Room
-    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotel(hotel_ID) ON DELETE CASCADE;
+ALTER TABLE Rooms
+    ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 
 -- Room_Has_Amenities references Room and Amenities
 ALTER TABLE Room_Has_Amenities
-    ADD FOREIGN KEY (room_ID) REFERENCES Room(room_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (room_ID) REFERENCES Rooms(room_ID) ON DELETE CASCADE,
     ADD FOREIGN KEY (amenity_ID) REFERENCES Amenities(amenity_ID) ON DELETE CASCADE;
 
--- Booking references Customer and Room
-ALTER TABLE Booking
-    ADD FOREIGN KEY (customer_ID) REFERENCES Customer(customer_ID) ON DELETE CASCADE,
-    ADD FOREIGN KEY (room_ID) REFERENCES Room(room_ID) ON DELETE CASCADE;
+-- Bookings references Customer and Room
+ALTER TABLE Bookings
+    ADD FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (room_ID) REFERENCES Rooms(room_ID) ON DELETE CASCADE;
 
--- Renting references Employee, Customer, Room, and Booking
-ALTER TABLE Renting
-    ADD FOREIGN KEY (employee_ID) REFERENCES Employee(employee_ID) ON DELETE CASCADE,
-    ADD FOREIGN KEY (customer_ID) REFERENCES Customer(customer_ID) ON DELETE CASCADE,
-    ADD FOREIGN KEY (room_ID) REFERENCES Room(room_ID) ON DELETE CASCADE,
-    ADD FOREIGN KEY (booking_ID) REFERENCES Booking(booking_ID) ON DELETE SET NULL;
+-- Rentings references Employee, Customer, Room, and Bookings
+ALTER TABLE Rentings
+    ADD FOREIGN KEY (employee_ID) REFERENCES Employees(employee_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (room_ID) REFERENCES Rooms(room_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL;
 
--- Archive references Renting and Booking
-ALTER TABLE Archive
-    ADD FOREIGN KEY (renting_ID) REFERENCES Renting(renting_ID) ON DELETE SET NULL,
-    ADD FOREIGN KEY (booking_ID) REFERENCES Booking(booking_ID) ON DELETE SET NULL;
+-- Archive references Rentings and Bookings
+ALTER TABLE Archives
+    ADD FOREIGN KEY (renting_ID) REFERENCES Rentings(renting_ID) ON DELETE SET NULL,
+    ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL;
