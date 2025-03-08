@@ -166,7 +166,7 @@ CREATE TABLE Customers (
     full_name VARCHAR(255) NOT NULL,
     ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN', 'Driver License')),
     ID_number VARCHAR(255) UNIQUE NOT NULL,
-    customer_address VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
     registration_date VARCHAR(255) UNIQUE NOT NULL
 );
 
