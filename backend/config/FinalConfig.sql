@@ -303,7 +303,7 @@ INSERT INTO Archive (renting_ID, booking_ID, total_price) VALUES
 
 -- Hotel references HotelChain and Employee (Manager)
 ALTER TABLE Hotel
-	ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE,
     ADD FOREIGN KEY (manager_ID) REFERENCES Employee(employee_ID) ON DELETE SET NULL;
 
 -- ChainPhone references HotelChain 
