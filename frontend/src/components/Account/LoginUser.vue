@@ -36,8 +36,10 @@ const resolver = ({ values }: FormResolverOptions) => {
 async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
         try {
-            await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}/${e.values.fullname}`)
-            setAuthCookie(e.values.fullname)
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}/${e.values.fullname}`)
+            if (res.ok) {
+                setAuthCookie(e.values.fullname)
+            }
         } catch (error) {
             console.error('Error calling API:', error);
         }
