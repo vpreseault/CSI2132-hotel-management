@@ -6,10 +6,9 @@ type AppContext struct {
 	DB *sql.DB
 }
 
-// TODO: cleanup user structs
 type Customer struct {
-	ID               int    `json:"ID"`
-	Fullname         string `json:"fullname"`
+	ID               int    `json:"customer_ID"`
+	FullName         string `json:"full_name"`
 	Address          string `json:"address"`
 	IDType           string `json:"ID_type"`
 	IDNumber         string `json:"ID_number"`
@@ -17,9 +16,9 @@ type Customer struct {
 }
 
 type Employee struct {
-	ID       int    `json:"ID"`
-	HotelID  string `json:"ID_number"`
-	Fullname string `json:"fullname"`
+	ID       int    `json:"employee_ID"`
+	HotelID  string `json:"hotel_ID"`
+	FullName string `json:"full_name"`
 	Address  string `json:"address"`
 	IDType   string `json:"ID_type"`
 	IDNumber string `json:"ID_number"`

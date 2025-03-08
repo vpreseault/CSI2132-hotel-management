@@ -23,8 +23,8 @@ func createCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		registrationDate := time.Now().UTC().Format("2006-01-02")
-
-		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.Fullname, customer.Address, customer.IDType, customer.IDNumber, registrationDate).Scan(&customer.ID)
+		// TODO: update to Exec
+		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.FullName, customer.Address, customer.IDType, customer.IDNumber, registrationDate).Scan(&customer.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -41,7 +41,7 @@ func getCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 		userName := chi.URLParam(r, "name")
 		var customer internal.Customer
 
-		err := ctx.DB.QueryRow(queries.GetCustomerByName, userName).Scan(&customer.ID, &customer.Fullname, &customer.IDType, &customer.IDNumber, &customer.RegistrationDate)
+		err := ctx.DB.QueryRow(queries.GetCustomerByName, userName).Scan(&customer.ID, &customer.FullName, &customer.IDType, &customer.IDNumber, &customer.RegistrationDate)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				// Treat 0 rows error differently
@@ -64,7 +64,7 @@ func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.Fullname, employee.Address, employee.IDType, employee.IDNumber).Scan(&employee.ID)
+		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.HotelID, employee.FullName, employee.Address, employee.IDType, employee.IDNumber, employee.Role).Scan(&employee.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -81,7 +81,7 @@ func getEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 		userName := chi.URLParam(r, "name")
 		var employee internal.Employee
 
-		err := ctx.DB.QueryRow(queries.GetEmployeeByName, userName).Scan(&employee.ID, &employee.HotelID, &employee.Fullname, &employee.Address, &employee.IDNumber, &employee.Role)
+		err := ctx.DB.QueryRow(queries.GetEmployeeByName, userName).Scan(&employee.ID, &employee.HotelID, &employee.FullName, &employee.Address, &employee.IDType, &employee.IDNumber, &employee.Role)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				// Treat 0 rows error differently
