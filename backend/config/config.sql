@@ -39,14 +39,14 @@ INSERT INTO HotelChains (central_office_address, number_of_hotels) VALUES
 CREATE TABLE Hotels (
     hotel_ID SERIAL PRIMARY KEY, 
     chain_ID INT NOT NULL,
-    manager_ID INT UNIQUE NOT NULL,  
+    manager_ID INT UNIQUE,  
     number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
     address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
 -- Insert into Hotel
-INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_address, category) VALUES
+INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, address, category) VALUES
 (1, NULL, 100, '1001 Broadway, New York, NY', 5),
 (2, NULL, 80, '2022 Sunset Blvd, Los Angeles, CA', 4),
 (3, NULL, 50, '3033 Lakeshore Dr, Chicago, IL', 3),
@@ -147,17 +147,17 @@ CREATE TABLE Employees (
 );
 
 -- Insert into Employee
-INSERT INTO Employees (hotel_ID, full_name, address, SSN_SIN, role) VALUES
-(1, 'John Doe', '500 Fifth Ave, New York, NY', '123-45-6789', 'Manager'),
-(2, 'Jane Smith', '123 Hollywood Blvd, Los Angeles, CA', '987-65-4321', 'Manager'),
-(3, 'Michael Brown', '789 Michigan Ave, Chicago, IL', '567-89-1234', 'Manager'),
-(4, 'Emily Davis', '400 Westheimer Rd, Houston, TX', '111-22-3333', 'Manager'),
-(5, 'James Wilson', '505 Ocean Dr, Miami, FL', '222-33-4444', 'Manager'),
-(6, 'Sarah Miller', '606 Rainier Ave, Seattle, WA', '333-44-5555', 'Manager'),
-(7, 'David Taylor', '707 Colfax Ave, Denver, CO', '444-55-6666', 'Manager'),
-(8, 'Emma Anderson', '808 Beacon St, Boston, MA', '555-66-7777', 'Manager'),
-(9, 'Daniel Martinez', '909 Peachtree St, Atlanta, GA', '666-77-8888', 'Manager'),
-(10, 'Sophia Thomas', '1010 Market St, San Francisco, CA', '777-88-9999', 'Manager');
+INSERT INTO Employees (hotel_ID, full_name, address, ID_type, ID_number, role) VALUES
+(1, 'John Doe', '500 Fifth Ave, New York, NY', 'SSN', '123-45-6789', 'Manager'),
+(2, 'Jane Smith', '123 Hollywood Blvd, Los Angeles, CA', 'SSN','987-65-4321', 'Manager'),
+(3, 'Michael Brown', '789 Michigan Ave, Chicago, IL', 'SSN','567-89-1234', 'Manager'),
+(4, 'Emily Davis', '400 Westheimer Rd, Houston, TX', 'SSN','111-22-3333', 'Manager'),
+(5, 'James Wilson', '505 Ocean Dr, Miami, FL', 'SSN','222-33-4444', 'Manager'),
+(6, 'Sarah Miller', '606 Rainier Ave, Seattle, WA', 'SSN','333-44-5555', 'Manager'),
+(7, 'David Taylor', '707 Colfax Ave, Denver, CO', 'SSN','444-55-6666', 'Manager'),
+(8, 'Emma Anderson', '808 Beacon St, Boston, MA', 'SSN','555-66-7777', 'Manager'),
+(9, 'Daniel Martinez', '909 Peachtree St, Atlanta, GA', 'SSN','666-77-8888', 'Manager'),
+(10, 'Sophia Thomas', '1010 Market St, San Francisco, CA', 'SSN','777-88-9999', 'Manager');
 
 
 -- Customers Table
@@ -171,17 +171,17 @@ CREATE TABLE Customers (
 );
 
 -- Insert into Customers
-INSERT INTO Customers (full_name, ID_type, ID_number, registration_date) VALUES
-('Alice Johnson', 'SSN', 'A12345678', '2024-01-15'),
-('Bob Williams', 'Driver License', 'B98765432', '2024-02-10'),
-('Charlie Davis', 'SIN', 'C56789012', '2024-03-05'),
-('Diana White', 'SSN', 'D11223344', '2024-04-20'),
-('Eric Harris', 'Driver License', 'E22334455', '2024-05-18'),
-('Fiona Lewis', 'SIN', 'F33445566', '2024-06-25'),
-('George Clark', 'SSN', 'G44556677', '2024-07-12'),
-('Hannah Young', 'Driver License', 'H55667788', '2024-08-30'),
-('Ian Hall', 'SIN', 'I66778899', '2024-09-10'),
-('Jessica Allen', 'SSN', 'J77889900', '2024-10-22');
+INSERT INTO Customers (full_name, ID_type, ID_number, address, registration_date) VALUES
+('Alice Johnson', 'SSN', 'A12345678', '1010 Market St, San Francisco, CA','2024-01-15'),
+('Bob Williams', 'Driver License', 'B98765432', '1010 Market St, San Francisco, CA','2024-02-10'),
+('Charlie Davis', 'SIN', 'C56789012', '1010 Market St, San Francisco, CA','2024-03-05'),
+('Diana White', 'SSN', 'D11223344', '1010 Market St, San Francisco, CA','2024-04-20'),
+('Eric Harris', 'Driver License', 'E22334455', '1010 Market St, San Francisco, CA','2024-05-18'),
+('Fiona Lewis', 'SIN', 'F33445566', '1010 Market St, San Francisco, CA','2024-06-25'),
+('George Clark', 'SSN', 'G44556677', '1010 Market St, San Francisco, CA','2024-07-12'),
+('Hannah Young', 'Driver License', 'H55667788', '1010 Market St, San Francisco, CA','2024-08-30'),
+('Ian Hall', 'SIN', 'I66778899', '1010 Market St, San Francisco, CA','2024-09-10'),
+('Jessica Allen', 'SSN', 'J77889900', '1010 Market St, San Francisco, CA','2024-10-22');
 
 
 -- Rooms Table
@@ -252,17 +252,17 @@ CREATE TABLE Bookings (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
-    CHECK (booking_date < start_Date),
+    CHECK (booking_date <= start_Date),
     CHECK (start_Date < end_Date)
 );
 
 -- Insert into Bookings
-INSERT INTO Bookings (customer_ID, room_ID, start_date, end_date, total_price) VALUES
-(1, 1, '2025-04-01', '2025-04-05', 600.00),
-(2, 2, '2025-05-10', '2025-05-15', 1000.00),
-(3, 3, '2025-06-20', '2025-06-25', 875.00),
-(4, 4, '2025-07-15', '2025-07-20', 1250.00),
-(5, 5, '2025-08-05', '2025-08-10', 800.00);
+INSERT INTO Bookings (customer_ID, room_ID, booking_date, start_date, end_date, total_price) VALUES
+(1, 1, '2025-04-01','2025-04-01', '2025-04-05', 600.00),
+(2, 2, '2025-04-01','2025-05-10', '2025-05-15', 1000.00),
+(3, 3, '2025-04-01','2025-06-20', '2025-06-25', 875.00),
+(4, 4, '2025-04-01','2025-07-15', '2025-07-20', 1250.00),
+(5, 5, '2025-04-01','2025-08-05', '2025-08-10', 800.00);
 
 -- Rentings Table
 CREATE TABLE Rentings (
@@ -279,12 +279,12 @@ CREATE TABLE Rentings (
 );
 
 -- Insert into Rentings
-INSERT INTO Rentings (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, total_price) VALUES
-(1, 1, 1, 1, '2025-04-01', '2025-04-05', 600.00),
-(2, 2, 2, 2, '2025-05-10', '2025-05-15', 1000.00),
-(3, 3, 3, 3, '2025-06-20', '2025-06-25', 875.00),
-(4, 4, 4, 4, '2025-07-15', '2025-07-20', 1250.00),
-(5, 5, 5, 5, '2025-08-05', '2025-08-10', 800.00);
+INSERT INTO Rentings (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, payment, total_price) VALUES
+(1, 1, 1, 1, '2025-04-01', '2025-04-05', TRUE, 600.00),
+(2, 2, 2, 2, '2025-05-10', '2025-05-15', TRUE, 1000.00),
+(3, 3, 3, 3, '2025-06-20', '2025-06-25', TRUE,875.00),
+(4, 4, 4, 4, '2025-07-15', '2025-07-20', TRUE,1250.00),
+(5, 5, 5, 5, '2025-08-05', '2025-08-10', TRUE,800.00);
 
 -- Archives Table  
 CREATE TABLE Archives (
@@ -299,12 +299,14 @@ CREATE TABLE Archives (
 );
 
 -- Insert into Archives
-INSERT INTO Archives (renting_ID, booking_ID, total_price) VALUES
-(1, 1, 600.00),
-(2, 2, 1000.00),
-(3, 3, 875.00),
-(4, 4, 1250.00),
-(5, 5, 800.00);
+INSERT INTO Archives (renting_ID, booking_ID, check_in_date, check_out_date, archive_date, total_price) VALUES
+(1, 1, '2024-01-10', '2024-02-10', '2024-02-15', 600.00),
+(2, 2, '2024-03-15', '2024-04-15', '2024-04-20', 1000.00),
+(3, 3, '2024-05-20', '2024-06-20', '2024-06-25', 875.00),
+(4, 4, '2024-07-25', '2024-08-25', '2024-08-30', 1250.00),
+(5, 5, '2024-09-30', '2024-10-30', '2024-11-05', 800.00);
+
+
 
 
 /* Alters tables to connect the foreign keys */
