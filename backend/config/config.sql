@@ -41,7 +41,7 @@ CREATE TABLE Hotels (
     chain_ID INT NOT NULL,
     manager_ID INT UNIQUE NOT NULL,  
     number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
-    hotel_address VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
