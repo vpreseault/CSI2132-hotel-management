@@ -283,7 +283,11 @@ CREATE TABLE Archive (
     archive_ID SERIAL PRIMARY KEY,
     renting_ID INT,
     booking_ID INT,
-    total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0)
+    total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
+    booking_date DATE,
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    archive_date DATE NOT NULL
 );
 
 -- Insert into Archive
