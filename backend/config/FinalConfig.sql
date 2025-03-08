@@ -137,7 +137,8 @@ CREATE TABLE Employee (
     hotel_ID INT NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    SSN_SIN VARCHAR(20) UNIQUE NOT NULL,
+    ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN')),
+    ID_number VARCHAR(255) UNIQUE NOT NULL,
     role VARCHAR(50) NOT NULL CHECK (role IN ('Manager', 'Employee'))
 );
 
