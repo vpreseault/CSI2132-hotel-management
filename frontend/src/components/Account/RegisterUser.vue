@@ -24,17 +24,10 @@ import { ref } from 'vue';
 import { type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms';
 import { setAuthCookie } from '../../utils/auth';
 
-const props = defineProps<{
-    employee: boolean
-}>()
-
 const idTypes = ref([
     { type: 'SSN' },
     { type: 'SIN' },
 ]);
-if (!props.employee) {
-    idTypes.value.push({ type: 'Drivers License' })
-}
 
 interface Error {
     type: string;
@@ -78,7 +71,7 @@ const resolver = ({ values }: FormResolverOptions) => {
 async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}`,
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/customers`,
                 {
                     method: 'POST',
                     body: JSON.stringify({
