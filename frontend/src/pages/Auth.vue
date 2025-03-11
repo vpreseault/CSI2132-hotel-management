@@ -9,7 +9,7 @@
                 <TabPanels class="flex flex-col items-center">
                     <h1 class="text-xl mb-5 my-2">{{ headerText }}</h1>
                     <LoginUser v-if="mode === 'login'" :employee="tabValue === 'employee'" />
-                    <RegisterUser />
+                    <RegisterUser v-else />
                 </TabPanels>
             </Tabs>
             <p class="my-3">{{ modeToggleText }} <Button :label="modeToggleButtonText" variant="link" @click="handleModeToggle" class="!p-0" /> instead.</p>
