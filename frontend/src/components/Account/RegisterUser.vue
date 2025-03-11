@@ -82,7 +82,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
                 {
                     method: 'POST',
                     body: JSON.stringify({
-                        fullname: e.values.fullname,
+                        "full_name": e.values.fullName,
                         address: e.values.address,
                         "ID_type": e.values.idType.type,
                         "ID_number": e.values.idNumber,

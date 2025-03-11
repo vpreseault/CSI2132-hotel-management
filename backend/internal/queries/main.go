@@ -2,19 +2,20 @@ package queries
 
 // Users
 var CreateCustomer = `
-INSERT INTO Customer (
+INSERT INTO Customers (
 	full_name, 
-	address,
 	ID_type, 
 	ID_number,
+	address,
 	registration_date
 ) VALUES ($1, $2, $3, $4, $5)
+RETURNING customer_ID
 `
 
-var GetCustomerByName = `SELECT * FROM customer WHERE full_name = $1`
+var GetCustomerByName = `SELECT * FROM Customers WHERE full_name = $1`
 
 var CreateEmployee = `
-INSERT INTO Employee (
+INSERT INTO Employees (
 	hotel_ID,
 	full_name, 
 	address, 
@@ -22,6 +23,7 @@ INSERT INTO Employee (
 	ID_number,
 	role
 ) VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING employee_ID
 `
 
-var GetEmployeeByName = `SELECT * FROM employee WHERE full_name = $1`
+var GetEmployeeByName = `SELECT * FROM Employees WHERE full_name = $1`

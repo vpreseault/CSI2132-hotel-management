@@ -15,16 +15,16 @@ func createCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var customer internal.Customer
+		customer := internal.Customer{
+			RegistrationDate: time.Now().UTC().Format("2006-01-02"),
+		}
 		err := json.NewDecoder(r.Body).Decode(&customer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		registrationDate := time.Now().UTC().Format("2006-01-02")
-		// TODO: update to Exec
-		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.FullName, customer.Address, customer.IDType, customer.IDNumber, registrationDate).Scan(&customer.ID)
+		err = ctx.DB.QueryRow(queries.CreateCustomer, customer.FullName, customer.IDType, customer.IDNumber, customer.Address, customer.RegistrationDate).Scan(&customer.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -41,7 +41,7 @@ func getCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 		userName := chi.URLParam(r, "name")
 		var customer internal.Customer
 
-		err := ctx.DB.QueryRow(queries.GetCustomerByName, userName).Scan(&customer.ID, &customer.FullName, &customer.IDType, &customer.IDNumber, &customer.RegistrationDate)
+		err := ctx.DB.QueryRow(queries.GetCustomerByName, userName).Scan(&customer.ID, &customer.FullName, &customer.IDType, &customer.IDNumber, &customer.Address, &customer.RegistrationDate)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				// Treat 0 rows error differently
@@ -64,7 +64,7 @@ func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.HotelID, employee.FullName, employee.Address, employee.IDType, employee.IDNumber, employee.Role).Scan(&employee.ID)
+		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.HotelID, employee.FullName, employee.Address, employee.IDType, employee.IDNumber, "Employee").Scan(&employee.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
