@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -73,9 +74,63 @@ func getCustomerBookings(ctx *internal.AppContext, customerID int) ([]internal.B
 	return bookings, nil
 }
 
+func getCustomerRentings(ctx *internal.AppContext, customerID int) ([]internal.Renting, error) {
+	rows, err := ctx.DB.Query(queries.GetCustomerRentings, customerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rentings []internal.Renting
+	for rows.Next() {
+		var renting internal.Renting
+		var bookingIDOrNull sql.NullInt32
+
+		if err := rows.Scan(
+			&renting.RentingID,
+			&renting.EmployeeID,
+			&renting.CustomerID,
+			&renting.RoomID,
+			&bookingIDOrNull,
+			&renting.CheckInDate,
+			&renting.CheckOutDate,
+			&renting.Payment,
+			&renting.TotalPrice,
+		); err != nil {
+			return rentings, err
+		}
+
+		if bookingIDOrNull.Valid {
+			renting.BookingID = int(bookingIDOrNull.Int32)
+		}
+
+		rentings = append(rentings, renting)
+	}
+
+	if err = rows.Err(); err != nil {
+		return rentings, err
+	}
+
+	return rentings, nil
+}
+
 func getCustomerRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 
+		customerID, err := getCustomerID(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		rentings, err := getCustomerRentings(ctx, customerID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(rentings)
 	}
 }
 

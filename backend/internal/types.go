@@ -34,3 +34,15 @@ type Booking struct {
 	EndDate     string  `json:"end_date"`
 	TotalPrice  float32 `json:"total_price"`
 }
+
+type Renting struct {
+	RentingID    int     `json:"renting_ID"`
+	EmployeeID   int     `json:"employee_ID"`
+	CustomerID   int     `json:"customer_ID"`
+	RoomID       int     `json:"room_ID"`
+	BookingID    int     `json:"booking_ID"`
+	CheckInDate  string  `json:"check_in_date"`
+	CheckOutDate string  `json:"check_out_date"`
+	Payment      bool    `json:"payment"`
+	TotalPrice   float32 `json:"total_price"`
+}
