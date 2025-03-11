@@ -24,3 +24,13 @@ type Employee struct {
 	IDNumber string `json:"ID_number"`
 	Role     string `json:"role"`
 }
+
+type Booking struct {
+	BookingID   int     `json:"booking_ID"`
+	CustomerID  int     `json:"customer_ID"`
+	RoomID      int     `json:"room_ID"`
+	BookingDate string  `json:"booking_date"`
+	StartDate   string  `json:"start_date"`
+	EndDate     string  `json:"end_date"`
+	TotalPrice  float32 `json:"total_price"`
+}
