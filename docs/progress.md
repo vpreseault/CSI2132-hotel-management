@@ -6,7 +6,7 @@
 
 ## Deliverable 2
 1. ✔ (10%) Database implementation: Implement the database according to your relational database schema and the constraints that you have defined.
-    - Implemented in PR (#16)[https://github.com/vpreseault/CSI2132-hotel-management/pull/16]
+    - Implemented in PR https://github.com/vpreseault/CSI2132-hotel-management/pull/16
 
 2. (5%) Database population: Insert in your database data for each one of the 5 hotel chains. Each one of them has at least 8 hotels, which belong to at least 3 categories. Two of the hotels at least should be in the same area. Each hotel should have at least 5 rooms of different capacity. Populate your database with enough data to be able to showcase the execution of queries/triggers/views. 
     - [ ] 5 Chains
