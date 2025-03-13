@@ -61,21 +61,21 @@ your database according to the referential integrity constraints, and moreover, 
         - [ ] room price
 
 The User Interface should allow the insert/delete/update of all information related to customers, employees, hotels and rooms. The user can be either a customer (who will use the interface in order to search for rooms and do bookings) or a hotel employee (who will use the interface to either turn a booking to renting when a customer checks in the hotel, or do directly a renting when a customer presents 
-physically to the hotel). An employee should be able to insert a customer payment for a renting through the interface. 
-    - [ ] insert/delete/update
-        - [ ] customers
-        - [ ] employees 
-        - [ ] hotels
-        - [ ] rooms 
-    - [ ] UI should allow employees to
-        - [ ] transform bookings to rentings
-        - [ ] create rentings for customers directly
-        - [ ] insert customer payment info
+physically to the hotel). An employee should be able to insert a customer payment for a renting through the interface.
+- [ ] insert/delete/update
+    - [ ] customers
+    - [ ] employees 
+    - [ ] hotels
+    - [ ] rooms 
+- [ ] UI should allow employees to
+    - [ ] transform bookings to rentings
+    - [ ] create rentings for customers directly
+    - [ ] insert customer payment info
 
 The user should be able to see in the User Interface the two specific SQL Views implemented 
 in (7/2f). 
-    - [ ] Display number of available rooms view
-    - [ ] Display aggregated hotel room capacity view
+- [ ] Display number of available rooms view
+- [ ] Display aggregated hotel room capacity view
 
 The User Interface should be user friendly, meaning that the user is not required to know SQL. All information should be presented to the user through appropriately designed forms. You should use appropriate elements, like drop-down lists, radio buttons etc. 
 
