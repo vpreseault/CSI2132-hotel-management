@@ -6,7 +6,7 @@
 
 ## Deliverable 2
 1. ✔ (10%) Database implementation: Implement the database according to your relational database schema and the constraints that you have defined.
-    - Implemented in PR #16
+    - Implemented in PR (#16)[https://github.com/vpreseault/CSI2132-hotel-management/pull/16]
 
 2. (5%) Database population: Insert in your database data for each one of the 5 hotel chains. Each one of them has at least 8 hotels, which belong to at least 3 categories. Two of the hotels at least should be in the same area. Each hotel should have at least 5 rooms of different capacity. Populate your database with enough data to be able to showcase the execution of queries/triggers/views. 
     - [ ] 5 Chains
@@ -22,22 +22,22 @@
         - [ ] Query X implmented in PR #Y
         - [ ] Query X implmented in PR #Y
         - [ ] Query X implmented in PR #Y
-    - [ ] 1 aggregation query
-        - Query X implmented in PR #Y
-    - [ ] 1 nested query
-        - Query X implmented in PR #Y
+    - 1 aggregation query
+        - [ ] Query X implmented in PR #Y
+    - 1 nested query
+        - [ ] Query X implmented in PR #Y
 
 4. (10%) Database modifications: Create the necessary SQL modifications (use queries and especially triggers): Your database should allow insert, delete and update operations of data in 
 your database according to the referential integrity constraints, and moreover, to the user-defined constraints, which you have defined. Implement at least 2 triggers of your choice for this purpose. 
     - [ ] 2 triggers
         - [ ] Trigger X implmented in PR #Y
         - [ ] Trigger X implmented in PR #Y
-    - [ ] 1 insert query
-        - Query X implmented in PR #Y
-    - [ ] 1 delete query
-        - Query X implmented in PR #Y
-    - [ ] 1 update query
-        - Query X implmented in PR #Y
+    - 1 insert query
+        - [ ] Query X implmented in PR #Y
+    - 1 delete query
+        - [ ] Query X implmented in PR #Y
+    - 1 update query
+        - [ ] Query X implmented in PR #Y
 
 5. (5%) Database indexes: Implement at least 3 indexes on the relations of your database and justify why you have chosen these indexes: explain what type of queries and data updates you are expecting on your database and how these indexes are useful to accelerate querying of the database.
     - [ ] Index X implmented in PR #Y
