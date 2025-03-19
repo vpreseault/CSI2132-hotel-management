@@ -46,3 +46,15 @@ type Renting struct {
 	Payment      bool    `json:"payment"`
 	TotalPrice   float32 `json:"total_price"`
 }
+
+type Archive struct {
+	ArchiveID    int     `json:"archive_ID"`
+	RentingID    int     `json:"renting_ID"`
+	BookingID    int     `json:"booking_ID"`
+	CustomerID   int     `json:"customer_ID"`
+	TotalPrice   float32 `json:"total_price"`
+	BookingDate  string  `json:"booking_date"`
+	CheckInDate  string  `json:"check_in_date"`
+	CheckOutDate string  `json:"check_out_date"`
+	ArchiveDate  string  `json:"archive_date"`
+}

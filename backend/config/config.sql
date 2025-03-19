@@ -291,6 +291,7 @@ CREATE TABLE Archives (
     archive_ID SERIAL PRIMARY KEY,
     renting_ID INT,
     booking_ID INT,
+    customer_ID INT,
     total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
     booking_date DATE,
     check_in_date DATE NOT NULL,
@@ -299,12 +300,12 @@ CREATE TABLE Archives (
 );
 
 -- Insert into Archives
-INSERT INTO Archives (renting_ID, booking_ID, check_in_date, check_out_date, archive_date, total_price) VALUES
-(1, 1, '2024-01-10', '2024-02-10', '2024-02-15', 600.00),
-(2, 2, '2024-03-15', '2024-04-15', '2024-04-20', 1000.00),
-(3, 3, '2024-05-20', '2024-06-20', '2024-06-25', 875.00),
-(4, 4, '2024-07-25', '2024-08-25', '2024-08-30', 1250.00),
-(5, 5, '2024-09-30', '2024-10-30', '2024-11-05', 800.00);
+INSERT INTO Archives (renting_ID, booking_ID, customer_ID, check_in_date, check_out_date, archive_date, total_price) VALUES
+(1, 1, 1, '2024-01-10', '2024-02-10', '2024-02-15', 600.00),
+(2, 2, 2, '2024-03-15', '2024-04-15', '2024-04-20', 1000.00),
+(3, 3, 3, '2024-05-20', '2024-06-20', '2024-06-25', 875.00),
+(4, 4, 4, '2024-07-25', '2024-08-25', '2024-08-30', 1250.00),
+(5, 5, 5, '2024-09-30', '2024-10-30', '2024-11-05', 800.00);
 
 
 
@@ -360,4 +361,5 @@ ALTER TABLE Rentings
 -- Archive references Rentings and Bookings
 ALTER TABLE Archives
     ADD FOREIGN KEY (renting_ID) REFERENCES Rentings(renting_ID) ON DELETE SET NULL,
-    ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL;
+    ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL,
+    ADD FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID) ON DELETE SET NULL;

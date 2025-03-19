@@ -136,6 +136,75 @@ func getCustomerRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 
 func getCustomerArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 
+		customerID, err := getCustomerID(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		archives, err := getCustomerArchives(ctx, customerID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(archives)
 	}
+}
+
+func getCustomerArchives(ctx *internal.AppContext, customerID int) ([]internal.Archive, error) {
+	rows, err := ctx.DB.Query(queries.GetCustomerArchives, customerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var archives []internal.Archive
+	for rows.Next() {
+		var archive internal.Archive
+		var rentingIDOrNull sql.NullInt32
+		var bookingIDOrNull sql.NullInt32
+		var customerIDOrNull sql.NullInt32
+		var bookingDateOrNull sql.NullString
+
+		if err := rows.Scan(
+			&archive.ArchiveID,
+			&rentingIDOrNull,
+			&bookingIDOrNull,
+			&customerIDOrNull,
+			&archive.TotalPrice,
+			&bookingDateOrNull,
+			&archive.CheckInDate,
+			&archive.CheckOutDate,
+			&archive.ArchiveDate,
+		); err != nil {
+			return archives, err
+		}
+
+		if rentingIDOrNull.Valid {
+			archive.RentingID = int(rentingIDOrNull.Int32)
+		}
+
+		if bookingIDOrNull.Valid {
+			archive.BookingID = int(bookingIDOrNull.Int32)
+		}
+
+		if customerIDOrNull.Valid {
+			archive.CustomerID = int(customerIDOrNull.Int32)
+		}
+
+		if bookingDateOrNull.Valid {
+			archive.BookingDate = bookingDateOrNull.String
+		}
+
+		archives = append(archives, archive)
+	}
+
+	if err = rows.Err(); err != nil {
+		return archives, err
+	}
+
+	return archives, nil
 }
