@@ -27,3 +27,5 @@ RETURNING employee_ID
 `
 
 var GetEmployeeByName = `SELECT * FROM Employees WHERE full_name = $1`
+
+var BaseRoomSearch = `SELECT * FROM Rooms`
