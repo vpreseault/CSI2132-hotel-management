@@ -1,6 +1,6 @@
 package queries
 
-// Users
+// Auth
 var CreateCustomer = `
 INSERT INTO Customers (
 	full_name, 
@@ -27,3 +27,8 @@ RETURNING employee_ID
 `
 
 var GetEmployeeByName = `SELECT * FROM Employees WHERE full_name = $1`
+
+// Activity
+var GetCustomerBookings = `SELECT * FROM Bookings WHERE customer_id = $1`
+var GetCustomerRentings = `SELECT * FROM Rentings WHERE customer_id = $1`
+var GetCustomerArchives = `SELECT * FROM Archives WHERE customer_id = $1`
