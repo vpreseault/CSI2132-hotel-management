@@ -30,34 +30,27 @@ type searchQuery struct {
 // - [ ] total number of rooms in hotel
 // - [x] room price
 
+type searchParams struct {
+	Capacity  *int    `json:"capacity,omitempty"`
+	ChainName *string `json:"chain_name,omitempty"`
+	Price     *int    `json:"price,omitempty"`
+}
+
 func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var searchParams struct {
-			Capacity  *int    `json:"capacity,omitempty"`
-			ChainName *string `json:"chain_name,omitempty"`
-			Price     *int    `json:"price,omitempty"`
-		}
+		var params searchParams
 
-		if err := json.NewDecoder(r.Body).Decode(&searchParams); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
 
-		search := buildSearchQuery()
+		query := buildSearchQuery(params)
 
-		if searchParams.Capacity != nil {
-			search.withCapacityFilter(*searchParams.Capacity)
-		}
-
-		if searchParams.ChainName != nil {
-			search.withChainNameFilter(*searchParams.ChainName)
-		}
-
-		rooms, err := search.executeQuery(ctx)
+		rooms, err := query.executeQuery(ctx)
 		if err != nil {
-			fmt.Println(search.query)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -66,11 +59,21 @@ func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func buildSearchQuery() *searchQuery {
-	return &searchQuery{
+func buildSearchQuery(params searchParams) *searchQuery {
+	search := &searchQuery{
 		query:       queries.BaseRoomSearch,
 		filterCount: 1,
 	}
+
+	if params.Capacity != nil {
+		search.withCapacityFilter(*params.Capacity)
+	}
+
+	if params.ChainName != nil {
+		search.withChainNameFilter(*params.ChainName)
+	}
+
+	return search
 }
 
 func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchResult, error) {
@@ -84,7 +87,6 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 		args = append(args, q.chainName.val)
 	}
 
-	fmt.Println(args...)
 	rows, err := ctx.DB.Query(q.query, args...)
 	if err != nil {
 		return nil, err
@@ -126,10 +128,8 @@ func (q *searchQuery) addFilter(filter string) {
 
 func (q *searchQuery) withCapacityFilter(value int) *searchQuery {
 	q.addFilter(fmt.Sprintf("capacity >= $%v", q.filterCount))
-
 	q.capacity.applied = true
 	q.capacity.val = value
-
 	return q
 }
 
