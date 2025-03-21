@@ -20,11 +20,12 @@ type searchQuery struct {
 	capacity    filter[int]
 	maxPrice    filter[int] // TODO: allow for price range
 	chainName   filter[string]
+	area        filter[string]
 }
 
 // - [ ] start/end date
 // - [x] room capacity
-// - [ ] area/city
+// - [x] area/city
 // - [x] hotel chain
 // - [ ] hotel category
 // - [ ] total number of rooms in hotel
@@ -33,6 +34,7 @@ type searchQuery struct {
 type searchParams struct {
 	Capacity  *int    `json:"capacity,omitempty"`
 	ChainName *string `json:"chain_name,omitempty"`
+	Area      *string `json:"area,omitempty"`
 	MaxPrice  *int    `json:"max_price,omitempty"`
 }
 
@@ -77,6 +79,10 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		search.withMaxPriceFilter(*params.MaxPrice)
 	}
 
+	if params.Area != nil {
+		search.withAreaFilter(*params.Area)
+	}
+
 	return search
 }
 
@@ -92,6 +98,9 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 	}
 	if q.maxPrice.applied {
 		args = append(args, q.maxPrice.val)
+	}
+	if q.area.applied {
+		args = append(args, q.area.val)
 	}
 
 	rows, err := ctx.DB.Query(q.query, args...)
@@ -144,6 +153,13 @@ func (q *searchQuery) withChainNameFilter(value string) *searchQuery {
 	q.addFilter(fmt.Sprintf("chain_name LIKE CONCAT('%%', CAST($%v AS TEXT), '%%')", q.filterCount))
 	q.chainName.applied = true
 	q.chainName.val = value
+	return q
+}
+
+func (q *searchQuery) withAreaFilter(value string) *searchQuery {
+	q.addFilter(fmt.Sprintf("address LIKE CONCAT('%%', CAST($%v AS TEXT), '%%')", q.filterCount))
+	q.area.applied = true
+	q.area.val = value
 	return q
 }
 
