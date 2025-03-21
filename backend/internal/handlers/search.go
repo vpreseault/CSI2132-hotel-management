@@ -22,6 +22,7 @@ type searchQuery struct {
 	category    filter[int] // TODO: allow for category range?
 	chainName   filter[string]
 	area        filter[string]
+	totalRooms  filter[int]
 }
 
 // - [ ] start/end date
@@ -29,15 +30,16 @@ type searchQuery struct {
 // - [x] area/city
 // - [x] hotel chain
 // - [x] hotel category
-// - [ ] total number of rooms in hotel
+// - [x] total number of rooms in hotel
 // - [x] room price
 
 type searchParams struct {
-	Capacity  *int    `json:"capacity,omitempty"`
-	ChainName *string `json:"chain_name,omitempty"`
-	Area      *string `json:"area,omitempty"`
-	Category  *int    `json:"category,omitempty"`
-	MaxPrice  *int    `json:"max_price,omitempty"`
+	Capacity   *int    `json:"capacity,omitempty"`
+	ChainName  *string `json:"chain_name,omitempty"`
+	Area       *string `json:"area,omitempty"`
+	Category   *int    `json:"category,omitempty"`
+	MaxPrice   *int    `json:"max_price,omitempty"`
+	TotalRooms *int    `json:"total_rooms,omitempty"`
 }
 
 func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
@@ -89,6 +91,10 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		search.withCategoryFilter(*params.Category)
 	}
 
+	if params.TotalRooms != nil {
+		search.withTotalRoomsFilter(*params.TotalRooms)
+	}
+
 	return search
 }
 
@@ -110,6 +116,9 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 	}
 	if q.category.applied {
 		args = append(args, q.category.val)
+	}
+	if q.totalRooms.applied {
+		args = append(args, q.totalRooms.val)
 	}
 
 	rows, err := ctx.DB.Query(q.query, args...)
@@ -183,5 +192,12 @@ func (q *searchQuery) withCategoryFilter(value int) *searchQuery {
 	q.addFilter(fmt.Sprintf("category = $%v", q.filterCount))
 	q.category.applied = true
 	q.category.val = value
+	return q
+}
+
+func (q *searchQuery) withTotalRoomsFilter(value int) *searchQuery {
+	q.addFilter(fmt.Sprintf("total_rooms = $%v", q.filterCount))
+	q.totalRooms.applied = true
+	q.totalRooms.val = value
 	return q
 }
