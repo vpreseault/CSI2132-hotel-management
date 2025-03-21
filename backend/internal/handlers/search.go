@@ -18,12 +18,13 @@ type searchQuery struct {
 	filterCount int
 	capacity    filter[int]
 	price       filter[int] // TODO: allow for price range
+	chainName   filter[string]
 }
 
 // - [ ] start/end date
 // - [x] room capacity
 // - [ ] area/city
-// - [ ] hotel chain
+// - [x] hotel chain
 // - [ ] hotel category
 // - [ ] total number of rooms in hotel
 // - [x] room price
@@ -60,6 +61,15 @@ func (q *searchQuery) withCapacityFilter(value int) *searchQuery {
 
 	q.capacity.applied = true
 	q.capacity.val = value
+
+	return q
+}
+
+func (q *searchQuery) withChainNameFilter(value string) *searchQuery {
+	q.addFilter(fmt.Sprintf("HotelChains.chain_name LIKE '%%$%v%%'", q.filterCount))
+
+	q.chainName.applied = true
+	q.chainName.val = value
 
 	return q
 }

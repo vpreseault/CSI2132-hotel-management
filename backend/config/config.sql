@@ -18,22 +18,23 @@ DROP TABLE IF EXISTS Customers CASCADE;
 -- HotelChain Table
 CREATE TABLE HotelChains (
     chain_ID SERIAL PRIMARY KEY,
+    chain_name VARCHAR(255) NOT NULL,
     central_office_address VARCHAR(255) NOT NULL, 
     number_of_hotels INT NOT NULL CHECK (number_of_hotels > 0)
 );
 
 -- Insert into HotelChain
-INSERT INTO HotelChains (central_office_address, number_of_hotels) VALUES
-('123 Main St, New York, NY', 10),
-('456 Elm St, Los Angeles, CA', 7),
-('789 Oak St, Chicago, IL', 5),
-('101 Pine St, Houston, TX', 8),
-('202 Maple St, Miami, FL', 6),
-('303 Birch St, Seattle, WA', 4),
-('404 Cedar St, Denver, CO', 3),
-('505 Walnut St, Boston, MA', 9),
-('606 Cherry St, Atlanta, GA', 5),
-('707 Aspen St, San Francisco, CA', 7);
+INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) VALUES
+('Hilton', '123 Main St, New York, NY', 10),
+('Hilton', '456 Elm St, Los Angeles, CA', 7),
+('Hilton', '789 Oak St, Chicago, IL', 5),
+('Best Western', '101 Pine St, Houston, TX', 8),
+('Best Western', '202 Maple St, Miami, FL', 6),
+('Best Western', '303 Birch St, Seattle, WA', 4),
+('Best Western', '404 Cedar St, Denver, CO', 3),
+('Travelodge', '505 Walnut St, Boston, MA', 9),
+('Travelodge', '606 Cherry St, Atlanta, GA', 5),
+('Travelodge', '707 Aspen St, San Francisco, CA', 7);
 
 -- Hotels Table
 CREATE TABLE Hotels (
