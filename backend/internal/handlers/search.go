@@ -19,6 +19,7 @@ type searchQuery struct {
 	filterCount int
 	capacity    filter[int]
 	maxPrice    filter[int] // TODO: allow for price range
+	category    filter[int] // TODO: allow for category range?
 	chainName   filter[string]
 	area        filter[string]
 }
@@ -27,7 +28,7 @@ type searchQuery struct {
 // - [x] room capacity
 // - [x] area/city
 // - [x] hotel chain
-// - [ ] hotel category
+// - [x] hotel category
 // - [ ] total number of rooms in hotel
 // - [x] room price
 
@@ -35,6 +36,7 @@ type searchParams struct {
 	Capacity  *int    `json:"capacity,omitempty"`
 	ChainName *string `json:"chain_name,omitempty"`
 	Area      *string `json:"area,omitempty"`
+	Category  *int    `json:"category,omitempty"`
 	MaxPrice  *int    `json:"max_price,omitempty"`
 }
 
@@ -83,6 +85,10 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		search.withAreaFilter(*params.Area)
 	}
 
+	if params.Category != nil {
+		search.withCategoryFilter(*params.Category)
+	}
+
 	return search
 }
 
@@ -101,6 +107,9 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 	}
 	if q.area.applied {
 		args = append(args, q.area.val)
+	}
+	if q.category.applied {
+		args = append(args, q.category.val)
 	}
 
 	rows, err := ctx.DB.Query(q.query, args...)
@@ -167,5 +176,12 @@ func (q *searchQuery) withMaxPriceFilter(value int) *searchQuery {
 	q.addFilter(fmt.Sprintf("price <= $%v", q.filterCount))
 	q.maxPrice.applied = true
 	q.maxPrice.val = value
+	return q
+}
+
+func (q *searchQuery) withCategoryFilter(value int) *searchQuery {
+	q.addFilter(fmt.Sprintf("category = $%v", q.filterCount))
+	q.category.applied = true
+	q.category.val = value
 	return q
 }
