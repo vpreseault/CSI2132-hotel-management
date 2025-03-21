@@ -18,7 +18,7 @@ type searchQuery struct {
 	query       string
 	filterCount int
 	capacity    filter[int]
-	price       filter[int] // TODO: allow for price range
+	maxPrice    filter[int] // TODO: allow for price range
 	chainName   filter[string]
 }
 
@@ -33,7 +33,7 @@ type searchQuery struct {
 type searchParams struct {
 	Capacity  *int    `json:"capacity,omitempty"`
 	ChainName *string `json:"chain_name,omitempty"`
-	Price     *int    `json:"price,omitempty"`
+	MaxPrice  *int    `json:"max_price,omitempty"`
 }
 
 func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
@@ -73,6 +73,10 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		search.withChainNameFilter(*params.ChainName)
 	}
 
+	if params.MaxPrice != nil {
+		search.withMaxPriceFilter(*params.MaxPrice)
+	}
+
 	return search
 }
 
@@ -85,6 +89,9 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 	}
 	if q.chainName.applied {
 		args = append(args, q.chainName.val)
+	}
+	if q.maxPrice.applied {
+		args = append(args, q.maxPrice.val)
 	}
 
 	rows, err := ctx.DB.Query(q.query, args...)
@@ -137,5 +144,12 @@ func (q *searchQuery) withChainNameFilter(value string) *searchQuery {
 	q.addFilter(fmt.Sprintf("chain_name LIKE CONCAT('%%', CAST($%v AS TEXT), '%%')", q.filterCount))
 	q.chainName.applied = true
 	q.chainName.val = value
+	return q
+}
+
+func (q *searchQuery) withMaxPriceFilter(value int) *searchQuery {
+	q.addFilter(fmt.Sprintf("price <= $%v", q.filterCount))
+	q.maxPrice.applied = true
+	q.maxPrice.val = value
 	return q
 }
