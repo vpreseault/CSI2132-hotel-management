@@ -3,7 +3,7 @@ package queries
 // Users
 var CreateCustomer = `
 INSERT INTO Customers (
-	full_name, 
+	full_name,
 	ID_type, 
 	ID_number,
 	address,
@@ -28,4 +28,13 @@ RETURNING employee_ID
 
 var GetEmployeeByName = `SELECT * FROM Employees WHERE full_name = $1`
 
-var BaseRoomSearch = `SELECT * FROM Rooms`
+var BaseRoomSearch = `SELECT * FROM RoomSearchView`
+
+// room_ID,
+// hotel_ID,
+// room_number,
+// capacity,
+// price,
+// view_type,
+// extendable,
+// damaged

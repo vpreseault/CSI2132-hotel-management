@@ -35,3 +35,18 @@ type Room struct {
 	Extendable bool    `json:"extendable"`
 	Damaged    bool    `json:"damaged"`
 }
+
+type SearchResult struct {
+	ID         int     `json:"room_ID"`
+	HotelID    int     `json:"hotel_ID"`
+	RoomNumber string  `json:"room_number"`
+	Capacity   int     `json:"capacity"`
+	Price      float32 `json:"price"`
+	ViewType   string  `json:"view_type"`
+	Extendable bool    `json:"extendable"`
+	Damaged    bool    `json:"damaged"`
+	ChainName  string  `json:"chain_name"`
+	Category   int     `json:"category"`
+	Address    string  `json:"address"`
+	TotalRooms int     `json:"total_rooms"`
+}

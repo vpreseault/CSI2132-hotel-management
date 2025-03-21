@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -33,27 +34,94 @@ func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		// search := buildSearchQuery()
+		var searchParams struct {
+			Capacity  *int    `json:"capacity,omitempty"`
+			ChainName *string `json:"chain_name,omitempty"`
+			Price     *int    `json:"price,omitempty"`
+		}
 
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
-		// json.NewEncoder(w).Encode(customer)
+		if err := json.NewDecoder(r.Body).Decode(&searchParams); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		search := buildSearchQuery()
+
+		if searchParams.Capacity != nil {
+			search.withCapacityFilter(*searchParams.Capacity)
+		}
+
+		if searchParams.ChainName != nil {
+			search.withChainNameFilter(*searchParams.ChainName)
+		}
+
+		rooms, err := search.executeQuery(ctx)
+		if err != nil {
+			fmt.Println(search.query)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(rooms)
 	}
 }
 
 func buildSearchQuery() *searchQuery {
 	return &searchQuery{
-		query: queries.BaseRoomSearch,
+		query:       queries.BaseRoomSearch,
+		filterCount: 1,
 	}
 }
 
-func (q *searchQuery) addFilter(filter string) {
-	if q.filterCount == 0 {
-		q.query += fmt.Sprintf(" WHERE %s", filter)
-		return
+func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchResult, error) {
+	var searchResults []internal.SearchResult
+	var args []interface{}
+
+	if q.capacity.applied {
+		args = append(args, q.capacity.val)
+	}
+	if q.chainName.applied {
+		args = append(args, q.chainName.val)
 	}
 
-	q.query += fmt.Sprintf(" AND %s", filter)
-	q.filterCount += 1
+	fmt.Println(args...)
+	rows, err := ctx.DB.Query(q.query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var searchResult internal.SearchResult
+		if err := rows.Scan(
+			&searchResult.ID,
+			&searchResult.HotelID,
+			&searchResult.RoomNumber,
+			&searchResult.Capacity,
+			&searchResult.Price,
+			&searchResult.ViewType,
+			&searchResult.Extendable,
+			&searchResult.Damaged,
+			&searchResult.ChainName,
+			&searchResult.Category,
+			&searchResult.Address,
+			&searchResult.TotalRooms,
+		); err != nil {
+			return nil, err
+		}
+		searchResults = append(searchResults, searchResult)
+	}
+
+	return searchResults, rows.Err()
+}
+
+func (q *searchQuery) addFilter(filter string) {
+	if q.filterCount == 1 {
+		q.query += fmt.Sprintf(" WHERE %s", filter)
+	} else {
+		q.query += fmt.Sprintf(" AND %s", filter)
+	}
+	q.filterCount++
 }
 
 func (q *searchQuery) withCapacityFilter(value int) *searchQuery {
@@ -66,10 +134,8 @@ func (q *searchQuery) withCapacityFilter(value int) *searchQuery {
 }
 
 func (q *searchQuery) withChainNameFilter(value string) *searchQuery {
-	q.addFilter(fmt.Sprintf("HotelChains.chain_name LIKE '%%$%v%%'", q.filterCount))
-
+	q.addFilter(fmt.Sprintf("chain_name LIKE CONCAT('%%', CAST($%v AS TEXT), '%%')", q.filterCount))
 	q.chainName.applied = true
 	q.chainName.val = value
-
 	return q
 }

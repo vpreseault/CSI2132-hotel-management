@@ -307,9 +307,6 @@ INSERT INTO Archives (renting_ID, booking_ID, check_in_date, check_out_date, arc
 (4, 4, '2024-07-25', '2024-08-25', '2024-08-30', 1250.00),
 (5, 5, '2024-09-30', '2024-10-30', '2024-11-05', 800.00);
 
-
-
-
 /* Alters tables to connect the foreign keys */
 
 -- Hotel references HotelChain and Employee (Manager)
@@ -362,3 +359,16 @@ ALTER TABLE Rentings
 ALTER TABLE Archives
     ADD FOREIGN KEY (renting_ID) REFERENCES Rentings(renting_ID) ON DELETE SET NULL,
     ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL;
+
+/* Views */
+-- Create view for room search
+CREATE VIEW RoomSearchView AS
+SELECT 
+    r.*,
+    hc.chain_name,
+    h.category,
+    h.address,
+    h.number_of_rooms as total_rooms
+FROM Rooms r
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
+JOIN HotelChains hc ON h.chain_ID = hc.chain_ID;
