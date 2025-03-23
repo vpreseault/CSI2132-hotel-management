@@ -10,6 +10,16 @@
         <!-- Book -->
         <div id="book" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md">
             <h2 class="text-center text-xl text-gray-600 font-semibold">Book a Hotel</h2>
+
+            <div class="mt-4 flex justify-center">
+                <Button label="Search" icon="pi pi-search" iconPos="left" class="w-20 justify-center text-center gap-0" @click="isSearchCardVisible = !isSearchCardVisible" />
+            </div>
+
+            <!-- Search Card -->
+            <div v-if="isSearchCardVisible">
+                <SearchSection />
+            </div>
+
             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center">
                 <GenericCard 
                     v-for="(hotel, index) in bookings" 
@@ -75,10 +85,13 @@ import { ref } from 'vue';
 import { removeAuthCookie } from '../utils/auth';
 import GenericCard from '../components/LandingPage/GenericCard.vue';
 import NavBar from '../components/LandingPage/NavBar.vue';
+import SearchSection from '../components/LandingPage/SearchSection.vue';
+import Button from 'primevue/button';
 
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 
 const isProfileModalOpen = ref(false);
+const isSearchCardVisible = ref(false);
 
 function toggleCard(section: string, index: number) {
     expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index 
@@ -171,5 +184,3 @@ const rentals = ref([
 ]);
 
 </script>
-
-
