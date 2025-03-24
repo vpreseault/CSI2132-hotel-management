@@ -1,6 +1,6 @@
 package queries
 
-// Users
+// Auth
 var CreateCustomer = `
 INSERT INTO Customers (
 	full_name,
@@ -42,3 +42,9 @@ var BaseRoomSearch = `SELECT
 	address,
 	total_rooms
 FROM RoomSearchView`
+
+// Activity
+var GetCustomerBookings = `SELECT * FROM Bookings WHERE customer_id = $1`
+var GetCustomerRentings = `SELECT * FROM Rentings WHERE customer_id = $1`
+var GetCustomerArchives = `SELECT * FROM Archives WHERE customer_id = $1`
+

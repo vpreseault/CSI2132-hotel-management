@@ -6,10 +6,18 @@ import (
 )
 
 func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
+	// Auth
 	r.Post("/api/customers", createCustomerHandler(ctx))
 	r.Get("/api/customers/{name}", getCustomerHandler(ctx))
 	r.Post("/api/employees", createEmployeeHandler(ctx))
 	r.Get("/api/employees/{name}", getEmployeeHandler(ctx))
 
+  // Search
 	r.Post("/api/search", RoomSearchHandler(ctx))
+  
+	// Activity
+	r.Get("/api/activity/{customer_ID}", getCustomerActivityHandler(ctx))
+	r.Get("/api/bookings/{customer_ID}", getCustomerBookingsHandler(ctx))
+	r.Get("/api/rentings/{customer_ID}", getCustomerRentingsHandler(ctx))
+	r.Get("/api/archives/{customer_ID}", getCustomerArchivesHandler(ctx))
 }
