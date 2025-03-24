@@ -42,12 +42,3 @@ var BaseRoomSearch = `SELECT
 	address,
 	total_rooms
 FROM RoomSearchView`
-
-// room_ID,
-// hotel_ID,
-// room_number,
-// capacity,
-// price,
-// view_type,
-// extendable,
-// damaged
