@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS ChainPhones CASCADE;
 DROP TABLE IF EXISTS Hotels CASCADE;
 DROP TABLE IF EXISTS HotelChains CASCADE;
 DROP TABLE IF EXISTS Customers CASCADE;
+DROP VIEW IF EXISTS RoomSearchView CASCADE;
 
 /* Create tables without connecting the foreign keys */
 
@@ -368,7 +369,17 @@ SELECT
     hc.chain_name,
     h.category,
     h.address,
-    h.number_of_rooms as total_rooms
+    h.number_of_rooms as total_rooms,
+    CASE 
+        WHEN b.booking_ID IS NOT NULL OR rt.renting_ID IS NOT NULL THEN false
+        ELSE true
+    END as is_available,
+    b.start_date as booking_start,
+    b.end_date as booking_end,
+    rt.check_in_date as renting_start,
+    rt.check_out_date as renting_end
 FROM Rooms r
 JOIN Hotels h ON r.hotel_ID = h.hotel_ID
-JOIN HotelChains hc ON h.chain_ID = hc.chain_ID;
+JOIN HotelChains hc ON h.chain_ID = hc.chain_ID
+LEFT JOIN Bookings b ON r.room_ID = b.room_ID
+LEFT JOIN Rentings rt ON r.room_ID = rt.room_ID;

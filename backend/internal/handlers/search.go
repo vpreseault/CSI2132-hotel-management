@@ -23,9 +23,11 @@ type searchQuery struct {
 	chainName   filter[string]
 	area        filter[string]
 	totalRooms  filter[int]
+	startDate   filter[string]
+	endDate     filter[string]
 }
 
-// - [ ] start/end date
+// - [x] start/end date
 // - [x] room capacity
 // - [x] area/city
 // - [x] hotel chain
@@ -40,6 +42,8 @@ type searchParams struct {
 	Category   *int    `json:"category,omitempty"`
 	MaxPrice   *int    `json:"max_price,omitempty"`
 	TotalRooms *int    `json:"total_rooms,omitempty"`
+	StartDate  *string `json:"start_date,omitempty"`
+	EndDate    *string `json:"end_date,omitempty"`
 }
 
 func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
@@ -95,6 +99,10 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		search.withTotalRoomsFilter(*params.TotalRooms)
 	}
 
+	if params.StartDate != nil && params.EndDate != nil {
+		search.withDateRangeFilter(*params.StartDate, *params.EndDate)
+	}
+
 	return search
 }
 
@@ -119,6 +127,10 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 	}
 	if q.totalRooms.applied {
 		args = append(args, q.totalRooms.val)
+	}
+	if q.startDate.applied && q.endDate.applied {
+		args = append(args, q.startDate.val)
+		args = append(args, q.endDate.val)
 	}
 
 	rows, err := ctx.DB.Query(q.query, args...)
@@ -199,5 +211,16 @@ func (q *searchQuery) withTotalRoomsFilter(value int) *searchQuery {
 	q.addFilter(fmt.Sprintf("total_rooms = $%v", q.filterCount))
 	q.totalRooms.applied = true
 	q.totalRooms.val = value
+	return q
+}
+
+func (q *searchQuery) withDateRangeFilter(start, end string) *searchQuery {
+	q.addFilter(fmt.Sprintf("(is_available = true OR ((renting_start NOT BETWEEN $%v AND $%v) AND (renting_end NOT BETWEEN $%v AND $%v)))",
+		q.filterCount, q.filterCount+1, q.filterCount, q.filterCount+1))
+	q.filterCount += 1
+	q.startDate.applied = true
+	q.startDate.val = start
+	q.endDate.applied = true
+	q.endDate.val = end
 	return q
 }
