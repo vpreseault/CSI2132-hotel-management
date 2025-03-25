@@ -12,28 +12,30 @@ DROP TABLE IF EXISTS ChainPhones CASCADE;
 DROP TABLE IF EXISTS Hotels CASCADE;
 DROP TABLE IF EXISTS HotelChains CASCADE;
 DROP TABLE IF EXISTS Customers CASCADE;
+DROP VIEW IF EXISTS RoomSearchView CASCADE;
 
 /* Create tables without connecting the foreign keys */
 
 -- HotelChain Table
 CREATE TABLE HotelChains (
     chain_ID SERIAL PRIMARY KEY,
+    chain_name VARCHAR(255) NOT NULL,
     central_office_address VARCHAR(255) NOT NULL, 
     number_of_hotels INT NOT NULL CHECK (number_of_hotels > 0)
 );
 
 -- Insert into HotelChain
-INSERT INTO HotelChains (central_office_address, number_of_hotels) VALUES
-('123 Main St, New York, NY', 10),
-('456 Elm St, Los Angeles, CA', 7),
-('789 Oak St, Chicago, IL', 5),
-('101 Pine St, Houston, TX', 8),
-('202 Maple St, Miami, FL', 6),
-('303 Birch St, Seattle, WA', 4),
-('404 Cedar St, Denver, CO', 3),
-('505 Walnut St, Boston, MA', 9),
-('606 Cherry St, Atlanta, GA', 5),
-('707 Aspen St, San Francisco, CA', 7);
+INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) VALUES
+('Hilton', '123 Main St, New York, NY', 10),
+('Hilton', '456 Elm St, Los Angeles, CA', 7),
+('Hilton', '789 Oak St, Chicago, IL', 5),
+('Best Western', '101 Pine St, Houston, TX', 8),
+('Best Western', '202 Maple St, Miami, FL', 6),
+('Best Western', '303 Birch St, Seattle, WA', 4),
+('Best Western', '404 Cedar St, Denver, CO', 3),
+('Travelodge', '505 Walnut St, Boston, MA', 9),
+('Travelodge', '606 Cherry St, Atlanta, GA', 5),
+('Travelodge', '707 Aspen St, San Francisco, CA', 7);
 
 -- Hotels Table
 CREATE TABLE Hotels (
@@ -307,9 +309,6 @@ INSERT INTO Archives (renting_ID, booking_ID, customer_ID, check_in_date, check_
 (4, 4, 4, '2024-07-25', '2024-08-25', '2024-08-30', 1250.00),
 (5, 5, 5, '2024-09-30', '2024-10-30', '2024-11-05', 800.00);
 
-
-
-
 /* Alters tables to connect the foreign keys */
 
 -- Hotel references HotelChain and Employee (Manager)
@@ -363,3 +362,26 @@ ALTER TABLE Archives
     ADD FOREIGN KEY (renting_ID) REFERENCES Rentings(renting_ID) ON DELETE SET NULL,
     ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL,
     ADD FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID) ON DELETE SET NULL;
+
+/* Views */
+-- Create view for room search
+CREATE VIEW RoomSearchView AS
+SELECT 
+    r.*,
+    hc.chain_name,
+    h.category,
+    h.address,
+    h.number_of_rooms as total_rooms,
+    CASE 
+        WHEN b.booking_ID IS NOT NULL OR rt.renting_ID IS NOT NULL THEN false
+        ELSE true
+    END as is_available,
+    b.start_date as booking_start,
+    b.end_date as booking_end,
+    rt.check_in_date as renting_start,
+    rt.check_out_date as renting_end
+FROM Rooms r
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
+JOIN HotelChains hc ON h.chain_ID = hc.chain_ID
+LEFT JOIN Bookings b ON r.room_ID = b.room_ID
+LEFT JOIN Rentings rt ON r.room_ID = rt.room_ID;

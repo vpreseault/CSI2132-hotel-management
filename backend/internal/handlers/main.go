@@ -12,6 +12,9 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Post("/api/employees", createEmployeeHandler(ctx))
 	r.Get("/api/employees/{name}", getEmployeeHandler(ctx))
 
+  // Search
+	r.Post("/api/search", RoomSearchHandler(ctx))
+  
 	// Activity
 	r.Get("/api/activity/{customer_ID}", getCustomerActivityHandler(ctx))
 	r.Get("/api/bookings/{customer_ID}", getCustomerBookingsHandler(ctx))
