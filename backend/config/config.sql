@@ -385,3 +385,18 @@ JOIN Hotels h ON r.hotel_ID = h.hotel_ID
 JOIN HotelChains hc ON h.chain_ID = hc.chain_ID
 LEFT JOIN Bookings b ON r.room_ID = b.room_ID
 LEFT JOIN Rentings rt ON r.room_ID = rt.room_ID;
+
+-- Number of available rooms per area view
+CREATE VIEW RoomsPerAreaView AS
+SELECT 
+    SUM(h.number_of_rooms),
+    trim(split_part(h.address, ',', 2)) as area
+FROM Hotels h
+GROUP BY area;
+
+-- Aggregated room capacity per hotel view
+CREATE VIEW HotelCapacityView AS
+SELECT 
+    SUM(r.capacity)
+FROM Rooms r
+WHERE r.hotel_ID = 1;
