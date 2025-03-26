@@ -25,8 +25,9 @@
                 </div>
                 <Button type="submit" :severity="serverError ? 'error' : 'secondary'" label="Create Account" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" />
                 <Message v-if="serverError" severity="error" size="small" variant="simple">{{ serverError }}</Message>
+                <Message v-if="success" severity="success" size="small" variant="simple">Employee account created</Message>
             </Form>
-            <button class="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="$emit('close')"> Close </button>
+            <button class="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="emit('close')"> Close </button>
         </div>
     </div>
 </template>
@@ -36,6 +37,11 @@ import { ref } from 'vue';
 import { type FormResolverOptions, type FormSubmitEvent } from '@primevue/forms';
 import type { FormError } from '../../types';
 import { getUserID } from '../../utils/auth';
+
+const emit = defineEmits<{
+    close: []
+    created: []
+}>()
 
 const idTypes = ref([
     { type: 'SSN' },
@@ -49,6 +55,7 @@ const roles = ref([
 ]);
 
 const serverError = ref('')
+const success = ref(false)
 
 const resolver = ({ values }: FormResolverOptions) => {
     const errors: Record<string, FormError[]> = {
@@ -80,7 +87,7 @@ const resolver = ({ values }: FormResolverOptions) => {
     }
 
     if (!values.role) {
-        values.role = 'Employee'
+        values.role = roles.value[0]
     }
 
     return {
@@ -90,8 +97,9 @@ const resolver = ({ values }: FormResolverOptions) => {
 };
 
 async function onFormSubmit(e: FormSubmitEvent) {
+    serverError.value = ''
+    success.value = false
     if (e.valid) {
-        serverError.value = ''
         const managerID = getUserID()
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/employees`,
@@ -103,13 +111,17 @@ async function onFormSubmit(e: FormSubmitEvent) {
                         address: e.values.address,
                         "ID_type": e.values.idType.type,
                         "ID_number": e.values.idNumber,
-                        role: e.values.role,
+                        role: e.values.role.type,
                     })
                 }
             )
-            if (!res.ok) {
-                serverError.value = await res.text()
+            
+            if (res.ok) {
+                emit('created')
+                return
             }
+
+            serverError.value = await res.text()
         } catch (error) {
             console.error('Error calling API:', error);
             serverError.value = error as string
