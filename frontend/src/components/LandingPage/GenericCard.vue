@@ -2,9 +2,7 @@
     <div class="p-4 rounded-lg shadow-md cursor-pointer transition grid place-items-center" :class="cardStyles" @click="toggleCard" >
         <h3 class="text-lg text-gray-600 font-semibold">{{ title }}</h3>
         <p class="text-sm text-gray-600">{{ description }}</p>
-        <div v-if="isExpanded" class="mt-4 p-3 rounded-md" :class="expandedStyles">
-            <p class="text-sm text-gray-600">{{ details }}</p>
-        </div>
+        <p class="text-sm text-gray-600" v-if="isExpanded">{{ details }}</p>
     </div>
 </template>
 
@@ -20,15 +18,8 @@ const props = defineProps<{
     expandedCard: { section: string | null; index: number | null };
 }>();
 
-const emit = defineEmits(['toggle']);
-
-const isExpanded = computed(() => 
-    props.expandedCard.section === props.section && props.expandedCard.index === props.index
-);
-
+const emit = defineEmits<{ toggle: [section: string, index: number] }>()
+const isExpanded = computed(() => props.expandedCard.section === props.section && props.expandedCard.index === props.index );
 const cardStyles = computed(() => isExpanded.value ? 'bg-gray-200' : 'bg-green-100');
-
-function toggleCard() {
-    emit('toggle', props.section, props.index);
-}
+function toggleCard() { emit('toggle', props.section, props.index) }
 </script>
