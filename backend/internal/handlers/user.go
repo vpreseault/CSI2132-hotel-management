@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -57,16 +58,31 @@ func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var employee internal.Employee
-		err := json.NewDecoder(r.Body).Decode(&employee)
+		var payload struct {
+			ManagerID int `json:"manager_ID"`
+			internal.Employee
+		}
+
+		err := json.NewDecoder(r.Body).Decode(&payload)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = ctx.DB.QueryRow(queries.CreateEmployee, employee.HotelID, employee.FullName, employee.Address, employee.IDType, employee.IDNumber, "Employee").Scan(&employee.ID)
+		var HotelID int
+		err = ctx.DB.QueryRow(queries.GetEmployeeHotelID, payload.ManagerID).Scan(&HotelID)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("could not get HotelID from ManagerID. %v", err.Error()), http.StatusInternalServerError)
+			return
+		}
+
+		employee := internal.Employee{
+			FullName: payload.FullName,
+			Role:     payload.Role,
+		}
+		err = ctx.DB.QueryRow(queries.CreateEmployee, HotelID, payload.FullName, payload.Address, payload.IDType, payload.IDNumber, payload.Role).Scan(&payload.ID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("could not create new employee. %v", err.Error()), http.StatusInternalServerError)
 			return
 		}
 

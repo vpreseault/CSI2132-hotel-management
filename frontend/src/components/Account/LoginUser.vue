@@ -43,9 +43,9 @@ async function onFormSubmit(e: FormSubmitEvent) {
                 const user = {
                     ID: props.employee ? data.employee_ID: data.customer_ID,
                     name: data.full_name,
-                    role: data?.role ? data.role : 'customer',
+                    role: data?.role ? data.role : 'Customer',
                 }
-                
+
                 setAuthCookie(user)
             }
         } catch (error) {
