@@ -61,8 +61,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import ActivityCard from './ActivityCard.vue';
+import { computed, onMounted } from 'vue';
+import { getUserID } from '../../utils/auth';
 
 type RentalItem = {
   cardType: 'booking' | 'renting' | 'archive';
@@ -82,41 +82,24 @@ const props = defineProps<{
   employeeRentals?: RentalItem[];
 }>();
 
-const customerRentals: RentalItem[] = [
-  {
-    customer_name: "You",
-    room_number: 12,
-    start_date: "2025-03-24",
-    end_date: "2025-03-30",
-    cardType: "booking"
-  },
-  {
-    customer_name: "You",
-    room_number: 7,
-    start_date: "2025-04-01",
-    end_date: "2025-04-05",
-    cardType: "renting",
-    total_price: 300,
-    payment: false
-  },
-  {
-    customer_name: "You",
-    start_date: "2025-03-10",
-    end_date: "2025-03-15",
-    cardType: "archive"
-  },
-  {
-    customer_name: "You",
-    start_date: "2025-03-10",
-    end_date: "2025-03-15",
-    cardType: "archive"
-  },
-  {
-    customer_name: "You",
-    start_date: "2025-03-10",
-    end_date: "2025-03-15",
-    cardType: "archive"
+onMounted(async () => {
+  const customerID = getUserID()
+  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity/${customerID}`)
+      if (res.ok) {
+        // TODO: use data with RentalCard
+        // const {bookings, rentings, archives} = await res.json()
+      }
+  } catch (error) {
+      console.error('Error calling API:', error);
   }
+})
+
+const customerRentals = [
+  { title: "Current Rental", description: "You have an active rental", details: "Check-in: March 24, 2025" },
+  { title: "Upcoming Rental", description: "You have an upcoming stay", details: "Check-in: April 1, 2025" },
+  { title: "Past Rental", description: "You stayed at Hotel 3", details: "Check-out: March 20, 2025" }
 ];
 
 const defaultEmployeeRentals: RentalItem[] = [
