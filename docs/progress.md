@@ -45,8 +45,8 @@ your database according to the referential integrity constraints, and moreover, 
     - [ ] Index X implmented in PR #Y
 
 6. (5%) Database views: Implement 2 views. View 1: the first view is the number of available rooms per area. View 2: the second view is the aggregated capacity of all the rooms of a specific hotel. You are welcome to implement more views of your choice. 
-    - [ ] Number of available rooms implmented in PR #Y
-    - [ ] Aggregated hotel room capacity implmented in PR #Y
+    - [x] Number of available rooms implmented in PR #41
+    - [x] Aggregated hotel room capacity implmented in PR #41
 
 7. (30%) Web application: Design and implement an appropriate User Interface, through which a user will be able to see the available rooms by giving different, multiple and combinations of criteria in order to choose the room that he/she is interested in and book it or rent it. These criteria should be: the dates (start, end) of booking or renting, the room capacity, the area, the hotel chain, the category of the hotel, the total number of rooms in the hotel, the price of the rooms. The user should be able to see the available choices when he/she changes the value of any of these criteria. 
     - [ ] Customer can search for rooms
