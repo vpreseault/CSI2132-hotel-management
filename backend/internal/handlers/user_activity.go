@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -42,22 +41,21 @@ func getCustomerBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerBookings(ctx *internal.AppContext, customerID int) ([]internal.Booking, error) {
+func getCustomerBookings(ctx *internal.AppContext, customerID int) ([]internal.BookingDisplay, error) {
 	rows, err := ctx.DB.Query(queries.GetCustomerBookings, customerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var bookings []internal.Booking
+	var bookings []internal.BookingDisplay
 	for rows.Next() {
-		var booking internal.Booking
+		var booking internal.BookingDisplay
 
 		if err := rows.Scan(
 			&booking.BookingID,
-			&booking.CustomerID,
-			&booking.RoomID,
-			&booking.BookingDate,
+			&booking.CustomerName,
+			&booking.RoomNumber,
 			&booking.StartDate,
 			&booking.EndDate,
 			&booking.TotalPrice,
@@ -94,34 +92,28 @@ func getCustomerRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerRentings(ctx *internal.AppContext, customerID int) ([]internal.Renting, error) {
+func getCustomerRentings(ctx *internal.AppContext, customerID int) ([]internal.RentingDisplay, error) {
 	rows, err := ctx.DB.Query(queries.GetCustomerRentings, customerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var rentings []internal.Renting
+	var rentings []internal.RentingDisplay
 	for rows.Next() {
-		var renting internal.Renting
-		var bookingIDOrNull sql.NullInt32
+		var renting internal.RentingDisplay
 
 		if err := rows.Scan(
 			&renting.RentingID,
-			&renting.EmployeeID,
-			&renting.CustomerID,
-			&renting.RoomID,
-			&bookingIDOrNull,
-			&renting.CheckInDate,
-			&renting.CheckOutDate,
+			&renting.EmployeeName,
+			&renting.CustomerName,
+			&renting.RoomNumber,
+			&renting.StartDate,
+			&renting.EndDate,
 			&renting.Payment,
 			&renting.TotalPrice,
 		); err != nil {
 			return rentings, err
-		}
-
-		if bookingIDOrNull.Valid {
-			renting.BookingID = int(bookingIDOrNull.Int32)
 		}
 
 		rentings = append(rentings, renting)
@@ -154,49 +146,25 @@ func getCustomerArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerArchives(ctx *internal.AppContext, customerID int) ([]internal.Archive, error) {
-	rows, err := ctx.DB.Query(queries.GetCustomerArchives, customerID)
+func getCustomerArchives(ctx *internal.AppContext, customerID int) ([]internal.ArchiveDisplay, error) {
+	rows, err := ctx.DB.Query(queries.GetCustomerRentingArchives, customerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var archives []internal.Archive
+	var archives []internal.ArchiveDisplay
 	for rows.Next() {
-		var archive internal.Archive
-		var rentingIDOrNull sql.NullInt32
-		var bookingIDOrNull sql.NullInt32
-		var customerIDOrNull sql.NullInt32
-		var bookingDateOrNull sql.NullString
+		var archive internal.ArchiveDisplay
 
 		if err := rows.Scan(
 			&archive.ArchiveID,
-			&rentingIDOrNull,
-			&bookingIDOrNull,
-			&customerIDOrNull,
+			&archive.CustomerName,
+			&archive.StartDate,
+			&archive.EndDate,
 			&archive.TotalPrice,
-			&bookingDateOrNull,
-			&archive.CheckInDate,
-			&archive.CheckOutDate,
-			&archive.ArchiveDate,
 		); err != nil {
 			return archives, err
-		}
-
-		if rentingIDOrNull.Valid {
-			archive.RentingID = int(rentingIDOrNull.Int32)
-		}
-
-		if bookingIDOrNull.Valid {
-			archive.BookingID = int(bookingIDOrNull.Int32)
-		}
-
-		if customerIDOrNull.Valid {
-			archive.CustomerID = int(customerIDOrNull.Int32)
-		}
-
-		if bookingDateOrNull.Valid {
-			archive.BookingDate = bookingDateOrNull.String
 		}
 
 		archives = append(archives, archive)
@@ -238,13 +206,13 @@ func getCustomerActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		payload := struct {
-			Bookings []internal.Booking `json:"bookings"`
-			Rentings []internal.Renting `json:"rentings"`
-			Archives []internal.Archive `json:"archives"`
+			Bookings     []internal.BookingDisplay `json:"bookings"`
+			Rentings     []internal.RentingDisplay `json:"rentings"`
+			PastRentings []internal.ArchiveDisplay `json:"past_rentings"`
 		}{
-			Bookings: bookings,
-			Rentings: rentings,
-			Archives: archives,
+			Bookings:     bookings,
+			Rentings:     rentings,
+			PastRentings: archives,
 		}
 
 		json.NewEncoder(w).Encode(payload)
