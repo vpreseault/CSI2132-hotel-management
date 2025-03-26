@@ -18,8 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import GenericCard from './GenericCard.vue';
+import { getUserID } from '../../utils/auth';
 
 type CustomerRental = {
   title: string;
@@ -42,6 +43,20 @@ const props = defineProps<{
   isEmployee?: boolean;
   employeeRentals?: EmployeeRental[];
 }>();
+
+onMounted(async () => {
+  const customerID = getUserID()
+  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity/${customerID}`)
+      if (res.ok) {
+        // TODO: use data with RentalCard
+        // const {bookings, rentings, archives} = await res.json()
+      }
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
+})
 
 const customerRentals: CustomerRental[] = [
   { title: "Current Rental", description: "You have an active rental", details: "Check-in: March 24, 2025" },
