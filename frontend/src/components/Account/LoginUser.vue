@@ -38,7 +38,15 @@ async function onFormSubmit(e: FormSubmitEvent) {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}/${e.values.fullname}`)
             if (res.ok) {
-                setAuthCookie(e.values.fullname)
+                const data = await res.json()
+
+                const user = {
+                    ID: props.employee ? data.employee_ID: data.customer_ID,
+                    name: data.full_name,
+                    role: data?.role ? data.role : 'customer',
+                }
+                
+                setAuthCookie(user)
             }
         } catch (error) {
             console.error('Error calling API:', error);
