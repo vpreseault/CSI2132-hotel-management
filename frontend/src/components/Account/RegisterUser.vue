@@ -89,7 +89,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
                 const user = {
                     ID: data.customer_ID,
                     name: data.full_name,
-                    role: 'customer',
+                    role: 'Customer',
                 }
 
                 setAuthCookie(user)
