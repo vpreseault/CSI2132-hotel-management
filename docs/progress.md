@@ -35,7 +35,7 @@ your database according to the referential integrity constraints, and moreover, 
     - 1 insert query
         - [x] Query `CreateEmployee` implmented in PR #14
     - 1 delete query
-        - [ ] Query X implmented in PR #Y
+        - [x] Query `DeleteChainByID` implmented in PR #53
     - 1 update query
         - [ ] Query X implmented in PR #Y
 
