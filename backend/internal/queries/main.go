@@ -48,3 +48,4 @@ var GetCustomerBookings = `SELECT * FROM Bookings WHERE customer_id = $1`
 var GetCustomerRentings = `SELECT * FROM Rentings WHERE customer_id = $1`
 var GetCustomerArchives = `SELECT * FROM Archives WHERE customer_id = $1`
 
+var GetEmployeeHotelID = `SELECT hotel_ID FROM Employees WHERE employee_ID = $1`

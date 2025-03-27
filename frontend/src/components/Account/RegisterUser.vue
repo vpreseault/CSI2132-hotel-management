@@ -84,7 +84,15 @@ async function onFormSubmit(e: FormSubmitEvent) {
             )
             
             if (res.ok) {
-                setAuthCookie(e.values.fullName)
+                const data = await res.json()
+
+                const user = {
+                    ID: data.customer_ID,
+                    name: data.full_name,
+                    role: 'Customer',
+                }
+
+                setAuthCookie(user)
             }
         } catch (error) {
             console.error('Error calling API:', error);

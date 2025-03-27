@@ -8,13 +8,14 @@
         <NavBar role="manager" @toggleProfile="toggleProfileModal" @toggleHotel="toggleHotelModal" @toggleCreateEmployee="toggleCreateEmployeeModal" />
         <Rental :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" :employeeRentals="allHotelRentings" />
         <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
-        <CreateEmployeeModal v-if="isCreateEmployeeModalOpen" @close="toggleCreateEmployeeModal" />
+        <CreateEmployeeModal v-if="isCreateEmployeeModalOpen" @close="toggleCreateEmployeeModal" @created="employeeCreatedToast" />
         <Profile v-if="isProfileModalOpen" :toggleProfileModal="toggleProfileModal" />
         <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
   
         <div class="mt-16 text-center">
             <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="handleLogout"> Logout </button>
         </div>
+        <Toast position="bottom-center" />
     </div>
 </template>
 
@@ -27,7 +28,9 @@ import Booking from '../components/LandingPage/Booking.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import HotelModal from '../components/LandingPage/HotelModal.vue';
 import CreateEmployeeModal from '../components/LandingPage/CreateEmployeeModal.vue';
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
 const isHotelModalOpen = ref(false);
@@ -68,5 +71,10 @@ const allHotelRentings = ref([
 { customerName: "Jane Smith", roomNumber: 202, checkoutDate: "2025-03-30", email: "jane@example.com" },
 { customerName: "Bob Builder", roomNumber: 303, checkoutDate: "2025-04-02", email: "bob@fixit.com" }
 ]);
+
+function employeeCreatedToast() {
+    toggleCreateEmployeeModal()
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Employee account created.', life: 3000});
+}
 </script>
 

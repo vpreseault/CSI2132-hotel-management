@@ -166,7 +166,7 @@ INSERT INTO Employees (hotel_ID, full_name, address, ID_type, ID_number, role) V
 CREATE TABLE Customers (
     customer_ID SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
-    ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN', 'Driver License')),
+    ID_type VARCHAR(50) NOT NULL CHECK (ID_type IN ('SSN', 'SIN', 'Drivers License')),
     ID_number VARCHAR(255) UNIQUE NOT NULL,
     address VARCHAR(255) NOT NULL,
     registration_date VARCHAR(255) NOT NULL

@@ -17,15 +17,15 @@
         - [ ] each room should have a different capacity
  
 3. (10%) Database queries: Implement at least 4 queries of your choice on your database. Implement at least 1 query with aggregation and at least 1 with a nested query.  
-    - [ ] 4 choice queries
-        - [ ] Query X implmented in PR #Y
-        - [ ] Query X implmented in PR #Y
-        - [ ] Query X implmented in PR #Y
-        - [ ] Query X implmented in PR #Y
+    - [x] 4 choice queries
+        - [x] Query `CreateCustomer` implmented in PR #14
+        - [x] Query `GetEmployeeByName` implmented in PR #14
+        - [x] Query `GetCustomerRentingArchives` implmented in PR #35
+        - [x] Query `BaseRoomSearch` implmented in PR #38
     - 1 aggregation query
         - [ ] Query X implmented in PR #Y
     - 1 nested query
-        - [ ] Query X implmented in PR #Y
+        - [x] Query `GetCustomerBookings` implmented in PR #Y
 
 4. (10%) Database modifications: Create the necessary SQL modifications (use queries and especially triggers): Your database should allow insert, delete and update operations of data in 
 your database according to the referential integrity constraints, and moreover, to the user-defined constraints, which you have defined. Implement at least 2 triggers of your choice for this purpose. 
@@ -33,7 +33,7 @@ your database according to the referential integrity constraints, and moreover, 
         - [ ] Trigger X implmented in PR #Y
         - [ ] Trigger X implmented in PR #Y
     - 1 insert query
-        - [ ] Query X implmented in PR #Y
+        - [x] Query `CreateEmployee` implmented in PR #14
     - 1 delete query
         - [ ] Query X implmented in PR #Y
     - 1 update query
