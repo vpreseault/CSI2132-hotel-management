@@ -1,7 +1,7 @@
 <template>
   <div id="book" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md">
     <h2 class="text-center text-xl text-gray-600 font-semibold">
-      {{ isEmployee ? 'Make a Booking' : 'Book a Hotel' }}
+      {{ isEmployee ? 'Make a Rental' : 'Book a Hotel' }}
     </h2>
 
     <template v-if="!isEmployee">
