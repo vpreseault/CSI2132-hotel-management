@@ -182,7 +182,7 @@ const resolver = ({ values }: FormResolverOptions) => {
     errors.employee_name.push({ type: 'required', message: 'Employee name is required.' });
   }
 
-  if (!values.room_number || values.room_number <= 0) {
+  if (!values.room_number || values.room_number >= 0) {
     errors.room_number.push({ type: 'required', message: 'Valid room number is required.' });
   }
 
@@ -206,7 +206,7 @@ const resolver = ({ values }: FormResolverOptions) => {
     }
   }
 
-  if (!values.total_price || values.total_price <= 0) {
+  if (!values.total_price || values.total_price >= 0) {
     errors.total_price.push({ type: 'required', message: 'Total price is required.' });
   }
 
