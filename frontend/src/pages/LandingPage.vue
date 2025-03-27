@@ -25,6 +25,7 @@ import Booking from '../components/LandingPage/Booking.vue';
 import Rental from '../components/LandingPage/Rental.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 
+
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 
 const isProfileModalOpen = ref(false);
@@ -44,4 +45,3 @@ function handleLogout() {
   window.location.href = '/';
 }
 </script>
-  
