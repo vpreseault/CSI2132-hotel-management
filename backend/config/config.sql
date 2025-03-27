@@ -311,24 +311,24 @@ INSERT INTO Archives (renting_ID, booking_ID, customer_ID, check_in_date, check_
 
 /* Alters tables to connect the foreign keys */
 
--- Hotel references HotelChain and Employee (Manager)
+-- Hotel references HotelChains and Employee (Manager)
 ALTER TABLE Hotels
-    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE,
+    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE,
     ADD FOREIGN KEY (manager_ID) REFERENCES Employee(employee_ID) ON DELETE SET NULL;
 
--- ChainPhone references HotelChain 
+-- ChainPhone references HotelChains 
 ALTER TABLE ChainPhones
-    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChain(chain_ID) ON DELETE CASCADE;
+    ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE;
 
--- ChainEmail references HotelChain 
+-- ChainEmail references HotelChains 
 ALTER TABLE ChainEmail
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE;
 
--- HotelPhone references HotelChain 
+-- HotelPhone references HotelChains 
 ALTER TABLE HotelPhones
     ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 
--- HotelEmail references HotelChain 
+-- HotelEmail references HotelChains 
 ALTER TABLE HotelEmails
     ADD FOREIGN KEY (hotel_ID) REFERENCES Hotels(hotel_ID) ON DELETE CASCADE;
 

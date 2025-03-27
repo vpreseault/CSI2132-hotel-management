@@ -20,4 +20,9 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/bookings", getBookingsHandler(ctx))
 	r.Get("/api/rentings", getRentingsHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
+
+	// Admin
+	r.Delete("/api/chain/{chain_ID}", deleteChainByID(ctx))
+	r.Delete("/api/hotel/{hotel_ID}", deleteHotelByID(ctx))
+	r.Delete("/api/room/{room_ID}", deleteRoomByID(ctx))
 }
