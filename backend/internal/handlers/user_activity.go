@@ -6,32 +6,39 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/vpreseault/csi2132-project/backend/internal"
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
-func getCustomerID(r *http.Request) (int, error) {
-	param := chi.URLParam(r, "customer_ID")
-	customerID, err := strconv.Atoi(param)
-	if err != nil {
-		return 0, fmt.Errorf("provided customer_ID '%v' is not a number", param)
-	}
-
-	return customerID, nil
-}
-
-func getCustomerBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID, err := getCustomerID(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		customerID := r.URL.Query().Get("customer_id")
+		hotelID := r.URL.Query().Get("hotel_id")
+
+		if customerID == "" && hotelID == "" {
+			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
 			return
 		}
 
-		bookings, err := getCustomerBookings(ctx, customerID)
+		var query string
+		var param string
+
+		if customerID != "" {
+			query = queries.GetBookingsByCustomerID
+			param = customerID
+		} else {
+			query = queries.GetBookingsByHotelID
+			param = hotelID
+		}
+
+		arg, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+		}
+
+		bookings, err := getBookings(ctx, query, arg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -41,8 +48,8 @@ func getCustomerBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerBookings(ctx *internal.AppContext, customerID int) ([]internal.BookingDisplay, error) {
-	rows, err := ctx.DB.Query(queries.GetCustomerBookings, customerID)
+func getBookings(ctx *internal.AppContext, query string, id int) ([]internal.BookingDisplay, error) {
+	rows, err := ctx.DB.Query(query, id)
 	if err != nil {
 		return nil, err
 	}
@@ -72,17 +79,35 @@ func getCustomerBookings(ctx *internal.AppContext, customerID int) ([]internal.B
 	return bookings, nil
 }
 
-func getCustomerRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID, err := getCustomerID(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		customerID := r.URL.Query().Get("customer_id")
+		hotelID := r.URL.Query().Get("hotel_id")
+
+		if customerID == "" && hotelID == "" {
+			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
 			return
 		}
 
-		rentings, err := getCustomerRentings(ctx, customerID)
+		var query string
+		var param string
+
+		if customerID != "" {
+			query = queries.GetRentingsByCustomerID
+			param = customerID
+		} else {
+			query = queries.GetRentingsByHotelID
+			param = hotelID
+		}
+
+		arg, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+		}
+
+		rentings, err := getRentings(ctx, query, arg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -92,8 +117,8 @@ func getCustomerRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerRentings(ctx *internal.AppContext, customerID int) ([]internal.RentingDisplay, error) {
-	rows, err := ctx.DB.Query(queries.GetCustomerRentings, customerID)
+func getRentings(ctx *internal.AppContext, query string, id int) ([]internal.RentingDisplay, error) {
+	rows, err := ctx.DB.Query(query, id)
 	if err != nil {
 		return nil, err
 	}
@@ -126,17 +151,23 @@ func getCustomerRentings(ctx *internal.AppContext, customerID int) ([]internal.R
 	return rentings, nil
 }
 
-func getCustomerArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID, err := getCustomerID(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		customerID := r.URL.Query().Get("customer_id")
+
+		if customerID == "" {
+			http.Error(w, "Param customer_id must be provided", http.StatusInternalServerError)
 			return
 		}
 
-		archives, err := getCustomerArchives(ctx, customerID)
+		arg, err := strconv.Atoi(customerID)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided customer_ID '%v' is not a number", customerID).Error(), http.StatusInternalServerError)
+		}
+
+		archives, err := getArchives(ctx, arg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -146,8 +177,8 @@ func getCustomerArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getCustomerArchives(ctx *internal.AppContext, customerID int) ([]internal.ArchiveDisplay, error) {
-	rows, err := ctx.DB.Query(queries.GetCustomerRentingArchives, customerID)
+func getArchives(ctx *internal.AppContext, customerID int) ([]internal.ArchiveDisplay, error) {
+	rows, err := ctx.DB.Query(queries.GetRentingArchivesByCustomerID, customerID)
 	if err != nil {
 		return nil, err
 	}
@@ -177,32 +208,53 @@ func getCustomerArchives(ctx *internal.AppContext, customerID int) ([]internal.A
 	return archives, nil
 }
 
-func getCustomerActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID, err := getCustomerID(r)
+		customerID := r.URL.Query().Get("customer_id")
+		hotelID := r.URL.Query().Get("hotel_id")
+
+		if customerID == "" && hotelID == "" {
+			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
+			return
+		}
+
+		var queryList []string
+		var param string
+
+		if customerID != "" {
+			queryList = []string{queries.GetBookingsByCustomerID, queries.GetRentingsByCustomerID, queries.GetRentingArchivesByCustomerID}
+			param = customerID
+		} else {
+			queryList = []string{queries.GetBookingsByHotelID, queries.GetRentingsByHotelID}
+			param = hotelID
+		}
+
+		arg, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+		}
+
+		bookings, err := getBookings(ctx, queryList[0], arg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		bookings, err := getCustomerBookings(ctx, customerID)
+		rentings, err := getRentings(ctx, queryList[1], arg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		rentings, err := getCustomerRentings(ctx, customerID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		archives, err := getCustomerArchives(ctx, customerID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		var archives []internal.ArchiveDisplay
+		if len(queryList) > 2 {
+			archives, err = getArchives(ctx, arg)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		payload := struct {

@@ -1,6 +1,6 @@
 package queries
 
-var GetCustomerBookings = `SELECT 
+var GetBookingsByCustomerID = `SELECT 
 	b.booking_ID,
 	c.full_name,
 	r.room_number,
@@ -15,7 +15,21 @@ JOIN Customers c ON b.customer_ID = c.customer_ID
 JOIN Rooms r ON b.room_ID = r.room_ID
 `
 
-var GetCustomerRentings = `SELECT 
+var GetBookingsByHotelID = `SELECT 
+	b.booking_ID,
+	c.full_name,
+	r.room_number,
+	b.start_date,
+	b.end_date,
+	b.total_price
+FROM Bookings b
+JOIN Rooms r ON r.room_ID = r.room_ID
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
+JOIN Customers c ON b.customer_ID = c.customer_ID
+WHERE h.hotel_ID = $1
+`
+
+var GetRentingsByCustomerID = `SELECT 
 	r.renting_ID,
 	e.full_name,
 	c.full_name,
@@ -33,7 +47,24 @@ JOIN Employees e ON r.employee_ID = e.employee_ID
 JOIN Rooms rm ON r.room_ID = rm.room_ID
 `
 
-var GetCustomerRentingArchives = `SELECT 
+var GetRentingsByHotelID = `SELECT 
+	r.renting_ID,
+	e.full_name,
+	c.full_name,
+	rm.room_number,
+	r.check_in_date,
+	r.check_out_date,
+	r.payment,
+	r.total_price
+FROM Rentings r
+JOIN Rooms rm ON r.room_ID = rm.room_ID
+JOIN Hotels h ON rm.hotel_ID = h.hotel_ID
+JOIN Customers c ON r.customer_ID = c.customer_ID
+JOIN Employees e ON r.employee_ID = e.employee_ID
+WHERE h.hotel_ID = $1
+`
+
+var GetRentingArchivesByCustomerID = `SELECT 
 	a.archive_ID,
 	c.full_name,
 	a.check_in_date,
