@@ -19,7 +19,7 @@ func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 		param := chi.URLParam(r, "chain_ID")
 		chainID, err := strconv.Atoi(param)
 		if err != nil {
-			http.Error(w, fmt.Errorf("provided chain_ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Errorf("provided chain_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
 			return
 		}
 
