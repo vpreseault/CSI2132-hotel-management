@@ -20,7 +20,7 @@
                     <Message v-if="$form.idNumber?.invalid" severity="error" size="small" variant="simple">{{ $form.idNumber.error?.message }}</Message>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <Select name="role" :options="roles" optionLabel="type" :defaultValue="roles[0]" fluid />
+                    <Select name="role" :options="roles" optionLabel="type" placeholder="Select a role" fluid />
                     <Message v-if="$form.role?.invalid" severity="error" size="small" variant="simple">{{ $form.role.error?.message }}</Message>
                 </div>
                 <Button type="submit" :severity="serverError ? 'error' : 'secondary'" label="Create Account" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" />
