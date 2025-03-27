@@ -1,10 +1,22 @@
 <template>
-    <div id="book" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md">
-      <h2 class="text-center text-xl text-gray-600 font-semibold">
-        {{ isEmployee ? 'Make a Booking' : 'Book a Hotel' }}
-      </h2>
-  
-      <div v-if="!isEmployee" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center">
+  <div id="book" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md">
+    <h2 class="text-center text-xl text-gray-600 font-semibold">
+      {{ isEmployee ? 'Make a Booking' : 'Book a Hotel' }}
+    </h2>
+
+    <template v-if="!isEmployee">
+      <div class="text-center my-4">
+        <button @click="isSearchCardVisible = !isSearchCardVisible" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-indigo-600 transition">
+          {{ isSearchCardVisible ? 'Close' : 'Search' }}
+        </button>
+      </div>
+
+      <!-- Search Section -->
+      <div v-if="isSearchCardVisible" class="mb-4">
+        <SearchSection />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center">
         <GenericCard 
           v-for="(hotel, index) in hotels" 
           :key="index"
@@ -17,20 +29,25 @@
           @toggle="toggleCard"
         />
       </div>
-  
-      <form v-else @submit.prevent="submitBooking" class="mt-4" >
+    </template>
+
+    <template v-else>
+      <form @submit.prevent="submitBooking" class="mt-4">
         <input v-model="employeeBooking.customerName" type="text" placeholder="Customer Name" class="border p-2 text-black rounded w-full mb-2" required />
         <input v-model.number="employeeBooking.roomNumber" type="number" placeholder="Room Number" class="border p-2 text-black rounded w-full mb-2" required />
         <input v-model="employeeBooking.checkoutDate" type="date" class="border p-2 text-black rounded w-full mb-2" required />
-        <input v-model="employeeBooking.contactEmail" type="contactEmail" placeholder="Email" class="border p-2 text-black rounded w-full mb-2" required />
-        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" > Book Room </button>
+        <input v-model="employeeBooking.contactEmail" type="email" placeholder="Email" class="border p-2 text-black rounded w-full mb-2" required />
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Book Room</button>
       </form>
-    </div>
+    </template>
+  </div>
 </template>
+
   
 <script setup lang="ts">
 import { ref } from 'vue';
 import GenericCard from './GenericCard.vue';
+import SearchSection from './SearchSection.vue';
 
 defineProps<{
 expandedCard: { section: string | null; index: number | null };
@@ -110,7 +127,9 @@ if (
   employeeBooking.value = { customerName: '', roomNumber: '', checkoutDate: '', contactEmail: '' };
 }
 }
-  
+
+const isSearchCardVisible = ref(false);
+
 function formatDetails(details: any) {
 return `
   Cost: ${details.cost}
