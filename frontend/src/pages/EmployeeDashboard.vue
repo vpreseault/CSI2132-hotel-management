@@ -30,6 +30,17 @@ import Booking from '../components/LandingPage/Booking.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import HotelModal from '../components/LandingPage/HotelModal.vue';
 
+type RentalItem = {
+  cardType: 'booking' | 'renting' | 'archive';
+  customer_name: string;
+  employee_name?: string;
+  room_number?: number;
+  start_date: string;
+  end_date: string;
+  total_price?: number;
+  payment?: boolean;
+};
+
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
 const isHotelModalOpen = ref(false);
@@ -43,7 +54,7 @@ function toggleHotelModal() {
 }
 
 function toggleCard(section: string, index: number) {
-expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index 
+  expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index 
     ? { section: null, index: null } 
     : { section, index };
 }
@@ -57,13 +68,52 @@ function handleEmployeeBooking(booking: {
   customerName: string;
   roomNumber: number;
   checkoutDate: string;
-  email : string;
-}) { allHotelRentings.value.push(booking); }
+  email: string;
+}) {
+  allHotelRentings.value.push({
+    customer_name: booking.customerName,
+    room_number: booking.roomNumber,
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: booking.checkoutDate,
+    employee_name: "Current Employee",
+    cardType: "renting",
+    total_price: 0,
+    payment: false
+  });
+}
 
-const allHotelRentings = ref([
-{ customerName: "John Doe", roomNumber: 101, checkoutDate: "2025-03-25", email: "john@example.com" },
-{ customerName: "Jane Smith", roomNumber: 202, checkoutDate: "2025-03-30", email: "jane@example.com" },
-{ customerName: "Bob Builder", roomNumber: 303, checkoutDate: "2025-04-02", email: "bob@fixit.com" }
+const allHotelRentings = ref<RentalItem[]>([
+  {
+    customer_name: "John Doe",
+    room_number: 101,
+    start_date: "2025-03-20",
+    end_date: "2025-03-25",
+    employee_name: "Employee A",
+    cardType: "renting",
+    total_price: 500,
+    payment: true
+  },
+  {
+    customer_name: "Jane Smith",
+    room_number: 202,
+    start_date: "2025-03-27",
+    end_date: "2025-03-30",
+    employee_name: "Employee A",
+    cardType: "renting",
+    total_price: 400,
+    payment: false
+  },
+  {
+    customer_name: "Bob Builder",
+    room_number: 303,
+    start_date: "2025-03-28",
+    end_date: "2025-04-02",
+    employee_name: "Employee A",
+    cardType: "renting",
+    total_price: 450,
+    payment: true
+  }
 ]);
 </script>
+
   
