@@ -1,6 +1,6 @@
 <template>
     <Dialog v-model:visible="visible" modal header="Search Results" class="w-full max-w-4xl" @hide="handleClose">
-      <BookCard v-if="selectedRoom" :room="selectedRoom" @close="selectedRoom = null" />
+      <BookCard v-if="selectedRoom" :room="selectedRoom" @close="selectedRoom = null" @createBooking="handleBooking"/>
   
       <Card v-else>
         <template #title>Rooms</template>
@@ -67,6 +67,12 @@
   
   function handleClose() {
     emit('close');
+  }
+  
+  function handleBooking(bookingData: any) {
+    console.log('Booking confirmed:', bookingData);
+    selectedRoom.value = null;
+    visible.value = false;
   }
   </script>
   
