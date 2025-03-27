@@ -71,7 +71,7 @@ func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
 		param := chi.URLParam(r, "room_ID")
 		roomID, err := strconv.Atoi(param)
 		if err != nil {
-			http.Error(w, fmt.Errorf("provided room_ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Errorf("provided room_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
 			return
 		}
 
