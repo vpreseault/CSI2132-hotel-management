@@ -14,11 +14,11 @@ func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID := r.URL.Query().Get("customer_id")
-		hotelID := r.URL.Query().Get("hotel_id")
+		customerID := r.URL.Query().Get("customer_ID")
+		hotelID := r.URL.Query().Get("hotel_ID")
 
 		if customerID == "" && hotelID == "" {
-			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
+			http.Error(w, "Either customer_ID or hotel_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 
@@ -83,18 +83,21 @@ func getRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID := r.URL.Query().Get("customer_id")
-		hotelID := r.URL.Query().Get("hotel_id")
+		customerID := r.URL.Query().Get("customer_ID")
+		hotelID := r.URL.Query().Get("hotel_ID")
+		employeeID := r.URL.Query().Get("employee_ID")
 
-		if customerID == "" && hotelID == "" {
-			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
+		if customerID == "" && hotelID == "" && employeeID == "" {
+			http.Error(w, "Either customer_ID, hotel_ID, employee_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 
 		var query string
 		var param string
 
-		if customerID != "" {
+		if employeeID != "" {
+			param = employeeID
+		} else if customerID != "" {
 			query = queries.GetRentingsByCustomerID
 			param = customerID
 		} else {
@@ -105,6 +108,16 @@ func getRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(param)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+		}
+
+		if employeeID != "" {
+			hotelID, err := getHotelByEmployeeID(ctx, arg)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			arg = hotelID
+			query = queries.GetRentingsByHotelID
 		}
 
 		rentings, err := getRentings(ctx, query, arg)
@@ -155,10 +168,10 @@ func getArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID := r.URL.Query().Get("customer_id")
+		customerID := r.URL.Query().Get("customer_ID")
 
 		if customerID == "" {
-			http.Error(w, "Param customer_id must be provided", http.StatusInternalServerError)
+			http.Error(w, "Param customer_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 
@@ -212,11 +225,11 @@ func getActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		customerID := r.URL.Query().Get("customer_id")
-		hotelID := r.URL.Query().Get("hotel_id")
+		customerID := r.URL.Query().Get("customer_ID")
+		hotelID := r.URL.Query().Get("hotel_ID")
 
 		if customerID == "" && hotelID == "" {
-			http.Error(w, "Either customer_id or hotel_id must be provided", http.StatusInternalServerError)
+			http.Error(w, "Either customer_ID or hotel_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 

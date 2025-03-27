@@ -49,8 +49,8 @@ JOIN Rooms rm ON r.room_ID = rm.room_ID
 
 var GetRentingsByHotelID = `SELECT 
 	r.renting_ID,
-	e.full_name,
-	c.full_name,
+	e.full_name as employee_name,
+	c.full_name as customer_name,
 	rm.room_number,
 	r.check_in_date,
 	r.check_out_date,
