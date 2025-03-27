@@ -25,7 +25,6 @@
                 </div>
                 <Button type="submit" :severity="serverError ? 'error' : 'secondary'" label="Create Account" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" />
                 <Message v-if="serverError" severity="error" size="small" variant="simple">{{ serverError }}</Message>
-                <Message v-if="success" severity="success" size="small" variant="simple">Employee account created</Message>
             </Form>
             <button class="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="emit('close')"> Close </button>
         </div>
