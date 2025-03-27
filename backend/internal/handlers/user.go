@@ -69,10 +69,9 @@ func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		var HotelID int
-		err = ctx.DB.QueryRow(queries.GetEmployeeHotelID, payload.ManagerID).Scan(&HotelID)
+		HotelID, err := getHotelByEmployeeID(ctx, payload.ManagerID)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("could not get HotelID from ManagerID. %v", err.Error()), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 

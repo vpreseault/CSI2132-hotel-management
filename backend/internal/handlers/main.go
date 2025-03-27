@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/vpreseault/csi2132-project/backend/internal"
+	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
 func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
@@ -25,4 +26,14 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Delete("/api/chain/{chain_ID}", deleteChainByID(ctx))
 	r.Delete("/api/hotel/{hotel_ID}", deleteHotelByID(ctx))
 	r.Delete("/api/room/{room_ID}", deleteRoomByID(ctx))
+}
+
+func getHotelByEmployeeID(ctx *internal.AppContext, employeeID int) (int, error) {
+	var hotelID int
+	err := ctx.DB.QueryRow(queries.GetEmployeeHotelID, employeeID).Scan(&hotelID)
+	if err != nil {
+		return 0, err
+	}
+
+	return hotelID, nil
 }
