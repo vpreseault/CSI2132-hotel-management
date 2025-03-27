@@ -45,7 +45,7 @@ func deleteHotelByID(ctx *internal.AppContext) http.HandlerFunc {
 		param := chi.URLParam(r, "hotel_ID")
 		hotelID, err := strconv.Atoi(param)
 		if err != nil {
-			http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
 			return
 		}
 
