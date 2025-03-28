@@ -18,7 +18,7 @@
           <!-- Hotel Chain -->
           <div class="flex flex-col">
             <label class="font-medium">Hotel Chain</label>
-            <Dropdown v-model="filters.chain" :options="chains" optionLabel="name" placeholder="Select Hotel Chain" class="w-full"/>
+            <Dropdown v-model="filters.chain" :options="chains" optionLabel="chain_name" optionValue="chain_ID" placeholder="Select Hotel Chain" class="w-full"/>
           </div>
         </div>
 
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Dropdown from 'primevue/dropdown';
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
@@ -92,12 +92,24 @@ const filters = ref({
   roomPrice: 200
 });
 
-const chains = ref([
-  { name: 'Hilton' },
-  { name: 'Marriott' },
-  { name: 'Holiday Inn' },
-  { name: 'Best Western' },
-]);
+type Chain = {
+  chain_ID: number
+  chain_name: string
+}
+
+const chains = ref<Chain[]>([]);
+
+onMounted(async () => {  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/chains`)
+      if (res.ok) {
+        // TODO: use data with RentalCard
+        chains.value = await res.json()
+      }
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
+})
 
 const searchResults = ref<Room[]>([]);
 const showDialog = ref(false);
