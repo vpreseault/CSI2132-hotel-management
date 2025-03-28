@@ -54,6 +54,7 @@ type SearchResult struct {
 type BookingDisplay struct {
 	BookingID    int     `json:"booking_ID"`
 	CustomerName string  `json:"customer_name"`
+	HotelName    string  `json:"hotel_name"`
 	RoomNumber   int     `json:"room_number"`
 	StartDate    string  `json:"start_date"`
 	EndDate      string  `json:"end_date"`
@@ -64,6 +65,7 @@ type RentingDisplay struct {
 	RentingID    int     `json:"renting_ID"`
 	EmployeeName string  `json:"employee_name"`
 	CustomerName string  `json:"customer_name"`
+	HotelName    string  `json:"hotel_name"`
 	RoomNumber   int     `json:"room_number"`
 	StartDate    string  `json:"start_date"`
 	EndDate      string  `json:"end_date"`

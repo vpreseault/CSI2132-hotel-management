@@ -39,26 +39,27 @@ INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) V
 
 -- Hotels Table
 CREATE TABLE Hotels (
-    hotel_ID SERIAL PRIMARY KEY, 
+    hotel_ID SERIAL PRIMARY KEY,
     chain_ID INT NOT NULL,
     manager_ID INT UNIQUE,  
+    hotel_name VARCHAR(255) NOT NULL,
     number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
     address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
 -- Insert into Hotel
-INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, address, category) VALUES
-(1, NULL, 100, '1001 Broadway, New York, NY', 5),
-(2, NULL, 80, '2022 Sunset Blvd, Los Angeles, CA', 4),
-(3, NULL, 50, '3033 Lakeshore Dr, Chicago, IL', 3),
-(4, NULL, 120, '4040 Westheimer Rd, Houston, TX', 5),
-(5, NULL, 90, '5055 Ocean Dr, Miami, FL', 4),
-(6, NULL, 70, '6066 Rainier Ave, Seattle, WA', 3),
-(7, NULL, 60, '7077 Colfax Ave, Denver, CO', 3),
-(8, NULL, 130, '8088 Beacon St, Boston, MA', 5),
-(9, NULL, 110, '9099 Peachtree St, Atlanta, GA', 4),
-(10, NULL, 95, '1010 Market St, San Francisco, CA', 4);
+INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_name, address, category) VALUES
+(1, NULL, 100, 'Hilton Express', '1001 Broadway, New York, NY', 5),
+(2, NULL, 80, 'Hilton Express', '2022 Sunset Blvd, Los Angeles, CA', 4),
+(3, NULL, 50, 'Hilton Express', '3033 Lakeshore Dr, Chicago, IL', 3),
+(4, NULL, 120, 'Hilton Express', '4040 Westheimer Rd, Houston, TX', 5),
+(5, NULL, 90, 'Hilton Express', '5055 Ocean Dr, Miami, FL', 4),
+(6, NULL, 70, 'Hilton Express', '6066 Rainier Ave, Seattle, WA', 3),
+(7, NULL, 60, 'Hilton Express', '7077 Colfax Ave, Denver, CO', 3),
+(8, NULL, 130, 'Hilton Express', '8088 Beacon St, Boston, MA', 5),
+(9, NULL, 110, 'Hilton Express', '9099 Peachtree St, Atlanta, GA', 4),
+(10, NULL, 95, 'Hilton Express', '1010 Market St, San Francisco, CA', 4);
 
 -- Phone and Emails for hotel and hotelchain
 CREATE TABLE ChainPhones (

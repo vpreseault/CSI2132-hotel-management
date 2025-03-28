@@ -3,6 +3,7 @@ package queries
 var GetBookingsByCustomerID = `SELECT 
 	b.booking_ID,
 	c.full_name,
+	h.hotel_name,
 	r.room_number,
 	b.start_date,
 	b.end_date,
@@ -13,11 +14,13 @@ FROM (
 ) b
 JOIN Customers c ON b.customer_ID = c.customer_ID
 JOIN Rooms r ON b.room_ID = r.room_ID
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
 `
 
 var GetBookingsByHotelID = `SELECT 
 	b.booking_ID,
 	c.full_name,
+	h.hotel_name,
 	r.room_number,
 	b.start_date,
 	b.end_date,
@@ -33,6 +36,7 @@ var GetRentingsByCustomerID = `SELECT
 	r.renting_ID,
 	e.full_name,
 	c.full_name,
+	h.hotel_name,
 	rm.room_number,
 	r.check_in_date,
 	r.check_out_date,
@@ -45,12 +49,14 @@ FROM (
 JOIN Customers c ON r.customer_ID = c.customer_ID
 JOIN Employees e ON r.employee_ID = e.employee_ID
 JOIN Rooms rm ON r.room_ID = rm.room_ID
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
 `
 
 var GetRentingsByHotelID = `SELECT 
 	r.renting_ID,
 	e.full_name as employee_name,
 	c.full_name as customer_name,
+	h.hotel_name,
 	rm.room_number,
 	r.check_in_date,
 	r.check_out_date,

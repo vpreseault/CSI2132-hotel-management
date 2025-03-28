@@ -16,16 +16,19 @@ func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 
 		customerID := r.URL.Query().Get("customer_ID")
 		hotelID := r.URL.Query().Get("hotel_ID")
+		employeeID := r.URL.Query().Get("employee_ID")
 
-		if customerID == "" && hotelID == "" {
-			http.Error(w, "Either customer_ID or hotel_ID must be provided", http.StatusInternalServerError)
+		if customerID == "" && hotelID == "" && employeeID == "" {
+			http.Error(w, "Either customer_ID, hotel_ID, employee_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 
 		var query string
 		var param string
 
-		if customerID != "" {
+		if employeeID != "" {
+			param = employeeID
+		} else if customerID != "" {
 			query = queries.GetBookingsByCustomerID
 			param = customerID
 		} else {
@@ -36,6 +39,16 @@ func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(param)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+		}
+
+		if employeeID != "" {
+			hotelID, err := getHotelByEmployeeID(ctx, arg)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			arg = hotelID
+			query = queries.GetBookingsByHotelID
 		}
 
 		bookings, err := getBookings(ctx, query, arg)
@@ -62,6 +75,7 @@ func getBookings(ctx *internal.AppContext, query string, id int) ([]internal.Boo
 		if err := rows.Scan(
 			&booking.BookingID,
 			&booking.CustomerName,
+			&booking.HotelName,
 			&booking.RoomNumber,
 			&booking.StartDate,
 			&booking.EndDate,
@@ -145,6 +159,7 @@ func getRentings(ctx *internal.AppContext, query string, id int) ([]internal.Ren
 			&renting.RentingID,
 			&renting.EmployeeName,
 			&renting.CustomerName,
+			&renting.HotelName,
 			&renting.RoomNumber,
 			&renting.StartDate,
 			&renting.EndDate,
