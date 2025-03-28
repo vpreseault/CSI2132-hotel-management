@@ -132,12 +132,6 @@ const customerRentals: RentalItem[] = [
     end_date: "2025-03-15",
     cardType: "archive"
   }
-})
-
-const customerRentals = [
-  { title: "Current Rental", description: "You have an active rental", details: "Check-in: March 24, 2025" },
-  { title: "Upcoming Rental", description: "You have an upcoming stay", details: "Check-in: April 1, 2025" },
-  { title: "Past Rental", description: "You stayed at Hotel 3", details: "Check-out: March 20, 2025" }
 ];
 
 const defaultEmployeeRentals: RentalItem[] = [
