@@ -39,6 +39,7 @@ func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(param)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			return
 		}
 
 		if employeeID != "" {
@@ -122,6 +123,7 @@ func getRentingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(param)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			return
 		}
 
 		if employeeID != "" {
@@ -193,6 +195,7 @@ func getArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(customerID)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided customer_ID '%v' is not a number", customerID).Error(), http.StatusInternalServerError)
+			return
 		}
 
 		archives, err := getArchives(ctx, arg)
@@ -262,6 +265,7 @@ func getActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
 		arg, err := strconv.Atoi(param)
 		if err != nil {
 			http.Error(w, fmt.Errorf("provided ID '%v' is not a number", param).Error(), http.StatusInternalServerError)
+			return
 		}
 
 		bookings, err := getBookings(ctx, queryList[0], arg)
