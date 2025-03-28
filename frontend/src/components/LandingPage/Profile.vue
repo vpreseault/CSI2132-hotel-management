@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 flex justify-center items-center">
     <div class="bg-green-200 p-6 rounded-lg shadow-lg w-full max-w-xl">
-      <h2 class="text-center text-xl text-black font-semibold mb-4">{{ role === 'employee' ? 'Employee' : 'Customer' }} Profile Details</h2>
+      <h2 class="text-center text-xl text-black font-semibold mb-4">{{ role }} Profile Details</h2>
 
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
