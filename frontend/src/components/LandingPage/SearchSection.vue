@@ -18,27 +18,14 @@
             </div>
             <div class="flex flex-col">
               <label class="font-medium">End Date</label>
-              <Calendar
-                v-model="filters.endDate"
-                :minDate="minEndDate"
-                showIcon
-                placeholder="End Date"
-                class="w-full md:w-56"
-              />
+              <Calendar v-model="filters.endDate" :minDate="minEndDate" showIcon placeholder="End Date" class="w-full md:w-56" />
             </div>
           </div>
 
           <!-- Hotel Chain -->
           <div class="flex flex-col gap-1">
             <label class="font-medium">Hotel Chain</label>
-            <Dropdown
-              v-model="filters.chain"
-              :options="chains"
-              optionLabel="name"
-              placeholder="Select or Type Hotel Chain"
-              editable
-              class="w-full md:w-80"
-            />
+            <Dropdown v-model="filters.chain" :options="chains" optionLabel="name" placeholder="Select or Type Hotel Chain" editable class="w-full md:w-80"/>
           </div>
 
           <!-- Sliders -->
@@ -116,7 +103,7 @@ const filters = ref({
   chain: '',
   roomCapacity: 1,
   hotelCategory: 1,
-  totalRooms: 50,
+  totalRooms: 5,
   roomPrice: 200
 });
 

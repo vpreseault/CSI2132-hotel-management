@@ -1,6 +1,6 @@
 <template>
-    <Dialog v-model:visible="visible" modal header="Search Results" class="w-full max-w-4xl" @hide="handleClose">
-      <BookCard v-if="selectedRoom" :room="selectedRoom" @close="selectedRoom = null" />
+    <Dialog v-model:visible="props.show" modal header="Search Results" class="w-full max-w-4xl" @hide="handleClose">
+      <BookCard v-if="selectedRoom" :room="selectedRoom" @close="selectedRoom = null" @createBooking="handleBooking"/>
   
       <Card v-else>
         <template #title>Rooms</template>
@@ -29,7 +29,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, watch, defineProps, defineEmits } from 'vue';
+  import { ref, defineProps, defineEmits } from 'vue';
   import Dialog from 'primevue/dialog';
   import Card from 'primevue/card';
   import Button from 'primevue/button';
@@ -61,12 +61,14 @@
   const visible = ref(props.show);
   const selectedRoom = ref<Room | null>(null);
   
-  watch(() => props.show, (val) => {
-    visible.value = val;
-  });
-  
   function handleClose() {
     emit('close');
+  }
+  
+  function handleBooking(bookingData: any) {
+    console.log('Booking confirmed:', bookingData);
+    selectedRoom.value = null;
+    visible.value = false;
   }
   </script>
   
