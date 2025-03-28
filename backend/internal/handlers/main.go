@@ -22,7 +22,10 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/rentings", getRentingsHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
 
-	return hotelID, nil
+	// Admin
+	r.Delete("/api/chain/{chain_ID}", deleteChainByID(ctx))
+	r.Delete("/api/hotel/{hotel_ID}", deleteHotelByID(ctx))
+	r.Delete("/api/room/{room_ID}", deleteRoomByID(ctx))
 }
 
 func getHotelByEmployeeID(ctx *internal.AppContext, employeeID int) (int, error) {
