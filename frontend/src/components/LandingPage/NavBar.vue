@@ -4,9 +4,8 @@
       <li v-if="role === 'customer'" :class="navItemClass"> Book </li>
       <li v-if="role === 'customer'" :class="navItemClass"> Rentings </li>
   
-      <li v-if="role === 'employee'" @click="emit('toggleHotel')" :class="navItemClass"> Hotel </li>
+      <li v-if="role === 'employee' || role === 'manager'" @click="emit('toggleHotel')" :class="navItemClass"> Hotel </li>
       <li v-if="role === 'manager'" @click="emit('toggleCreateEmployee')" :class="navItemClass" > Create Employee </li>
-      <li v-if="role === 'manager'" @click="emit('toggleHotel')" :class="navItemClass"> Hotel </li>
   
       <li @click="emit('toggleProfile')" :class="navItemClass"> Profile </li>
     </ul>
