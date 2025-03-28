@@ -27,7 +27,7 @@
         />
       </div>
     </LayoutSection>
-    <LayoutSection title="Upcomming Bookings">
+    <LayoutSection title="Upcoming Bookings">
       <div class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(booking, index) in hotelBookings"
