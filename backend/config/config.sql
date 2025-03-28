@@ -1341,14 +1341,14 @@ INSERT INTO Archives (renting_ID, booking_ID, customer_ID, total_price, booking_
 -- Hotel references HotelChains and Employee (Manager)
 ALTER TABLE Hotels
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE,
-    ADD FOREIGN KEY (manager_ID) REFERENCES Employee(employee_ID) ON DELETE SET NULL;
+    ADD FOREIGN KEY (manager_ID) REFERENCES Employees(employee_ID) ON DELETE SET NULL;
 
 -- ChainPhone references HotelChains 
 ALTER TABLE ChainPhones
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE;
 
 -- ChainEmail references HotelChains 
-ALTER TABLE ChainEmail
+ALTER TABLE ChainEmails
     ADD FOREIGN KEY (chain_ID) REFERENCES HotelChains(chain_ID) ON DELETE CASCADE;
 
 -- HotelPhone references HotelChains 
