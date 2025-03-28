@@ -39,26 +39,27 @@ INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) V
 
 -- Hotels Table
 CREATE TABLE Hotels (
-    hotel_ID SERIAL PRIMARY KEY, 
+    hotel_ID SERIAL PRIMARY KEY,
     chain_ID INT NOT NULL,
     manager_ID INT UNIQUE,  
+    hotel_name VARCHAR(255) NOT NULL,
     number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
     address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
 -- Insert into Hotel
-INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, address, category) VALUES
-(1, NULL, 100, '1001 Broadway, New York, NY', 5),
-(2, NULL, 80, '2022 Sunset Blvd, Los Angeles, CA', 4),
-(3, NULL, 50, '3033 Lakeshore Dr, Chicago, IL', 3),
-(4, NULL, 120, '4040 Westheimer Rd, Houston, TX', 5),
-(5, NULL, 90, '5055 Ocean Dr, Miami, FL', 4),
-(6, NULL, 70, '6066 Rainier Ave, Seattle, WA', 3),
-(7, NULL, 60, '7077 Colfax Ave, Denver, CO', 3),
-(8, NULL, 130, '8088 Beacon St, Boston, MA', 5),
-(9, NULL, 110, '9099 Peachtree St, Atlanta, GA', 4),
-(10, NULL, 95, '1010 Market St, San Francisco, CA', 4);
+INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_name, address, category) VALUES
+(1, NULL, 100, 'Hilton Express', '1001 Broadway, New York, NY', 5),
+(2, NULL, 80, 'Hilton Express', '2022 Sunset Blvd, Los Angeles, CA', 4),
+(3, NULL, 50, 'Hilton Express', '3033 Lakeshore Dr, Chicago, IL', 3),
+(4, NULL, 120, 'Hilton Express', '4040 Westheimer Rd, Houston, TX', 5),
+(5, NULL, 90, 'Hilton Express', '5055 Ocean Dr, Miami, FL', 4),
+(6, NULL, 70, 'Hilton Express', '6066 Rainier Ave, Seattle, WA', 3),
+(7, NULL, 60, 'Hilton Express', '7077 Colfax Ave, Denver, CO', 3),
+(8, NULL, 130, 'Hilton Express', '8088 Beacon St, Boston, MA', 5),
+(9, NULL, 110, 'Hilton Express', '9099 Peachtree St, Atlanta, GA', 4),
+(10, NULL, 95, 'Hilton Express', '1010 Market St, San Francisco, CA', 4);
 
 -- Phone and Emails for hotel and hotelchain
 CREATE TABLE ChainPhones (
@@ -150,15 +151,15 @@ CREATE TABLE Employees (
 
 -- Insert into Employee
 INSERT INTO Employees (hotel_ID, full_name, address, ID_type, ID_number, role) VALUES
-(1, 'John Doe', '500 Fifth Ave, New York, NY', 'SSN', '123-45-6789', 'Manager'),
+(1, 'John Doe', '500 Fifth Ave, New York, NY', 'SSN', '123-45-6789', 'Employee'),
 (2, 'Jane Smith', '123 Hollywood Blvd, Los Angeles, CA', 'SSN','987-65-4321', 'Manager'),
-(3, 'Michael Brown', '789 Michigan Ave, Chicago, IL', 'SSN','567-89-1234', 'Manager'),
+(3, 'Michael Brown', '789 Michigan Ave, Chicago, IL', 'SSN','567-89-1234', 'Employee'),
 (4, 'Emily Davis', '400 Westheimer Rd, Houston, TX', 'SSN','111-22-3333', 'Manager'),
-(5, 'James Wilson', '505 Ocean Dr, Miami, FL', 'SSN','222-33-4444', 'Manager'),
+(5, 'James Wilson', '505 Ocean Dr, Miami, FL', 'SSN','222-33-4444', 'Employee'),
 (6, 'Sarah Miller', '606 Rainier Ave, Seattle, WA', 'SSN','333-44-5555', 'Manager'),
-(7, 'David Taylor', '707 Colfax Ave, Denver, CO', 'SSN','444-55-6666', 'Manager'),
+(7, 'David Taylor', '707 Colfax Ave, Denver, CO', 'SSN','444-55-6666', 'Employee'),
 (8, 'Emma Anderson', '808 Beacon St, Boston, MA', 'SSN','555-66-7777', 'Manager'),
-(9, 'Daniel Martinez', '909 Peachtree St, Atlanta, GA', 'SSN','666-77-8888', 'Manager'),
+(9, 'Daniel Martinez', '909 Peachtree St, Atlanta, GA', 'SSN','666-77-8888', 'Employee'),
 (10, 'Sophia Thomas', '1010 Market St, San Francisco, CA', 'SSN','777-88-9999', 'Manager');
 
 
@@ -175,13 +176,13 @@ CREATE TABLE Customers (
 -- Insert into Customers
 INSERT INTO Customers (full_name, ID_type, ID_number, address, registration_date) VALUES
 ('Alice Johnson', 'SSN', 'A12345678', '1010 Market St, San Francisco, CA','2024-01-15'),
-('Bob Williams', 'Driver License', 'B98765432', '1010 Market St, San Francisco, CA','2024-02-10'),
+('Bob Williams', 'Drivers License', 'B98765432', '1010 Market St, San Francisco, CA','2024-02-10'),
 ('Charlie Davis', 'SIN', 'C56789012', '1010 Market St, San Francisco, CA','2024-03-05'),
 ('Diana White', 'SSN', 'D11223344', '1010 Market St, San Francisco, CA','2024-04-20'),
-('Eric Harris', 'Driver License', 'E22334455', '1010 Market St, San Francisco, CA','2024-05-18'),
+('Eric Harris', 'Drivers License', 'E22334455', '1010 Market St, San Francisco, CA','2024-05-18'),
 ('Fiona Lewis', 'SIN', 'F33445566', '1010 Market St, San Francisco, CA','2024-06-25'),
 ('George Clark', 'SSN', 'G44556677', '1010 Market St, San Francisco, CA','2024-07-12'),
-('Hannah Young', 'Driver License', 'H55667788', '1010 Market St, San Francisco, CA','2024-08-30'),
+('Hannah Young', 'Drivers License', 'H55667788', '1010 Market St, San Francisco, CA','2024-08-30'),
 ('Ian Hall', 'SIN', 'I66778899', '1010 Market St, San Francisco, CA','2024-09-10'),
 ('Jessica Allen', 'SSN', 'J77889900', '1010 Market St, San Francisco, CA','2024-10-22');
 

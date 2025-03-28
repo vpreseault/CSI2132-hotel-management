@@ -7,7 +7,7 @@
     <div v-if="currentRentals.length" class="mt-6" >
       <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Current Rentals</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center" >
-        <ActivityCard 
+        <!-- <ActivityCard 
           v-for="(rental, index) in currentRentals" 
           :key="`current-${index}`"
           :title="getTitle(rental)"
@@ -18,14 +18,14 @@
           :index="index"
           :expandedCard="expandedCard"
           @toggle="toggleCard"
-        />
+        /> -->
       </div>
     </div>
 
     <div v-if="futureRentals.length" class="mt-10">
       <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Future Rentals</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center">
-        <ActivityCard 
+        <!-- <ActivityCard 
           v-for="(rental, index) in futureRentals" 
           :key="`future-${index}`"
           :title="getTitle(rental)"
@@ -36,14 +36,14 @@
           :index="index"
           :expandedCard="expandedCard"
           @toggle="toggleCard"
-        />
+        /> -->
       </div>
     </div>
 
     <div v-if="archivedRentals.length" class="mt-10">
       <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Past Rentals</h3>
       <div class="flex flex-col gap-4">
-        <ActivityCard
+        <!-- <ActivityCard
           v-for="(rental, index) in archivedRentals"
           :key="`archive-${index}`"
           :title="getTitle(rental)"
@@ -54,14 +54,15 @@
           :index="index"
           :expandedCard="expandedCard"
           @toggle="toggleCard"
-        />
+        /> -->
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { getUserID } from '../../utils/auth';
 import ActivityCard from './ActivityCard.vue';
 
 type RentalItem = {
@@ -81,6 +82,20 @@ const props = defineProps<{
   isEmployee?: boolean;
   employeeRentals?: RentalItem[];
 }>();
+
+onMounted(async () => {
+  const customerID = getUserID()
+  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity/${customerID}`)
+      if (res.ok) {
+        // TODO: use data with RentalCard
+        // const {bookings, rentings, archives} = await res.json()
+      }
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
+})
 
 const customerRentals: RentalItem[] = [
   {
