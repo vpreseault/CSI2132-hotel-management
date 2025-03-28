@@ -11,7 +11,7 @@ app.use(PrimeVue, {
         preset: Material,
         options: {
             prefix: 'p',
-            darkModeSelector: 'system',
+            darkModeSelector: 'light',
             cssLayer: {
                 name: 'primevue',
                 order: 'theme, base, primevue'
