@@ -7,12 +7,13 @@
   
       <NavBar role="employee" @toggleProfile="toggleProfileModal" @toggleHotel="toggleHotelModal" />
       
-      <LayoutSection title="All Hotel Rentings">
-        <div :class="gridColumns" class="mt-4 grid grid-cols-1 gap-4 justify-center">
+      <LayoutSection title="Current Rentals">
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
           <ActivityCard
             v-for="(rental, index) in hotelRentals"
             :key="`rental-${index}`"
             :customerName="rental.customer_name"
+            :hotelName="rental.hotel_name"
             :startDate="new Date(rental.start_date)"
             :endDate="new Date(rental.end_date)"
             :employeeName="rental.employee_name"
@@ -20,6 +21,24 @@
             :price="rental.total_price"
             :payment="rental.payment"
             :section="'rental'"
+            :index="index"
+            :expandedCard="expandedCard"
+            @toggle="toggleCard"
+          />
+        </div>
+      </LayoutSection>
+      <LayoutSection title="Upcomming Bookings">
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+          <ActivityCard
+            v-for="(booking, index) in hotelBookings"
+            :key="`booking-${index}`"
+            :customerName="booking.customer_name"
+            :hotelName="booking.hotel_name"
+            :startDate="new Date(booking.start_date)"
+            :endDate="new Date(booking.end_date)"
+            :roomNumber="booking.room_number"
+            :price="booking.total_price"
+            :section="'booking'"
             :index="index"
             :expandedCard="expandedCard"
             @toggle="toggleCard"
@@ -37,24 +56,12 @@
 </template>
   
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getUserID, removeAuthCookie } from '../utils/auth';
 import NavBar from '../components/LandingPage/NavBar.vue';
-import Booking from '../components/LandingPage/Booking.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import HotelModal from '../components/LandingPage/HotelModal.vue';
 import LayoutSection from '../components/Layout/LayoutSection.vue';
-
-type RentalItem = {
-  cardType: 'booking' | 'renting' | 'archive';
-  customer_name: string;
-  employee_name?: string;
-  room_number?: number;
-  start_date: string;
-  end_date: string;
-  total_price?: number;
-  payment?: boolean;
-};
 
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
@@ -97,26 +104,43 @@ function handleEmployeeBooking(booking: {
   // });
 }
 
+type RentalItem = {
+  customer_name: string;
+  hotel_name: string;
+  start_date: string;
+  end_date: string;
+  employee_name: string;
+  room_number: number;
+  total_price: number;
+  payment: boolean;
+};
+type BookingItem = {
+  customer_name: string;
+  hotel_name: string;
+  room_number: number;
+  start_date: string;
+  end_date: string;
+  total_price: number;
+};
 const hotelRentals = ref<Array<RentalItem>>([])
+  const hotelBookings = ref<Array<BookingItem>>([])
 onMounted(async () => {
   const employeeID = getUserID()
   
   try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rentings?employee_ID=${employeeID}`)
-      if (res.ok) {
-        // TODO: use data with RentalCard
-        hotelRentals.value = await res.json()
+      const rentalResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rentings?employee_ID=${employeeID}`)
+      if (rentalResponse.ok) {
+        hotelRentals.value = await rentalResponse.json()
       }
+
+      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings?employee_ID=${employeeID}`)
+      if (bookingResponse.ok) {
+        hotelBookings.value = await bookingResponse.json()
+      }
+
   } catch (error) {
       console.error('Error calling API:', error);
   }
-})
-
-const gridColumns = computed(() => {
-  if (hotelRentals.value.length > 1){
-    return `md:grid-cols-2 lg:grid-cols-2`
-  }
-  return `md:grid-cols-1 lg:grid-cols-1`
 })
 </script>
 
