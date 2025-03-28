@@ -21,6 +21,8 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/bookings", getBookingsHandler(ctx))
 	r.Get("/api/rentings", getRentingsHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
+
+	return hotelID, nil
 }
 
 func getHotelByEmployeeID(ctx *internal.AppContext, employeeID int) (int, error) {

@@ -63,6 +63,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { getUserID } from '../../utils/auth';
+import ActivityCard from './ActivityCard.vue';
 
 type RentalItem = {
   cardType: 'booking' | 'renting' | 'archive';
@@ -93,6 +94,43 @@ onMounted(async () => {
       }
   } catch (error) {
       console.error('Error calling API:', error);
+  }
+})
+
+const customerRentals: RentalItem[] = [
+  {
+    customer_name: "You",
+    room_number: 12,
+    start_date: "2025-03-24",
+    end_date: "2025-03-30",
+    cardType: "booking"
+  },
+  {
+    customer_name: "You",
+    room_number: 7,
+    start_date: "2025-04-01",
+    end_date: "2025-04-05",
+    cardType: "renting",
+    total_price: 300,
+    payment: false
+  },
+  {
+    customer_name: "You",
+    start_date: "2025-03-10",
+    end_date: "2025-03-15",
+    cardType: "archive"
+  },
+  {
+    customer_name: "You",
+    start_date: "2025-03-10",
+    end_date: "2025-03-15",
+    cardType: "archive"
+  },
+  {
+    customer_name: "You",
+    start_date: "2025-03-10",
+    end_date: "2025-03-15",
+    cardType: "archive"
   }
 })
 
