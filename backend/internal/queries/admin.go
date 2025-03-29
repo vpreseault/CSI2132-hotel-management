@@ -13,3 +13,5 @@ var GetEmployeesByHotelID = `SELECT
 	address
 FROM Employees
 WHERE hotel_ID = $1`
+
+var DeleteEmployeeByID = `DELETE FROM Employees WHERE employee_ID = $1`
