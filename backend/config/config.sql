@@ -21,16 +21,16 @@ CREATE TABLE HotelChains (
     chain_ID SERIAL PRIMARY KEY,
     chain_name VARCHAR(255) NOT NULL,
     central_office_address VARCHAR(255) NOT NULL, 
-    number_of_hotels INT NOT NULL CHECK (number_of_hotels > 0)
+    number_of_hotels INT NOT NULL DEFAULT 0
 );
 
 -- Insert into HotelChain
-INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) VALUES
-('Hilton', '456 King St, Toronto, ON', 8),
-('Best Western', '789 Sparks St, Ottawa, ON', 8),
-('Travelodge', '123 Crescent St, Montreal, QC', 8),
-('Four Seasons', '321 Granville St, Vancouver, BC', 8),
-('Fairmont', '100 Jasper Ave, Edmonton, AB', 8);
+INSERT INTO HotelChains (chain_name, central_office_address) VALUES
+('Hilton', '456 King St, Toronto, ON'),
+('Best Western', '789 Sparks St, Ottawa, ON'),
+('Travelodge', '123 Crescent St, Montreal, QC'),
+('Four Seasons', '321 Granville St, Vancouver, BC'),
+('Fairmont', '100 Jasper Ave, Edmonton, AB');
 
 -- Hotels Table
 CREATE TABLE Hotels (
@@ -38,53 +38,74 @@ CREATE TABLE Hotels (
     chain_ID INT NOT NULL,
     manager_ID INT UNIQUE,  
     hotel_name VARCHAR(255) NOT NULL,
-    number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
+    number_of_rooms INT NOT NULL DEFAULT 0,
     address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
+CREATE OR REPLACE FUNCTION update_hotel_chain_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE HotelChains 
+        SET number_of_hotels = number_of_hotels + 1
+        WHERE chain_ID = NEW.chain_ID;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE HotelChains 
+        SET number_of_hotels = number_of_hotels - 1
+        WHERE chain_ID = OLD.chain_ID;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_hotel_count
+    AFTER INSERT OR DELETE ON Hotels
+    FOR EACH ROW
+    EXECUTE FUNCTION update_hotel_chain_count();
+
 -- Insert into Hotel
-INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_name, address, category) VALUES
-(1, 1, 50, 'Hilton Grand Boston', '100 Boylston St, Boston, MA', 3),
-(1, 4, 25, 'Hilton Express Montreal', '103 Sherbrooke St, Montreal, QC', 4),
-(1, 7, 96, 'Hilton Express Edmonton', '106 Jasper Ave, Edmonton, AB', 4),
-(1, 10, 30, 'Hilton Elite Edmonton', '109 Jasper Ave, Edmonton, AB', 4),
-(1, 13, 61, 'Hilton Grand San Francisco', '112 Market St, San Francisco, CA', 5),
-(1, 16, 84, 'Hilton Express Vancouver', '115 Georgia St, Vancouver, BC', 4),
-(1, 19, 87, 'Hilton Central Seattle', '118 Pine St, Seattle, WA', 3),
-(1, 22, 97, 'Hilton Central New York', '121 Broadway, New York, NY', 3),
-(2, 25, 32, 'Best Western Downtown Ottawa', '124 Elgin St, Ottawa, ON', 4),
-(2, 28, 100, 'Best Western Select Seattle', '127 Pine St, Seattle, WA', 4),
-(2, 31, 48, 'Best Western Inn Miami', '130 Ocean Dr, Miami, FL', 4),
-(2, 34, 91, 'Best Western Plus Toronto', '133 King St, Toronto, ON', 4),
-(2, 37, 62, 'Best Western Select Vancouver', '136 Georgia St, Vancouver, BC', 3),
-(2, 40, 52, 'Best Western Plus Chicago', '139 Michigan Ave, Chicago, IL', 3),
-(2, 43, 91, 'Best Western Select Las Vegas', '142 Las Vegas Blvd, Las Vegas, NV', 5),
-(2, 46, 97, 'Best Western Plus Toronto', '145 King St, Toronto, ON', 3),
-(3, 49, 87, 'Travelodge Classic Calgary', '148 17th Ave, Calgary, AB', 5),
-(3, 52, 47, 'Travelodge Suites Edmonton', '151 Jasper Ave, Edmonton, AB', 5),
-(3, 55, 66, 'Travelodge Suites Montreal', '154 Sherbrooke St, Montreal, QC', 4),
-(3, 58, 26, 'Travelodge Central Halifax', '157 Barrington St, Halifax, NS', 5),
-(3, 61, 86, 'Travelodge Classic Ottawa', '160 Elgin St, Ottawa, ON', 4),
-(3, 64, 22, 'Travelodge Central Edmonton', '163 Jasper Ave, Edmonton, AB', 4),
-(3, 67, 58, 'Travelodge Classic New York', '166 Broadway, New York, NY', 4),
-(3, 70, 21, 'Travelodge Classic Calgary', '169 17th Ave, Calgary, AB', 3),
-(4, 73, 37, 'Four Seasons Elite San Francisco', '172 Market St, San Francisco, CA', 5),
-(4, 76, 94, 'Four Seasons East Edmonton', '175 Jasper Ave, Edmonton, AB', 4),
-(4, 79, 95, 'Four Seasons East Miami', '178 Ocean Dr, Miami, FL', 3),
-(4, 82, 49, 'Four Seasons Cityview Ottawa', '181 Elgin St, Ottawa, ON', 5),
-(4, 85, 25, 'Four Seasons West Vancouver', '184 Georgia St, Vancouver, BC', 5),
-(4, 88, 94, 'Four Seasons Elite Las Vegas', '187 Las Vegas Blvd, Las Vegas, NV', 3),
-(4, 91, 76, 'Four Seasons Grand Las Vegas', '101 Las Vegas Blvd, Las Vegas, NV', 3),
-(4, 94, 34, 'Four Seasons Cityview Edmonton', '104 Jasper Ave, Edmonton, AB', 5),
-(5, 97, 62, 'Fairmont Bayview Boston', '107 Boylston St, Boston, MA', 4),
-(5, 100, 74, 'Fairmont Plus Vancouver', '110 Georgia St, Vancouver, BC', 5),
-(5, 103, 80, 'Fairmont Signature Seattle', '113 Pine St, Seattle, WA', 4),
-(5, 106, 64, 'Fairmont Plus Chicago', '116 Michigan Ave, Chicago, IL', 5),
-(5, 109, 47, 'Fairmont Plus Miami', '119 Ocean Dr, Miami, FL', 3),
-(5, 112, 73, 'Fairmont Bayview Montreal', '122 Sherbrooke St, Montreal, QC', 3),
-(5, 115, 53, 'Fairmont Luxe Chicago', '125 Michigan Ave, Chicago, IL', 5),
-(5, 118, 79, 'Fairmont Bayview Miami', '128 Ocean Dr, Miami, FL', 5);
+INSERT INTO Hotels (chain_ID, manager_ID, hotel_name, address, category) VALUES
+(1, 1, 'Hilton Grand Boston', '100 Boylston St, Boston, MA', 3),
+(1, 4, 'Hilton Express Montreal', '103 Sherbrooke St, Montreal, QC', 4),
+(1, 7, 'Hilton Express Edmonton', '106 Jasper Ave, Edmonton, AB', 4),
+(1, 10, 'Hilton Elite Edmonton', '109 Jasper Ave, Edmonton, AB', 4),
+(1, 13, 'Hilton Grand San Francisco', '112 Market St, San Francisco, CA', 5),
+(1, 16, 'Hilton Express Vancouver', '115 Georgia St, Vancouver, BC', 4),
+(1, 19, 'Hilton Central Seattle', '118 Pine St, Seattle, WA', 3),
+(1, 22, 'Hilton Central New York', '121 Broadway, New York, NY', 3),
+(2, 25, 'Best Western Downtown Ottawa', '124 Elgin St, Ottawa, ON', 4),
+(2, 28, 'Best Western Select Seattle', '127 Pine St, Seattle, WA', 4),
+(2, 31, 'Best Western Inn Miami', '130 Ocean Dr, Miami, FL', 4),
+(2, 34, 'Best Western Plus Toronto', '133 King St, Toronto, ON', 4),
+(2, 37, 'Best Western Select Vancouver', '136 Georgia St, Vancouver, BC', 3),
+(2, 40, 'Best Western Plus Chicago', '139 Michigan Ave, Chicago, IL', 3),
+(2, 43, 'Best Western Select Las Vegas', '142 Las Vegas Blvd, Las Vegas, NV', 5),
+(2, 46, 'Best Western Plus Toronto', '145 King St, Toronto, ON', 3),
+(3, 49, 'Travelodge Classic Calgary', '148 17th Ave, Calgary, AB', 5),
+(3, 52, 'Travelodge Suites Edmonton', '151 Jasper Ave, Edmonton, AB', 5),
+(3, 55, 'Travelodge Suites Montreal', '154 Sherbrooke St, Montreal, QC', 4),
+(3, 58, 'Travelodge Central Halifax', '157 Barrington St, Halifax, NS', 5),
+(3, 61, 'Travelodge Classic Ottawa', '160 Elgin St, Ottawa, ON', 4),
+(3, 64, 'Travelodge Central Edmonton', '163 Jasper Ave, Edmonton, AB', 4),
+(3, 67, 'Travelodge Classic New York', '166 Broadway, New York, NY', 4),
+(3, 70, 'Travelodge Classic Calgary', '169 17th Ave, Calgary, AB', 3),
+(4, 73, 'Four Seasons Elite San Francisco', '172 Market St, San Francisco, CA', 5),
+(4, 76, 'Four Seasons East Edmonton', '175 Jasper Ave, Edmonton, AB', 4),
+(4, 79, 'Four Seasons East Miami', '178 Ocean Dr, Miami, FL', 3),
+(4, 82, 'Four Seasons Cityview Ottawa', '181 Elgin St, Ottawa, ON', 5),
+(4, 85, 'Four Seasons West Vancouver', '184 Georgia St, Vancouver, BC', 5),
+(4, 88, 'Four Seasons Elite Las Vegas', '187 Las Vegas Blvd, Las Vegas, NV', 3),
+(4, 91, 'Four Seasons Grand Las Vegas', '101 Las Vegas Blvd, Las Vegas, NV', 3),
+(4, 94, 'Four Seasons Cityview Edmonton', '104 Jasper Ave, Edmonton, AB', 5),
+(5, 97, 'Fairmont Bayview Boston', '107 Boylston St, Boston, MA', 4),
+(5, 100, 'Fairmont Plus Vancouver', '110 Georgia St, Vancouver, BC', 5),
+(5, 103, 'Fairmont Signature Seattle', '113 Pine St, Seattle, WA', 4),
+(5, 106, 'Fairmont Plus Chicago', '116 Michigan Ave, Chicago, IL', 5),
+(5, 109, 'Fairmont Plus Miami', '119 Ocean Dr, Miami, FL', 3),
+(5, 112, 'Fairmont Bayview Montreal', '122 Sherbrooke St, Montreal, QC', 3),
+(5, 115, 'Fairmont Luxe Chicago', '125 Michigan Ave, Chicago, IL', 5),
+(5, 118, 'Fairmont Bayview Miami', '128 Ocean Dr, Miami, FL', 5);
 
 -- Phone and Emails for hotel and hotelchain
 CREATE TABLE ChainPhones (
@@ -430,6 +451,27 @@ CREATE TABLE Rooms (
     extendable BOOLEAN NOT NULL,
     damaged BOOLEAN NOT NULL
 );
+
+CREATE OR REPLACE FUNCTION update_hotel_room_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE Hotels 
+        SET number_of_rooms = number_of_rooms + 1
+        WHERE hotel_ID = NEW.hotel_ID;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE Hotels 
+        SET number_of_rooms = number_of_rooms - 1
+        WHERE hotel_ID = OLD.hotel_ID;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_room_count
+    AFTER INSERT OR DELETE ON Rooms
+    FOR EACH ROW
+    EXECUTE FUNCTION update_hotel_room_count();
 
 -- Insert into Rooms
 INSERT INTO Rooms (hotel_ID, room_number, capacity, price, view_type, extendable, damaged) VALUES
@@ -1395,6 +1437,7 @@ CREATE VIEW RoomSearchView AS
 SELECT 
     r.*,
     hc.chain_name,
+    h.hotel_name,
     h.category,
     h.address,
     h.number_of_rooms as total_rooms,

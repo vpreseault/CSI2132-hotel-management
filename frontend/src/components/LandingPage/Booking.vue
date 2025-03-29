@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import GenericCard from './GenericCard.vue';
-import SearchSection from './SearchSection.vue';
+import SearchSection from '../Search/SearchSection.vue';
 import { Form } from '@primevue/forms';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
