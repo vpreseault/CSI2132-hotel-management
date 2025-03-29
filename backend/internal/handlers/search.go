@@ -93,6 +93,8 @@ func buildSearchQuery(params searchParams) *searchQuery {
 		sq.args = append(sq.args, *params.EndDate)
 	}
 
+	sq.query += " LIMIT 6"
+
 	return sq
 }
 
