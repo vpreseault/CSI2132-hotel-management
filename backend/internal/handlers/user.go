@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -52,6 +53,90 @@ func getCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		json.NewEncoder(w).Encode(customer)
+	}
+}
+
+func updateCustomerByID(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		customerID := chi.URLParam(r, "customer_ID")
+
+		var customer struct {
+			Name    string `json:"name"`
+			Address string `json:"address"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&customer); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		result, err := ctx.DB.Exec(queries.UpdateCustomerByID,
+			customer.Name,
+			customer.Address,
+			customerID,
+		)
+
+		if err != nil {
+			http.Error(w, "Failed to update customer", http.StatusInternalServerError)
+			return
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			http.Error(w, "Failed to get update result", http.StatusInternalServerError)
+			return
+		}
+
+		if rowsAffected == 0 {
+			http.Error(w, "Customer not found", http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Customer updated successfully",
+		})
+	}
+}
+
+func deleteCustomerByID(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		param := r.URL.Query().Get("customer_ID")
+		if param == "" {
+			http.Error(w, "customer_ID must be provided", http.StatusInternalServerError)
+			return
+		}
+
+		customerID, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided customer_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
+			return
+		}
+
+		res, err := ctx.DB.Exec(queries.DeleteCustomerByID, customerID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if rows, err := res.RowsAffected(); err != nil {
+			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("customer with ID %v not found", customerID), http.StatusNotFound)
+			return
+		} else if rows > 1 {
+			log.Printf("Multiple customers deleted from id: %v", customerID)
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Message string
+		}{
+			Message: fmt.Sprintf("Successfully deleted customer with ID: %v", customerID),
+		})
 	}
 }
 
@@ -163,5 +248,89 @@ func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		json.NewEncoder(w).Encode(employees)
+	}
+}
+
+func updateEmployeeByID(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		employeeID := chi.URLParam(r, "employee_ID")
+
+		var employee struct {
+			Name    string `json:"full_name"`
+			Address string `json:"address"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&employee); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		result, err := ctx.DB.Exec(queries.UpdateEmployeeByID,
+			employee.Name,
+			employee.Address,
+			employeeID,
+		)
+
+		if err != nil {
+			http.Error(w, "Failed to update employee", http.StatusInternalServerError)
+			return
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			http.Error(w, "Failed to get update result", http.StatusInternalServerError)
+			return
+		}
+
+		if rowsAffected == 0 {
+			http.Error(w, "Employee not found", http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Employee updated successfully",
+		})
+	}
+}
+
+func deleteEmployeeByID(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		param := r.URL.Query().Get("employee_ID")
+		if param == "" {
+			http.Error(w, "employee_ID must be provided", http.StatusInternalServerError)
+			return
+		}
+
+		employeeID, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided employee_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
+			return
+		}
+
+		res, err := ctx.DB.Exec(queries.DeleteEmployeeByID, employeeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if rows, err := res.RowsAffected(); err != nil {
+			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Employee with ID %v not found", employeeID), http.StatusNotFound)
+			return
+		} else if rows > 1 {
+			log.Printf("Multiple employees deleted from id: %v", employeeID)
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Message string
+		}{
+			Message: fmt.Sprintf("Successfully deleted employee with ID: %v", employeeID),
+		})
 	}
 }
