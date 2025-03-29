@@ -12,6 +12,45 @@ import (
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
+type hotelChain struct {
+	ID   int    `json:"chain_ID"`
+	Name string `json:"chain_name"`
+}
+
+func getChainsHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		rows, err := ctx.DB.Query(queries.GetChains)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		var chains []hotelChain
+		for rows.Next() {
+			var chain hotelChain
+
+			if err := rows.Scan(
+				&chain.ID,
+				&chain.Name,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			chains = append(chains, chain)
+		}
+
+		if err = rows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(chains)
+	}
+}
+
 func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

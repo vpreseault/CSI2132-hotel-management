@@ -6,8 +6,27 @@
         <h1 class="text-2xl mt-4">Welcome to your one-stop shop for all things Hotel Room Rentings!</h1>
         <p class="mt-4">You are logged in!</p>
       </div>
-  
-      <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" />
+
+      <LayoutSection title="Search For Room">
+        <div class="mt-4">
+          <SearchSection />
+        </div>
+      </LayoutSection>
+
+      <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center">
+        <GenericCard 
+          v-for="(hotel, index) in hotels" 
+          :key="index"
+          :title="hotel.title" 
+          :description="hotel.description" 
+          :details="formatDetails(hotel.details)"
+          :section="'book'"
+          :index="index"
+          :expandedCard="expandedCard"
+          @toggle="toggleCard"
+        />
+      </div> -->
+      <!-- <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" /> -->
       <Rental :expandedCard="expandedCard" :toggleCard="toggleCard" />
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
   

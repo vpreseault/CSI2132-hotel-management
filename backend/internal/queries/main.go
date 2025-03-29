@@ -4,6 +4,7 @@ package queries
 var BaseRoomSearch = `SELECT 
 	room_ID,
 	hotel_ID,
+	hotel_name,
 	room_number,
 	capacity,
 	price,
