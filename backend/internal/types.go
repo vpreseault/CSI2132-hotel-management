@@ -39,6 +39,7 @@ type Room struct {
 type SearchResult struct {
 	ID         int     `json:"room_ID"`
 	HotelID    int     `json:"hotel_ID"`
+	HotelName  string  `json:"hotel_name"`
 	RoomNumber string  `json:"room_number"`
 	Capacity   int     `json:"capacity"`
 	Price      float32 `json:"price"`

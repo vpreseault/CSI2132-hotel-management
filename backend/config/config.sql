@@ -370,6 +370,7 @@ CREATE VIEW RoomSearchView AS
 SELECT 
     r.*,
     hc.chain_name,
+    h.hotel_name,
     h.category,
     h.address,
     h.number_of_rooms as total_rooms,

@@ -112,6 +112,7 @@ func (q *searchQuery) executeQuery(ctx *internal.AppContext) ([]internal.SearchR
 		if err := rows.Scan(
 			&searchResult.ID,
 			&searchResult.HotelID,
+			&searchResult.HotelName,
 			&searchResult.RoomNumber,
 			&searchResult.Capacity,
 			&searchResult.Price,
