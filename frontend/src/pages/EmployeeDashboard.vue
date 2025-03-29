@@ -49,6 +49,7 @@
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal" @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
@@ -71,6 +72,7 @@ import LayoutSection from '../components/Layout/LayoutSection.vue';
 import { useToast } from "primevue/usetoast";
 import type { BookingItem, RentalItem } from '../types';
 import EmployeeList from '../components/LandingPage/EmployeeList.vue';
+import RoomList from '../components/LandingPage/RoomList.vue';
 import type { ToastMessageOptions } from 'primevue';
 
 const toast = useToast();
@@ -105,6 +107,15 @@ function showEmployeeDeletedToast(severity: ToastMessageOptions["severity"]) {
       detail: severity === 'success' ? 'Deleted employee account successfully.': 'Failed to delete employee account.', 
       life: 3000
     });
+}
+
+function showRoomDeletedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Deleted room successfully.' : 'Failed to delete room.', 
+    life: 3000 
+  })
 }
 
 function toggleCard(section: string, index: number) {
