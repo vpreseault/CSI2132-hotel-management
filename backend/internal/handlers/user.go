@@ -98,7 +98,7 @@ func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 		employeeName := r.URL.Query().Get("employee_name")
 
 		if managerID == "" && employeeName == "" {
-			http.Error(w, "Either manager_ID, employee_name must be provided", http.StatusInternalServerError)
+			http.Error(w, "Either manager_ID or employee_name must be provided", http.StatusInternalServerError)
 			return
 		}
 
