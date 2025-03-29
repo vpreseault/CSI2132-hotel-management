@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -89,21 +90,78 @@ func createEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func getEmployeeHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		userName := chi.URLParam(r, "name")
-		var employee internal.Employee
+		managerID := r.URL.Query().Get("manager_ID")
+		employeeName := r.URL.Query().Get("employee_name")
 
-		err := ctx.DB.QueryRow(queries.GetEmployeeByName, userName).Scan(&employee.ID, &employee.HotelID, &employee.FullName, &employee.Address, &employee.IDType, &employee.IDNumber, &employee.Role)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				// Treat 0 rows error differently
-				// http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if managerID == "" && employeeName == "" {
+			http.Error(w, "Either manager_ID or employee_name must be provided", http.StatusInternalServerError)
+			return
 		}
-		json.NewEncoder(w).Encode(employee)
+
+		var query string
+		var arg interface{}
+
+		if employeeName != "" {
+			query = queries.GetEmployeeByName
+			arg = employeeName
+		} else {
+			query = queries.GetEmployeesByHotelID
+			param, err := strconv.Atoi(managerID)
+			if err != nil {
+				http.Error(w, fmt.Errorf("provided manager_ID '%v' is not a number", managerID).Error(), http.StatusInternalServerError)
+				return
+			}
+
+			hotelID, err := getHotelByEmployeeID(ctx, param)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			arg = hotelID
+		}
+
+		rows, err := ctx.DB.Query(query, arg)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		var employees []internal.Employee
+		for rows.Next() {
+			var employee internal.Employee
+			if err := rows.Scan(
+				&employee.ID,
+				&employee.FullName,
+				&employee.Role,
+				&employee.Address,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			employees = append(employees, employee)
+		}
+
+		if err = rows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if employeeName != "" {
+			if len(employees) > 1 {
+				http.Error(w, fmt.Errorf("more than one employee with name: %v", employeeName).Error(), http.StatusInternalServerError)
+			} else if len(employees) == 1 {
+				json.NewEncoder(w).Encode(employees[0])
+			} else {
+				json.NewEncoder(w).Encode(nil)
+			}
+			return
+		}
+
+		json.NewEncoder(w).Encode(employees)
 	}
 }

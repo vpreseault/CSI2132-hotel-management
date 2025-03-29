@@ -2,31 +2,73 @@
     <div id="employee-list" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md mx-75">
       <h2 class="text-center text-xl text-gray-600 font-semibold">All Employees</h2>
       <div v-if="employees.length" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
-        <EmployeeCard v-for="employee in employees" :key="employee.id" :employee="employee" @delete="deleteEmployee(employee.id)"/>
+        <EmployeeCard 
+          v-for="employee in employees" 
+          :key="employee.employee_ID" 
+          :name="employee.full_name"
+          :role="employee.role"
+          :address="employee.address"
+          @delete="deleteEmployee(employee.employee_ID)"/>
       </div>
       <p v-else class="text-center text-gray-500 mt-8">No employees found.</p>
     </div>
 </template>
   
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import EmployeeCard from './EmployeeCard.vue';
+import { getUserID } from '../../utils/auth';
+import type { ToastMessageOptions } from 'primevue';
+
+const emit = defineEmits<{
+  'delete': [severity: ToastMessageOptions["severity"]],
+}>()
 
 type Employee = {
-id: number;
-name: string;
-role: string;
-email: string;
+  employee_ID: number;
+  full_name: string;
+  address: string;
+  role: string;
 };
 
-const employees = ref<Employee[]>([
-{ id: 1, name: 'Alice Johnson', role: 'Employee', email: 'alice@hotel.com' },
-{ id: 2, name: 'Bob Smith', role: 'Employee', email: 'bob@hotel.com' },
-{ id: 3, name: 'Charlie Rose', role: 'Employee', email: 'charlie@hotel.com' },
-]);
+const employees = ref<Employee[]>([]);
 
-function deleteEmployee(id: number) {
-employees.value = employees.value.filter(emp => emp.id !== id);
+onMounted(async () => {
+  await fetchEmployees()
+})
+
+const managerID = ref(getUserID())
+async function fetchEmployees() {
+  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/employees?manager_ID=${managerID.value}`)
+      if (res.ok) {
+        employees.value = await res.json()
+      }
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
+}
+
+
+async function deleteEmployee(id: number) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/employees?employee_ID=${id}`,
+        {
+            method: 'DELETE',
+        }
+    )
+    
+    if (res.ok) {
+        emit('delete', 'success')
+        await fetchEmployees()
+    } else {
+      emit('delete', 'error')
+    }
+  } catch (error) {
+      console.error('Error calling API:', error);
+      emit('delete', 'error')
+  }
 }
 </script>
   

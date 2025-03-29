@@ -36,7 +36,7 @@ const resolver = ({ values }: FormResolverOptions) => {
 async function onFormSubmit(e: FormSubmitEvent) {
     if (e.valid) {
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? 'employees' : 'customers'}/${e.values.fullname}`)
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${props.employee ? `employees?employee_name=${e.values.fullname}` : `customers/${e.values.fullname}`}`)
             if (res.ok) {
                 const data = await res.json()
 
