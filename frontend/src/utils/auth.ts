@@ -6,6 +6,7 @@ type User = {
     name: string
     role: string
     ID: number
+    address: string
 }
 
 export function setAuthCookie(user: User) {
@@ -18,6 +19,10 @@ export function getUserRole() {
 
 export function getUserID() {
     return authCookie.get('auth').ID
+}
+
+export function getUserAddress() {
+    return authCookie.get('auth').address
 }
 
 export function getUserName() {

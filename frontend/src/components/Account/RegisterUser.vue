@@ -90,6 +90,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
                     ID: data.customer_ID,
                     name: data.full_name,
                     role: 'Customer',
+                    address: data.address
                 }
 
                 setAuthCookie(user)
