@@ -69,6 +69,7 @@ import HotelModal from '../components/LandingPage/HotelModal.vue';
 import CreateEmployeeModal from '../components/LandingPage/CreateEmployeeModal.vue';
 import LayoutSection from '../components/Layout/LayoutSection.vue';
 import { useToast } from "primevue/usetoast";
+import type { BookingItem, RentalItem } from '../types';
 import EmployeeList from '../components/LandingPage/EmployeeList.vue';
 import type { ToastMessageOptions } from 'primevue';
 
@@ -135,24 +136,6 @@ function handleEmployeeBooking(booking: {
   // });
 }
 
-type RentalItem = {
-  customer_name: string;
-  hotel_name: string;
-  start_date: string;
-  end_date: string;
-  employee_name: string;
-  room_number: number;
-  total_price: number;
-  payment: boolean;
-};
-type BookingItem = {
-  customer_name: string;
-  hotel_name: string;
-  room_number: number;
-  start_date: string;
-  end_date: string;
-  total_price: number;
-};
 const hotelRentals = ref<Array<RentalItem>>([])
 const hotelBookings = ref<Array<BookingItem>>([])
 onMounted(async () => {
