@@ -60,7 +60,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_hotel_count
-    AFTER INSERT OR UPDATE OR DELETE ON Hotels
+    AFTER INSERT OR DELETE ON Hotels
     FOR EACH ROW
     EXECUTE FUNCTION update_hotel_chain_count();
 
@@ -470,7 +470,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_room_count
-    AFTER INSERT OR UPDATE OR DELETE ON Rooms
+    AFTER INSERT OR DELETE ON Rooms
     FOR EACH ROW
     EXECUTE FUNCTION update_hotel_room_count();
 
