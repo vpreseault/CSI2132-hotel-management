@@ -45,7 +45,7 @@
           @toggle="toggleCard"
         />
       </div>
-      <p v-else class="flex justify-center mt-4">There are no upcomming bookings.</p>
+      <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
