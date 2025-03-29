@@ -82,16 +82,12 @@
       </LayoutSection>
       
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
-  
-      <div class="mt-16 text-center">
-        <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="handleLogout"> Logout </button>
-      </div>
     </div>
 </template>
   
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { getUserID, removeAuthCookie } from '../utils/auth';
+import { getUserID } from '../utils/auth';
 import NavBar from '../components/LandingPage/NavBar.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import type { RentalItem, BookingItem } from '../types';
@@ -107,11 +103,6 @@ expandedCard.value = expandedCard.value.section === section && expandedCard.valu
 
 function toggleProfileModal() {
   isProfileModalOpen.value = !isProfileModalOpen.value;
-}
-
-function handleLogout() {
-  removeAuthCookie();
-  window.location.href = '/';
 }
 
 const customerRentals = ref<Array<RentalItem>>([])

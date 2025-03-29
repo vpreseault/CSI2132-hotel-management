@@ -55,16 +55,13 @@
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
 
-    <div class="mt-16 text-center pb-3">
-        <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="handleLogout">Logout</button>
-    </div>
     <Toast position="bottom-center" />
   </div>
 </template>
   
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { getUserID, getUserRole, removeAuthCookie } from '../utils/auth';
+import { getUserID, getUserRole } from '../utils/auth';
 import NavBar from '../components/LandingPage/NavBar.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import HotelModal from '../components/LandingPage/HotelModal.vue';
@@ -113,11 +110,6 @@ function toggleCard(section: string, index: number) {
   expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index 
     ? { section: null, index: null } 
     : { section, index };
-}
-
-function handleLogout() {
-  removeAuthCookie();
-  window.location.href = '/';
 }
 
 function handleEmployeeBooking(booking: {
