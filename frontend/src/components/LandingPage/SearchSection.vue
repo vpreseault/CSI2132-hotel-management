@@ -53,13 +53,32 @@
       <Button label="Search" icon="pi pi-search" @click="submitSearch" />
       <Button label="Clear Filters"severity="secondary" icon="pi pi-times" @click="clearFilters" />
     </div>
-    {{ searchResults }}
-    <!-- <SearchCard :rooms="searchResults" :show="showDialog" @close="showDialog = false" /> -->
+    
+    <div v-if="searchResults.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <template v-for="(room) in searchResults" :key="index">
+          <SearchResult 
+            :hotelName="room.hotel_ID"
+            :chainName="room.chain_name"
+            :address="room.address"
+            :viewType="room.view_type"
+            :roomNumber="room.room_number"
+            :capacity="room.capacity"
+            :price="room.price"
+            :category="room.category"
+            :totalRooms="room.total_rooms"
+            :extendable="room.extendable"
+            :damaged="room.damaged"
+          />
+      </template>
+    </div>
+    <div v-else-if="hasSearched" class="text-gray-600">No results found for your filters.</div>
+    <SearchCard :rooms="searchResults" :show="false" @close="showDialog = false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue';
+import SearchResult from '../Search/SearchResult.vue'
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -105,12 +124,13 @@ onMounted(async () => {
 })
 
 const searchResults = ref<SearchResult[]>([]);
+const hasSearched = ref(false)
 const showDialog = ref(false);
 
 type SearchResult = {
   room_ID: number,
 	hotel_ID: number,
-	room_number: string,
+	room_number: number,
 	capacity: number,
 	price: number,
 	view_type: string,
@@ -141,6 +161,7 @@ function validate() {
 
 async function submitSearch() {
     if (validate()) {
+      hasSearched.value = true
         try {
           const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/search`,
               {
