@@ -21,7 +21,7 @@ defineProps<{
     chainName: string
     address: string
     viewType: string
-    roomNumber: number
+    roomNumber: string
     capacity: number
     price: number
     category: number
