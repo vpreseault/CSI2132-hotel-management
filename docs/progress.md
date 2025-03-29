@@ -18,35 +18,35 @@
  
 3. (10%) Database queries: Implement at least 4 queries of your choice on your database. Implement at least 1 query with aggregation and at least 1 with a nested query.  
     - [x] 4 choice queries
-        - [x] Query `CreateCustomer` implmented in PR #14
-        - [x] Query `GetEmployeeByName` implmented in PR #14
-        - [x] Query `GetCustomerRentingArchives` implmented in PR #35
-        - [x] Query `BaseRoomSearch` implmented in PR #38
+        - [x] Query `CreateCustomer` implemented in PR #14
+        - [x] Query `GetEmployeeByName` implemented in PR #14
+        - [x] Query `GetCustomerRentingArchives` implemented in PR #35
+        - [x] Query `BaseRoomSearch` implemented in PR #38
     - 1 aggregation query
-        - [ ] Query X implmented in PR #Y
+        - [ ] Query X implemented in PR #Y
     - 1 nested query
-        - [x] Query `GetCustomerBookings` implmented in PR #Y
+        - [x] Query `GetCustomerBookings` implemented in PR #Y
 
 4. (10%) Database modifications: Create the necessary SQL modifications (use queries and especially triggers): Your database should allow insert, delete and update operations of data in 
 your database according to the referential integrity constraints, and moreover, to the user-defined constraints, which you have defined. Implement at least 2 triggers of your choice for this purpose. 
     - [x] 2 triggers
-        - [x] Trigger `update_hotel_count` implmented in PR #69
-        - [x] Trigger `update_room_count` implmented in PR #69
+        - [x] Trigger `update_hotel_count` implemented in PR #69
+        - [x] Trigger `update_room_count` implemented in PR #69
     - 1 insert query
-        - [x] Query `CreateEmployee` implmented in PR #14
+        - [x] Query `CreateEmployee` implemented in PR #14
     - 1 delete query
-        - [x] Query `DeleteChainByID` implmented in PR #53
+        - [x] Query `DeleteChainByID` implemented in PR #53
     - 1 update query
-        - [ ] Query X implmented in PR #Y
+        - [ ] Query X implemented in PR #Y
 
 5. (5%) Database indexes: Implement at least 3 indexes on the relations of your database and justify why you have chosen these indexes: explain what type of queries and data updates you are expecting on your database and how these indexes are useful to accelerate querying of the database.
-    - [ ] Index X implmented in PR #Y
-    - [ ] Index X implmented in PR #Y
-    - [ ] Index X implmented in PR #Y
+    - [ ] Index X implemented in PR #Y
+    - [ ] Index X implemented in PR #Y
+    - [ ] Index X implemented in PR #Y
 
 6. ✔ (5%) Database views: Implement 2 views. View 1: the first view is the number of available rooms per area. View 2: the second view is the aggregated capacity of all the rooms of a specific hotel. You are welcome to implement more views of your choice. 
-    - [x] Number of available rooms implmented in PR #41
-    - [x] Aggregated hotel room capacity implmented in PR #41
+    - [x] Number of available rooms implemented in PR #41
+    - [x] Aggregated hotel room capacity implemented in PR #41
 
 7.1 (30%) Web application: Design and implement an appropriate User Interface, through which a user will be able to see the available rooms by giving different, multiple and combinations of criteria in order to choose the room that he/she is interested in and book it or rent it. These criteria should be: the dates (start, end) of booking or renting, the room capacity, the area, the hotel chain, the category of the hotel, the total number of rooms in the hotel, the price of the rooms. The user should be able to see the available choices when he/she changes the value of any of these criteria. 
     - [x] Customer can search for rooms
