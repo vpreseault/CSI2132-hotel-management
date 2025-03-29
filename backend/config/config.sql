@@ -21,16 +21,16 @@ CREATE TABLE HotelChains (
     chain_ID SERIAL PRIMARY KEY,
     chain_name VARCHAR(255) NOT NULL,
     central_office_address VARCHAR(255) NOT NULL, 
-    number_of_hotels INT NOT NULL CHECK (number_of_hotels > 0)
+    number_of_hotels INT NOT NULL DEFAULT 0
 );
 
 -- Insert into HotelChain
-INSERT INTO HotelChains (chain_name, central_office_address, number_of_hotels) VALUES
-('Hilton', '456 King St, Toronto, ON', 8),
-('Best Western', '789 Sparks St, Ottawa, ON', 8),
-('Travelodge', '123 Crescent St, Montreal, QC', 8),
-('Four Seasons', '321 Granville St, Vancouver, BC', 8),
-('Fairmont', '100 Jasper Ave, Edmonton, AB', 8);
+INSERT INTO HotelChains (chain_name, central_office_address) VALUES
+('Hilton', '456 King St, Toronto, ON'),
+('Best Western', '789 Sparks St, Ottawa, ON'),
+('Travelodge', '123 Crescent St, Montreal, QC'),
+('Four Seasons', '321 Granville St, Vancouver, BC'),
+('Fairmont', '100 Jasper Ave, Edmonton, AB');
 
 -- Hotels Table
 CREATE TABLE Hotels (
@@ -38,53 +38,74 @@ CREATE TABLE Hotels (
     chain_ID INT NOT NULL,
     manager_ID INT UNIQUE,  
     hotel_name VARCHAR(255) NOT NULL,
-    number_of_rooms INT NOT NULL CHECK (number_of_rooms > 0),  
+    number_of_rooms INT NOT NULL DEFAULT 0,
     address VARCHAR(255) NOT NULL,
     category INT NOT NULL CHECK (category BETWEEN 1 AND 5)
 );
 
+CREATE OR REPLACE FUNCTION update_hotel_chain_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE HotelChains 
+        SET number_of_hotels = number_of_hotels + 1
+        WHERE chain_ID = NEW.chain_ID;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE HotelChains 
+        SET number_of_hotels = number_of_hotels - 1
+        WHERE chain_ID = OLD.chain_ID;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_hotel_count
+    AFTER INSERT OR UPDATE OR DELETE ON Hotels
+    FOR EACH ROW
+    EXECUTE FUNCTION update_hotel_chain_count();
+
 -- Insert into Hotel
-INSERT INTO Hotels (chain_ID, manager_ID, number_of_rooms, hotel_name, address, category) VALUES
-(1, 1, 50, 'Hilton Boston 1', '1101 Boylston St, Boston, MA', 3),
-(1, 4, 25, 'Hilton Montreal 2', '301 Sherbrooke St, Montreal, QC', 4),
-(1, 7, 96, 'Hilton Edmonton 3', '600 Jasper Ave, Edmonton, AB', 4),
-(1, 10, 30, 'Hilton Edmonton 4', '600 Jasper Ave, Edmonton, AB', 4),
-(1, 13, 61, 'Hilton San Francisco 5', '1400 Market St, San Francisco, CA', 5),
-(1, 16, 84, 'Hilton Vancouver 6', '500 Georgia St, Vancouver, BC', 4),
-(1, 19, 87, 'Hilton Seattle 7', '901 Pine St, Seattle, WA', 3),
-(1, 22, 97, 'Hilton New York 8', '1001 Broadway, New York, NY', 3),
-(2, 25, 32, 'Best Western Ottawa 9', '200 Elgin St, Ottawa, ON', 4),
-(2, 28, 100, 'Best Western Seattle 10', '900 Pine St, Seattle, WA', 4),
-(2, 31, 48, 'Best Western Miami 11', '1201 Ocean Dr, Miami, FL', 4),
-(2, 34, 91, 'Best Western Toronto 12', '101 King St, Toronto, ON', 4),
-(2, 37, 62, 'Best Western Vancouver 13', '500 Georgia St, Vancouver, BC', 3),
-(2, 40, 52, 'Best Western Chicago 14', '801 Michigan Ave, Chicago, IL', 3),
-(2, 43, 91, 'Best Western Las Vegas 15', '1301 Las Vegas Blvd, Las Vegas, NV', 5),
-(2, 46, 97, 'Best Western Toronto 16', '100 King St, Toronto, ON', 3),
-(3, 49, 87, 'Travelodge Calgary 17', '701 17th Ave, Calgary, AB', 5),
-(3, 52, 47, 'Travelodge Edmonton 18', '601 Jasper Ave, Edmonton, AB', 5),
-(3, 55, 66, 'Travelodge Montreal 19', '300 Sherbrooke St, Montreal, QC', 4),
-(3, 58, 26, 'Travelodge Halifax 20', '400 Barrington St, Halifax, NS', 5),
-(3, 61, 86, 'Travelodge Ottawa 21', '200 Elgin St, Ottawa, ON', 4),
-(3, 64, 22, 'Travelodge Edmonton 22', '600 Jasper Ave, Edmonton, AB', 4),
-(3, 67, 58, 'Travelodge New York 23', '1000 Broadway, New York, NY', 4),
-(3, 70, 21, 'Travelodge Calgary 24', '700 17th Ave, Calgary, AB', 3),
-(4, 73, 37, 'Four Seasons San Francisco 25', '1401 Market St, San Francisco, CA', 5),
-(4, 76, 94, 'Four Seasons Edmonton 26', '601 Jasper Ave, Edmonton, AB', 4),
-(4, 79, 95, 'Four Seasons Miami 27', '1201 Ocean Dr, Miami, FL', 3),
-(4, 82, 49, 'Four Seasons Ottawa 28', '201 Elgin St, Ottawa, ON', 5),
-(4, 85, 25, 'Four Seasons Vancouver 29', '501 Georgia St, Vancouver, BC', 5),
-(4, 88, 94, 'Four Seasons Las Vegas 30', '1300 Las Vegas Blvd, Las Vegas, NV', 3),
-(4, 91, 76, 'Four Seasons Las Vegas 31', '1301 Las Vegas Blvd, Las Vegas, NV', 3),
-(4, 94, 34, 'Four Seasons Edmonton 32', '601 Jasper Ave, Edmonton, AB', 5),
-(5, 97, 62, 'Fairmont Boston 33', '1100 Boylston St, Boston, MA', 4),
-(5, 100, 74, 'Fairmont Vancouver 34', '501 Georgia St, Vancouver, BC', 5),
-(5, 103, 80, 'Fairmont Seattle 35', '900 Pine St, Seattle, WA', 4),
-(5, 106, 64, 'Fairmont Chicago 36', '801 Michigan Ave, Chicago, IL', 5),
-(5, 109, 47, 'Fairmont Miami 37', '1200 Ocean Dr, Miami, FL', 3),
-(5, 112, 73, 'Fairmont Montreal 38', '300 Sherbrooke St, Montreal, QC', 3),
-(5, 115, 53, 'Fairmont Chicago 39', '800 Michigan Ave, Chicago, IL', 5),
-(5, 118, 79, 'Fairmont Miami 40', '1200 Ocean Dr, Miami, FL', 5);
+INSERT INTO Hotels (chain_ID, manager_ID, hotel_name, address, category) VALUES
+(1, 1, 'Hilton Boston 1', '1101 Boylston St, Boston, MA', 3),
+(1, 4, 'Hilton Montreal 2', '301 Sherbrooke St, Montreal, QC', 4),
+(1, 7, 'Hilton Edmonton 3', '600 Jasper Ave, Edmonton, AB', 4),
+(1, 10, 'Hilton Edmonton 4', '600 Jasper Ave, Edmonton, AB', 4),
+(1, 13, 'Hilton San Francisco 5', '1400 Market St, San Francisco, CA', 5),
+(1, 16, 'Hilton Vancouver 6', '500 Georgia St, Vancouver, BC', 4),
+(1, 19, 'Hilton Seattle 7', '901 Pine St, Seattle, WA', 3),
+(1, 22, 'Hilton New York 8', '1001 Broadway, New York, NY', 3),
+(2, 25, 'Best Western Ottawa 9', '200 Elgin St, Ottawa, ON', 4),
+(2, 28, 'Best Western Seattle 10', '900 Pine St, Seattle, WA', 4),
+(2, 31, 'Best Western Miami 11', '1201 Ocean Dr, Miami, FL', 4),
+(2, 34, 'Best Western Toronto 12', '101 King St, Toronto, ON', 4),
+(2, 37, 'Best Western Vancouver 13', '500 Georgia St, Vancouver, BC', 3),
+(2, 40, 'Best Western Chicago 14', '801 Michigan Ave, Chicago, IL', 3),
+(2, 43, 'Best Western Las Vegas 15', '1301 Las Vegas Blvd, Las Vegas, NV', 5),
+(2, 46, 'Best Western Toronto 16', '100 King St, Toronto, ON', 3),
+(3, 49, 'Travelodge Calgary 17', '701 17th Ave, Calgary, AB', 5),
+(3, 52, 'Travelodge Edmonton 18', '601 Jasper Ave, Edmonton, AB', 5),
+(3, 55, 'Travelodge Montreal 19', '300 Sherbrooke St, Montreal, QC', 4),
+(3, 58, 'Travelodge Halifax 20', '400 Barrington St, Halifax, NS', 5),
+(3, 61, 'Travelodge Ottawa 21', '200 Elgin St, Ottawa, ON', 4),
+(3, 64, 'Travelodge Edmonton 22', '600 Jasper Ave, Edmonton, AB', 4),
+(3, 67, 'Travelodge New York 23', '1000 Broadway, New York, NY', 4),
+(3, 70, 'Travelodge Calgary 24', '700 17th Ave, Calgary, AB', 3),
+(4, 73, 'Four Seasons San Francisco 25', '1401 Market St, San Francisco, CA', 5),
+(4, 76, 'Four Seasons Edmonton 26', '601 Jasper Ave, Edmonton, AB', 4),
+(4, 79, 'Four Seasons Miami 27', '1201 Ocean Dr, Miami, FL', 3),
+(4, 82, 'Four Seasons Ottawa 28', '201 Elgin St, Ottawa, ON', 5),
+(4, 85, 'Four Seasons Vancouver 29', '501 Georgia St, Vancouver, BC', 5),
+(4, 88, 'Four Seasons Las Vegas 30', '1300 Las Vegas Blvd, Las Vegas, NV', 3),
+(4, 91, 'Four Seasons Las Vegas 31', '1301 Las Vegas Blvd, Las Vegas, NV', 3),
+(4, 94, 'Four Seasons Edmonton 32', '601 Jasper Ave, Edmonton, AB', 5),
+(5, 97, 'Fairmont Boston 33', '1100 Boylston St, Boston, MA', 4),
+(5, 100, 'Fairmont Vancouver 34', '501 Georgia St, Vancouver, BC', 5),
+(5, 103, 'Fairmont Seattle 35', '900 Pine St, Seattle, WA', 4),
+(5, 106, 'Fairmont Chicago 36', '801 Michigan Ave, Chicago, IL', 5),
+(5, 109, 'Fairmont Miami 37', '1200 Ocean Dr, Miami, FL', 3),
+(5, 112, 'Fairmont Montreal 38', '300 Sherbrooke St, Montreal, QC', 3),
+(5, 115, 'Fairmont Chicago 39', '800 Michigan Ave, Chicago, IL', 5),
+(5, 118, 'Fairmont Miami 40', '1200 Ocean Dr, Miami, FL', 5);
 
 
 -- Phone and Emails for hotel and hotelchain
@@ -431,6 +452,27 @@ CREATE TABLE Rooms (
     extendable BOOLEAN NOT NULL,
     damaged BOOLEAN NOT NULL
 );
+
+CREATE OR REPLACE FUNCTION update_hotel_room_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE Hotels 
+        SET number_of_rooms = number_of_rooms + 1
+        WHERE hotel_ID = NEW.hotel_ID;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE Hotels 
+        SET number_of_rooms = number_of_rooms - 1
+        WHERE hotel_ID = OLD.hotel_ID;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_room_count
+    AFTER INSERT OR UPDATE OR DELETE ON Rooms
+    FOR EACH ROW
+    EXECUTE FUNCTION update_hotel_room_count();
 
 -- Insert into Rooms
 INSERT INTO Rooms (hotel_ID, room_number, capacity, price, view_type, extendable, damaged) VALUES
