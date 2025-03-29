@@ -69,6 +69,11 @@ func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 		}
 		if rows, err := res.RowsAffected(); err != nil {
 			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Chain with ID %v not found", chainID), http.StatusNotFound)
+			return
 		} else if rows > 1 {
 			log.Printf("Multiple chains deleted from id: %v", chainID)
 		}
@@ -95,6 +100,11 @@ func deleteHotelByID(ctx *internal.AppContext) http.HandlerFunc {
 		}
 		if rows, err := res.RowsAffected(); err != nil {
 			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
+			return
 		} else if rows > 1 {
 			log.Printf("Multiple hotels deleted from id: %v", hotelID)
 		}
@@ -121,10 +131,56 @@ func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
 		}
 		if rows, err := res.RowsAffected(); err != nil {
 			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Room with ID %v not found", roomID), http.StatusNotFound)
+			return
 		} else if rows > 1 {
 			log.Printf("Multiple rooms deleted from id: %v", roomID)
 		}
 
 		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully deleted room with ID: %v", roomID)})
+	}
+}
+
+func deleteEmployeeByID(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		param := r.URL.Query().Get("employee_ID")
+		if param == "" {
+			http.Error(w, "employee_ID must be provided", http.StatusInternalServerError)
+			return
+		}
+
+		employeeID, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided employee_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
+			return
+		}
+
+		res, err := ctx.DB.Exec(queries.DeleteEmployeeByID, employeeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if rows, err := res.RowsAffected(); err != nil {
+			log.Printf("Error getting affected rows: %v", err.Error())
+			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Employee with ID %v not found", employeeID), http.StatusNotFound)
+			return
+		} else if rows > 1 {
+			log.Printf("Multiple employees deleted from id: %v", employeeID)
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Message string
+		}{
+			Message: fmt.Sprintf("Successfully deleted employee with ID: %v", employeeID),
+		})
 	}
 }

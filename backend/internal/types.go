@@ -17,11 +17,11 @@ type Customer struct {
 
 type Employee struct {
 	ID       int    `json:"employee_ID"`
-	HotelID  int    `json:"hotel_ID"`
+	HotelID  int    `json:"hotel_ID,omitempty"`
 	FullName string `json:"full_name"`
 	Address  string `json:"address"`
-	IDType   string `json:"ID_type"`
-	IDNumber string `json:"ID_number"`
+	IDType   string `json:"ID_type,omitempty"`
+	IDNumber string `json:"ID_number,omitempty"`
 	Role     string `json:"role"`
 }
 
