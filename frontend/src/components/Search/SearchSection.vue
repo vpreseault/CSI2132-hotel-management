@@ -18,7 +18,7 @@
         <!-- Hotel Chain -->
         <div class="flex flex-col">
           <label class="font-medium">Hotel Chain</label>
-          <Select v-model="filters.chain" :options="chains" optionLabel="chain_name" optionValue="chain_ID" placeholder="Select Hotel Chain" class="w-full"/>
+          <Select v-model="filters.chain" :options="chains" optionLabel="chain_name" optionValue="chain_name" placeholder="Select Hotel Chain" class="w-full"/>
         </div>
       </div>
   
@@ -26,7 +26,13 @@
       <div class="flex flex-wrap justify-center gap-6 mb-10">
         <div class="flex items-center gap-4">
           <div class="flex-1">
-            <label class="font-medium">Room Capacity: {{ filters.roomCapacity }}</label>
+            <label class="font-medium">Max Room Price: {{filters.roomPrice ? `$${filters.roomPrice}`:'' }}</label>
+            <Slider v-model="filters.roomPrice" :min="5" :max="500" :step="5" class="w-56 mt-3" />
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex-1">
+            <label class="font-medium">Minimum Room Capacity: {{ filters.roomCapacity }}</label>
             <Slider v-model="filters.roomCapacity" :min="1" :max="10" class="w-56 mt-3" />
           </div>
         </div>
@@ -38,14 +44,8 @@
         </div>
         <div class="flex items-center gap-4">
           <div class="flex-1">
-            <label class="font-medium">Total Hotel Rooms: {{ filters.totalRooms }}</label>
+            <label class="font-medium">Total Rooms in Hotel: {{ filters.totalRooms }}</label>
             <Slider v-model="filters.totalRooms" :min="1" :max="25" class="w-56 mt-3" />
-          </div>
-        </div>
-        <div class="flex items-center gap-4">
-          <div class="flex-1">
-            <label class="font-medium">Max Room Price: {{filters.roomPrice ? `$${filters.roomPrice}`:'' }}</label>
-            <Slider v-model="filters.roomPrice" :min="50" :max="1000" class="w-56 mt-3" />
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
         <Button label="Clear Filters"severity="secondary" icon="pi pi-times" @click="clearFilters" />
       </div>
     </div>
-
+    
     <div v-if="searchResults?.length > 0 && showResults" class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <template v-for="(room) in searchResults" :key="`${room.chain_name}-${room.hotel_ID}`">
         <SearchCard 
@@ -74,7 +74,10 @@
         />
       </template>
     </div>
-    <div v-else-if="showResults" class="text-gray-600">No results found for your filters.</div>
+    <div v-else-if="showResults">
+      <hr class="mb-8">
+      <p class="text-gray-600 text-center">No results found for your filters.</p>
+    </div>
     <Dialog v-model:visible="bookingModalIsVisible" modal header="Search Results" class="w-full max-w-4xl" @hide="bookingModalIsVisible= false">
       <BookCard
         :room="selectedRoom"

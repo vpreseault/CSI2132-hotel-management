@@ -27,3 +27,13 @@ body {
   height: 100%;
   width: 100%
 }
+
+.p-accordionpanel-active {
+  margin: 0;
+  border: 1px solid black;
+}
+
+.p-accordioncontent-content {
+  padding: 0 1rem;
+  padding-bottom: 0.25rem;
+}
