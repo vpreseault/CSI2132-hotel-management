@@ -63,23 +63,14 @@ import Message from 'primevue/message';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms';
+import type { SearchResult } from '../../types';
 
 const emit = defineEmits(['close', 'createBooking']);
 
 const props = defineProps<{
-  room: {
-    hotel_name: string;
-    room_number: number;
-    capacity: number;
-    price: number;
-    view_type: string;
-    extendable: boolean;
-    damaged: boolean;
-    chain_name: string;
-    category: number;
-    address: string;
-    total_rooms: number;
-  };
+  room: SearchResult
+  start_date: Date,
+  end_date: Date,
 }>();
 
 const cardTypes = [
@@ -89,7 +80,7 @@ const cardTypes = [
   { label: 'Discover', value: 'Discover' }
 ];
 
-const dates = ref<[Date, Date] | null>(null);
+const dates = ref<[Date, Date]>([props.start_date, props.end_date]);
 
 const totalNights = computed(() => {
   if (!dates.value || dates.value.length !== 2) return 0;

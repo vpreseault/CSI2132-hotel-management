@@ -8,7 +8,7 @@
     <NavBar :role="role === 'Manager' ? 'manager' : 'employee'" @toggleProfile="toggleProfileModal" @toggleHotel="toggleHotelModal" @toggleCreateEmployee="toggleCreateEmployeeModal" />
     
     <LayoutSection title="Current Rentals">
-      <div class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelRentals.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(rental, index) in hotelRentals"
           :key="`rental-${index}`"
@@ -26,9 +26,10 @@
           @toggle="toggleCard"
         />
       </div>
+      <p v-else class="flex justify-center mt-4">There are no current rentals.</p>
     </LayoutSection>
     <LayoutSection title="Upcoming Bookings">
-      <div class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelBookings.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(booking, index) in hotelBookings"
           :key="`booking-${index}`"
@@ -44,8 +45,10 @@
           @toggle="toggleCard"
         />
       </div>
+      <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
+    <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal" @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
@@ -67,6 +70,8 @@ import CreateEmployeeModal from '../components/LandingPage/CreateEmployeeModal.v
 import LayoutSection from '../components/Layout/LayoutSection.vue';
 import { useToast } from "primevue/usetoast";
 import type { BookingItem, RentalItem } from '../types';
+import EmployeeList from '../components/LandingPage/EmployeeList.vue';
+import type { ToastMessageOptions } from 'primevue';
 
 const toast = useToast();
 
@@ -91,6 +96,15 @@ function toggleCreateEmployeeModal() {
 function showEmployeeCreatedToast() {
     toggleCreateEmployeeModal()
     toast.add({ severity: 'success', summary: 'Success', detail: 'Employee account created.', life: 3000});
+}
+
+function showEmployeeDeletedToast(severity: ToastMessageOptions["severity"]) {
+    toast.add({ 
+      severity, 
+      summary: severity === 'success' ? 'Success': 'Failed', 
+      detail: severity === 'success' ? 'Deleted employee account successfully.': 'Failed to delete employee account.', 
+      life: 3000
+    });
 }
 
 function toggleCard(section: string, index: number) {
@@ -123,7 +137,7 @@ function handleEmployeeBooking(booking: {
 }
 
 const hotelRentals = ref<Array<RentalItem>>([])
-  const hotelBookings = ref<Array<BookingItem>>([])
+const hotelBookings = ref<Array<BookingItem>>([])
 onMounted(async () => {
   const employeeID = getUserID()
   

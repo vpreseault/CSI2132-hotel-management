@@ -6,7 +6,13 @@
         <h1 class="text-2xl mt-4">Welcome to your one-stop shop for all things Hotel Room Rentings!</h1>
         <p class="mt-4">You are logged in!</p>
       </div>
-  
+      
+      <LayoutSection title="Search For Room">
+        <div class="mt-4">
+          <SearchSection />
+        </div>
+      </LayoutSection>
+      
       <LayoutSection title="Your Activity">
           <Accordion value="0">
             <AccordionPanel value="0">
@@ -74,6 +80,7 @@
             </AccordionPanel>
         </Accordion>
       </LayoutSection>
+      
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
   
       <div class="mt-16 text-center">
