@@ -26,7 +26,7 @@ var GetBookingsByHotelID = `SELECT
 	b.end_date,
 	b.total_price
 FROM Bookings b
-JOIN Rooms r ON r.room_ID = r.room_ID
+JOIN Rooms r ON b.room_ID = r.room_ID
 JOIN Hotels h ON r.hotel_ID = h.hotel_ID
 JOIN Customers c ON b.customer_ID = c.customer_ID
 WHERE h.hotel_ID = $1
@@ -49,7 +49,7 @@ FROM (
 JOIN Customers c ON r.customer_ID = c.customer_ID
 JOIN Employees e ON r.employee_ID = e.employee_ID
 JOIN Rooms rm ON r.room_ID = rm.room_ID
-JOIN Hotels h ON r.hotel_ID = h.hotel_ID
+JOIN Hotels h ON rm.hotel_ID = h.hotel_ID
 `
 
 var GetRentingsByHotelID = `SELECT 
