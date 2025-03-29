@@ -11,7 +11,7 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Post("/api/customers", createCustomerHandler(ctx))
 	r.Get("/api/customers/{name}", getCustomerHandler(ctx))
 	r.Post("/api/employees", createEmployeeHandler(ctx))
-	r.Get("/api/employees/{name}", getEmployeeHandler(ctx))
+	r.Get("/api/employees", getEmployeesHandler(ctx))
 
 	// Search
 	r.Post("/api/search", RoomSearchHandler(ctx))

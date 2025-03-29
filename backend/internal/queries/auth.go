@@ -25,4 +25,9 @@ INSERT INTO Employees (
 RETURNING employee_ID
 `
 
-var GetEmployeeByName = `SELECT * FROM Employees WHERE full_name = $1`
+var GetEmployeeByName = `SELECT
+	employee_ID, 
+	full_name, 
+	role, 
+	address
+FROM Employees WHERE full_name = $1`
