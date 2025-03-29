@@ -43,7 +43,9 @@
           :index="index"
           :expandedCard="expandedCard"
           @toggle="toggleCard"
-        />
+        >
+          <Button class="mt-3" label="Activate Booking" size="small" @click="" />
+        </ActivityCard>
       </div>
       <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>

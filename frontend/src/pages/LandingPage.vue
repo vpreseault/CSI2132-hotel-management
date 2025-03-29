@@ -135,10 +135,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style lang="css" scoped>
-.p-accordionpanel-active {
-  margin: 0;
-  border: 1px solid black;
-}
-</style>
