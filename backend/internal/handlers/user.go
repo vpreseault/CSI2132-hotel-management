@@ -94,11 +94,11 @@ func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		hotelID := r.URL.Query().Get("hotel_ID")
+		managerID := r.URL.Query().Get("manager_ID")
 		employeeName := r.URL.Query().Get("employee_name")
 
-		if hotelID == "" && employeeName == "" {
-			http.Error(w, "Either hotel_ID, employee_name must be provided", http.StatusInternalServerError)
+		if managerID == "" && employeeName == "" {
+			http.Error(w, "Either manager_ID, employee_name must be provided", http.StatusInternalServerError)
 			return
 		}
 
@@ -110,12 +110,18 @@ func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 			arg = employeeName
 		} else {
 			query = queries.GetEmployeesByHotelID
-			param, err := strconv.Atoi(hotelID)
+			param, err := strconv.Atoi(managerID)
 			if err != nil {
-				http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", hotelID).Error(), http.StatusInternalServerError)
+				http.Error(w, fmt.Errorf("provided manager_ID '%v' is not a number", managerID).Error(), http.StatusInternalServerError)
 				return
 			}
-			arg = param
+
+			hotelID, err := getHotelByEmployeeID(ctx, param)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			arg = hotelID
 		}
 
 		rows, err := ctx.DB.Query(query, arg)
