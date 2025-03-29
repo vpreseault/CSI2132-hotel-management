@@ -1,32 +1,36 @@
 <template>
     <div class="border p-4 rounded-xl shadow-md hover:bg-blue-50 transition">
-        <p><strong>Hotel:</strong> {{ hotelName }}</p>
-        <p><strong>Room #:</strong> {{ roomNumber }}</p>
+        <p><strong>Hotel:</strong> {{ hotel_name }}</p>
+        <p><strong>Room #:</strong> {{ room_number }}</p>
         <p><strong>Capacity:</strong> {{ capacity }}</p>
         <p><strong>Price:</strong> ${{ price }}</p>
-        <p><strong>View:</strong> {{ viewType }}</p>
+        <p><strong>View:</strong> {{ view_type }}</p>
         <p><strong>Extendable:</strong> {{ extendable ? 'Yes' : 'No' }}</p>
         <p><strong>Damaged:</strong> {{ damaged ? 'Yes' : 'No' }}</p>
-        <p><strong>Chain:</strong> {{ chainName }}</p>
+        <p><strong>Chain:</strong> {{ chain_name }}</p>
         <p><strong>Category:</strong> {{ category }}-star</p>
         <p><strong>Address:</strong> {{ address }}</p>
-        <p><strong>Total Rooms:</strong> {{ totalRooms }}</p>
+        <p><strong>Total Rooms:</strong> {{ total_rooms }}</p>
 
-        <Button label="Book Now" icon="pi pi-book" class="mt-4 pl-2" @click="" />
+        <Button label="Book Now" icon="pi pi-book" class="mt-4 pl-2" @click="emit('showBookingModal')" />
     </div>
 </template>
 <script setup lang="ts">
 defineProps<{
-    hotelName: number
-    chainName: string
+    hotel_name: string
+    room_number: string
+    view_type: string
+    chain_name: string
     address: string
-    viewType: string
-    roomNumber: string
-    capacity: number
     price: number
     category: number
-    totalRooms: number
-    extendable: boolean
+    capacity: number
+    total_rooms: number
     damaged: boolean
+    extendable: boolean
+}>()
+
+const emit = defineEmits<{
+    showBookingModal: []
 }>()
 </script>

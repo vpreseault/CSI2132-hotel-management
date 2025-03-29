@@ -59,21 +59,30 @@
     <div v-if="searchResults?.length > 0 && showResults" class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <template v-for="(room) in searchResults" :key="`${room.chain_name}-${room.hotel_ID}`">
         <SearchCard 
-          :hotelName="room.hotel_ID"
-          :chainName="room.chain_name"
+          :hotel_name="room.hotel_name"
+          :chain_name="room.chain_name"
           :address="room.address"
-          :viewType="room.view_type"
-          :roomNumber="room.room_number"
+          :view_type="room.view_type"
+          :room_number="room.room_number"
           :capacity="room.capacity"
           :price="room.price"
           :category="room.category"
-          :totalRooms="room.total_rooms"
+          :total_rooms="room.total_rooms"
           :extendable="room.extendable"
           :damaged="room.damaged"
+          @show-booking-modal="showBookingModal(room)"
         />
       </template>
     </div>
     <div v-else-if="showResults" class="text-gray-600">No results found for your filters.</div>
+    <Dialog v-model:visible="bookingModalIsVisible" modal header="Search Results" class="w-full max-w-4xl" @hide="bookingModalIsVisible= false">
+      <BookCard
+        :room="selectedRoom"
+        :start_date="filters.dates[0]"
+        :end_date="filters.dates[1]"
+        @close="bookingModalIsVisible = false" 
+      />
+    </Dialog>
   </div>
 </template>
 
@@ -83,6 +92,7 @@ import SearchCard from './SearchCard.vue'
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import type { SearchResult } from '../../types';
 
 const filters = reactive<{
   dates: Date[],
@@ -128,21 +138,7 @@ onMounted(async () => {
 })
 
 const searchResults = ref<SearchResult[]>([]);
-
-type SearchResult = {
-  room_ID: number,
-	hotel_ID: number,
-	room_number: string,
-	capacity: number,
-	price: number,
-	view_type: string,
-	extendable: boolean,
-	damaged: boolean,
-	chain_name: string,
-	category: number,
-	address: string,
-	total_rooms: number,
-}
+const bookingModalIsVisible = ref(false)
 
 const error = ref('')
 function validate() {
@@ -196,6 +192,12 @@ async function submitSearch() {
   } else {
     showResults.value = false
   }
+}
+
+const selectedRoom = ref<SearchResult>()
+function showBookingModal(room: SearchResult) {
+  selectedRoom.value = room
+  bookingModalIsVisible.value = true
 }
 </script>
 
