@@ -50,7 +50,7 @@
                     :expandedCard="expandedCard"
                     @toggle="toggleCard"
                   />
-                  <p v-else class="text-center text-gray-500">You have no upcomming bookings.</p>
+                  <p v-else class="text-center text-gray-500">You have no upcoming bookings.</p>
                 </AccordionContent>
             </AccordionPanel>
             <AccordionPanel value="2">
