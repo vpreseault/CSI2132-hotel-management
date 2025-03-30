@@ -55,7 +55,7 @@ import HotelModal from '../components/LandingPage/HotelModal.vue';
 import CreateEmployeeModal from '../components/LandingPage/CreateEmployeeModal.vue';
 import LayoutSection from '../components/Layout/LayoutSection.vue';
 import { useToast } from "primevue/usetoast";
-import type { BookingItem, RentalItem, RentalPayload, RentalWithBookingPayload } from '../types';
+import type { BookingItem, RentalItem, RentalWithBookingPayload } from '../types';
 import EmployeeList from '../components/LandingPage/EmployeeList.vue';
 import RoomList from '../components/LandingPage/RoomList.vue';
 import type { ToastMessageOptions } from 'primevue';
