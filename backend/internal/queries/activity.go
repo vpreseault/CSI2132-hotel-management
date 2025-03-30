@@ -32,6 +32,34 @@ JOIN Customers c ON b.customer_ID = c.customer_ID
 WHERE h.hotel_ID = $1
 `
 
+var GetBookingByID = `SELECT 
+	b.booking_ID,
+	c.customer_ID,
+	r.room_ID,
+	b.start_date,
+	b.end_date,
+	b.total_price
+FROM (
+	SELECT * FROM Bookings
+	WHERE booking_ID = $1
+) b
+JOIN Customers c ON b.customer_ID = c.customer_ID
+JOIN Rooms r ON b.room_ID = r.room_ID
+`
+
+var CreateRenting = `INSERT INTO Rentings (
+	employee_ID,
+	customer_ID, 
+	room_ID, 
+	booking_ID, 
+	check_in_date,
+	check_out_date,
+	payment,
+	total_price
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING renting_ID
+`
+
 var GetRentingsByCustomerID = `SELECT 
 	r.renting_ID,
 	e.full_name,
