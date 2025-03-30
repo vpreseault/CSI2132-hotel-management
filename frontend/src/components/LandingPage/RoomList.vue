@@ -28,6 +28,8 @@ import type { Room } from '../../types'
 
 const emit = defineEmits<{
     delete: [severity: ToastMessageOptions["severity"]]
+    update: [severity: ToastMessageOptions["severity"]]
+    create: [severity: ToastMessageOptions["severity"]]
 }>()
 
 const rooms = ref<Room[]>([])
@@ -59,32 +61,29 @@ function handleCreateRoom(room: Room) {
 async function updateRoom(updatedRoom: Room) {
     try {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms/${updatedRoom.room_ID}`,
-        {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedRoom)
-        }
-    )
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedRoom)
+            }
+        )
     
-    if (res.ok) {
-            console.log('success', JSON.stringify(updatedRoom))
-            // editsMade.value = true
+        if (res.ok) {
+            emit('update', 'success')
 
-            // message.severity = 'success'
-            // message.text = 'Hotel information updated successfully.'
-            // return
+            const index = rooms.value.findIndex(r => r.room_number === updatedRoom.room_number)
+            if (index !== -1) {
+                rooms.value[index] = { ...updatedRoom }
+            }
+            return
         }
+
+        emit('update', 'error')
     } catch (error) {
         console.error('Error calling API:', error);
-        // message.severity = 'error'
-        // message.text = 'Failed to update hotel information.'
-    }
-
-    const index = rooms.value.findIndex(r => r.room_number === updatedRoom.room_number)
-    if (index !== -1) {
-        rooms.value[index] = { ...updatedRoom }
+        emit('update', 'error')
     }
 }
 

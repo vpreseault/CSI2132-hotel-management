@@ -51,7 +51,7 @@
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
-    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal" @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
@@ -161,6 +161,24 @@ function showRoomDeletedToast(severity: ToastMessageOptions["severity"]) {
     severity, 
     summary: severity === 'success' ? 'Success' : 'Failed', 
     detail: severity === 'success' ? 'Deleted room successfully.' : 'Failed to delete room.', 
+    life: 3000 
+  })
+}
+
+function showRoomUpdatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Updated room successfully.' : 'Failed to update room.', 
+    life: 3000 
+  })
+}
+
+function showRoomCreatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Created room successfully.' : 'Failed to create room.', 
     life: 3000 
   })
 }
