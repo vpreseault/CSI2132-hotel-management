@@ -61,7 +61,7 @@ func updateCustomerByID(ctx *internal.AppContext) http.HandlerFunc {
 		customerID := chi.URLParam(r, "customer_ID")
 
 		var customer struct {
-			Name    string `json:"name"`
+			Name    string `json:"full_name"`
 			Address string `json:"address"`
 		}
 

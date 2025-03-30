@@ -29,7 +29,7 @@ export function getUserName() {
     return authCookie.get('auth').name
 }
 
-export function getAuthCookie() {
+export function getAuthCookie(): User {
     return authCookie.get('auth')
 }
 
