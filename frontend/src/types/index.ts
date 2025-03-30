@@ -45,3 +45,12 @@ export type SearchResult = {
     address: string,
     total_rooms: number,
 }
+
+export type Hotel = {
+    hotel_ID: number,
+    hotel_name: string,
+    address: string,
+    phone_number: string,
+    email: string,
+    category: number,
+}
