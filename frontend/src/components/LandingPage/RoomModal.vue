@@ -26,12 +26,12 @@
 
         <div class="flex flex-col gap-1">
           <label class="text-black font-medium">Extendable</label>
-          <InputSwitch v-model="form.extendable" />
+          <ToggleSwitch v-model="form.extendable" />
         </div>
 
         <div class="flex flex-col gap-1">
           <label class="text-black font-medium">Damaged</label>
-          <InputSwitch v-model="form.damaged" />
+          <ToggleSwitch v-model="form.damaged" />
         </div>
 
         <div class="flex flex-col gap-1">
@@ -59,7 +59,7 @@ import { ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Slider from 'primevue/slider'
-import InputSwitch from 'primevue/inputswitch'
+import ToggleSwitch from 'primevue/toggleswitch'
 import Checkbox from 'primevue/checkbox'
 import type { Amenity, Room } from '../../types'
 

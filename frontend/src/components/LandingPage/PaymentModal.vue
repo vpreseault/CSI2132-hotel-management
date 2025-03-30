@@ -21,7 +21,7 @@
   
           <div class="flex flex-col gap-1">
             <label class="text-black font-medium">Stay Dates</label>
-            <Calendar v-model="dateRange" selectionMode="range" :manualInput="false" dateFormat="yy-mm-dd" :minDate="today" class="w-full"/>
+            <DatePicker v-model="dateRange" selectionMode="range" :manualInput="false" dateFormat="yy-mm-dd" :minDate="today" class="w-full"/>
             <small v-if="!isDateRangeValid" class="text-red-600">End date must be at least one day after start date.</small>
           </div>
   
@@ -32,7 +32,7 @@
   
           <div class="flex flex-col gap-1">
             <label class="text-black font-medium">Card Type</label>
-            <Dropdown v-model="cardType" :options="cardOptions" placeholder="Select Card Type" class="w-full" />
+            <Select v-model="cardType" :options="cardOptions" placeholder="Select Card Type" class="w-full" />
             <small v-if="showCardError && !cardType" class="text-red-600">Card type is required.</small>
           </div>
   
@@ -55,8 +55,8 @@
 import { ref, watch, computed } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
+import DatePicker from 'primevue/datepicker';
+import Select from 'primevue/select';
 import type { BookingItem } from '../../types';
 
 const props = defineProps<{
