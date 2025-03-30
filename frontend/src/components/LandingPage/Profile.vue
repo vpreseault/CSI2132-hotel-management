@@ -81,11 +81,11 @@ async function updateAccount() {
           return
       }
       message.severity = 'error'
-      message.text = 'Account update Failed.'
+      message.text = 'Account update failed.'
   } catch (error) {
       console.error('Error calling API:', error);
       message.severity = 'error'
-      message.text = 'Account update Failed.'
+      message.text = 'Account update failed.'
   }
 }
 
@@ -107,11 +107,16 @@ async function deleteAccount() {
           }
       )
       
-      if (res.ok) {
+      if (res.ok || res.status === 404) {
           removeAuthCookie()
+          return
       }
+      message.severity = 'error'
+      message.text = 'Failed to delete account.'
     } catch (error) {
         console.error('Error calling API:', error);
+        message.severity = 'error'
+        message.text = 'Failed to delete account.'
     }
   }
 }
