@@ -164,7 +164,6 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// Start transaction
 		tx, err := ctx.DB.Begin()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

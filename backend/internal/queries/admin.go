@@ -75,7 +75,7 @@ ORDER BY r.room_number
 var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`
 var UpdateRoom = `UPDATE Rooms 
 SET 
-	room_number = $2, 
+    room_number = $2, 
     capacity = $3,
     price = $4,
     view_type = $5,
