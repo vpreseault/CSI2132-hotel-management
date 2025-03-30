@@ -69,19 +69,19 @@ INSERT INTO Hotels (chain_ID, manager_ID, hotel_name, address, category) VALUES
 (1, 1, 'Hilton Grand Boston', '100 Boylston St, Boston, MA', 3),
 (1, 4, 'Hilton Express Montreal', '103 Sherbrooke St, Montreal, QC', 4),
 (1, 7, 'Hilton Express Edmonton', '106 Jasper Ave, Edmonton, AB', 4),
-(1, 10, 'Hilton Elite Edmonton', '109 Jasper Ave, Edmonton, AB', 4),
-(1, 13, 'Hilton Grand San Francisco', '112 Market St, San Francisco, CA', 5),
+(1, 10, 'Hilton Elite Edmonton', '109 Jasper Ave, Edmonton, AB', 2),
+(1, 13, 'Hilton Grand San Francisco', '112 Market St, San Francisco, CA', 1),
 (1, 16, 'Hilton Express Vancouver', '115 Georgia St, Vancouver, BC', 4),
 (1, 19, 'Hilton Central Seattle', '118 Pine St, Seattle, WA', 3),
 (1, 22, 'Hilton Central New York', '121 Broadway, New York, NY', 3),
 (2, 25, 'Best Western Downtown Ottawa', '124 Elgin St, Ottawa, ON', 4),
-(2, 28, 'Best Western Select Seattle', '127 Pine St, Seattle, WA', 4),
+(2, 28, 'Best Western Select Seattle', '127 Pine St, Seattle, WA', 1),
 (2, 31, 'Best Western Inn Miami', '130 Ocean Dr, Miami, FL', 4),
-(2, 34, 'Best Western Plus Toronto', '133 King St, Toronto, ON', 4),
+(2, 34, 'Best Western Plus Toronto', '133 King St, Toronto, ON', 2),
 (2, 37, 'Best Western Select Vancouver', '136 Georgia St, Vancouver, BC', 3),
 (2, 40, 'Best Western Plus Chicago', '139 Michigan Ave, Chicago, IL', 3),
 (2, 43, 'Best Western Select Las Vegas', '142 Las Vegas Blvd, Las Vegas, NV', 5),
-(2, 46, 'Best Western Plus Toronto', '145 King St, Toronto, ON', 3),
+(2, 46, 'Best Western Plus Toronto', '145 King St, Toronto, ON', 1),
 (3, 49, 'Travelodge Classic Calgary', '148 17th Ave, Calgary, AB', 5),
 (3, 52, 'Travelodge Suites Edmonton', '151 Jasper Ave, Edmonton, AB', 5),
 (3, 55, 'Travelodge Suites Montreal', '154 Sherbrooke St, Montreal, QC', 4),
@@ -91,10 +91,10 @@ INSERT INTO Hotels (chain_ID, manager_ID, hotel_name, address, category) VALUES
 (3, 67, 'Travelodge Classic New York', '166 Broadway, New York, NY', 4),
 (3, 70, 'Travelodge Classic Calgary', '169 17th Ave, Calgary, AB', 3),
 (4, 73, 'Four Seasons Elite San Francisco', '172 Market St, San Francisco, CA', 5),
-(4, 76, 'Four Seasons East Edmonton', '175 Jasper Ave, Edmonton, AB', 4),
+(4, 76, 'Four Seasons East Edmonton', '175 Jasper Ave, Edmonton, AB', 2),
 (4, 79, 'Four Seasons East Miami', '178 Ocean Dr, Miami, FL', 3),
 (4, 82, 'Four Seasons Cityview Ottawa', '181 Elgin St, Ottawa, ON', 5),
-(4, 85, 'Four Seasons West Vancouver', '184 Georgia St, Vancouver, BC', 5),
+(4, 85, 'Four Seasons West Vancouver', '184 Georgia St, Vancouver, BC', 1),
 (4, 88, 'Four Seasons Elite Las Vegas', '187 Las Vegas Blvd, Las Vegas, NV', 3),
 (4, 91, 'Four Seasons Grand Las Vegas', '101 Las Vegas Blvd, Las Vegas, NV', 3),
 (4, 94, 'Four Seasons Cityview Edmonton', '104 Jasper Ave, Edmonton, AB', 5),
@@ -1326,20 +1326,20 @@ CREATE TABLE Rentings (
 -- Insert into Rentings
 INSERT INTO Rentings (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, payment, total_price) VALUES
 (76, 1, 120, 10, '2025-06-09', '2025-06-12', TRUE, 450.0),
-(115, 3, 113, 11, '2025-11-23', '2025-11-28', TRUE, 1125.0),
+(115, 3, 113, NULL, '2025-11-23', '2025-11-28', TRUE, 1125.0),
 (136, 4, 139, 12, '2025-06-02', '2025-06-07', TRUE, 1000.0),
 (132, 6, 26, 13, '2025-08-04', '2025-08-08', TRUE, 600.0),
-(24, 6, 106, 14, '2025-10-07', '2025-10-10', TRUE, 450.0),
-(96, 7, 69, 15, '2025-05-14', '2025-05-19', TRUE, 1250.0),
+(24, 6, 106, NULL, '2025-10-07', '2025-10-10', TRUE, 450.0),
+(96, 7, 69, NULL, '2025-05-14', '2025-05-19', TRUE, 1250.0),
 (17, 11, 7, 16, '2025-04-27', '2025-05-03', TRUE, 1350.0),
 (37, 12, 143, 20, '2025-05-19', '2025-05-25', TRUE, 1800.0),
-(100, 13, 74, 21, '2025-07-12', '2025-07-18', TRUE, 1050.0),
-(47, 15, 49, 22, '2025-06-18', '2025-06-23', TRUE, 1125.0),
-(95, 17, 115, 23, '2025-09-23', '2025-09-27', TRUE, 400.0),
+(100, 13, 74, NULL, '2025-07-12', '2025-07-18', TRUE, 1050.0),
+(47, 15, 49, NULL, '2025-06-18', '2025-06-23', TRUE, 1125.0),
+(95, 17, 115, NULL, '2025-09-23', '2025-09-27', TRUE, 400.0),
 (111, 18, 22, 24, '2025-08-10', '2025-08-15', TRUE, 500.0),
-(140, 18, 54, 25, '2025-04-09', '2025-04-15', TRUE, 1350.0),
+(140, 18, 54, NULL, '2025-04-09', '2025-04-15', TRUE, 1350.0),
 (43, 19, 14, 26, '2025-06-29', '2025-07-05', TRUE, 1050.0),
-(18, 20, 105, 27, '2025-06-28', '2025-06-30', TRUE, 550.0);
+(18, 20, 105, NULL, '2025-06-28', '2025-06-30', TRUE, 550.0);
 
 -- Archives Table  
 CREATE TABLE Archives (
@@ -1356,9 +1356,9 @@ CREATE TABLE Archives (
 
 -- Insert into Archives
 INSERT INTO Archives (renting_ID, booking_ID, customer_ID, total_price, booking_date, check_in_date, check_out_date, archive_date) VALUES
-(1, 1, 1, 300.0, '2024-07-11', '2024-07-16', '2024-07-18', '2024-07-27'),
-(2, 2, 2, 600.0, '2024-08-25', '2024-08-30', '2024-09-05', '2024-09-08'),
-(3, 3, 2, 350.0, '2024-04-20', '2024-04-25', '2024-04-28', '2024-05-01'),
+(1, 10, 1, 300.0, '2024-07-11', '2024-07-16', '2024-07-18', '2024-07-27'),
+(2, NULL, 2, 600.0, '2024-08-25', '2024-08-30', '2024-09-05', '2024-09-08'),
+(3, 12, 2, 350.0, '2024-04-20', '2024-04-25', '2024-04-28', '2024-05-01'),
 (NULL, NULL, 2, 700.0, '2024-11-17', '2024-11-22', '2024-11-29', '2024-12-09'),
 (NULL, NULL, 2, 700.0, '2024-08-31', '2024-09-05', '2024-09-12', '2024-09-20'),
 (NULL, NULL, 3, 400.0, '2024-03-13', '2024-03-18', '2024-03-21', '2024-03-30'),
@@ -1366,16 +1366,16 @@ INSERT INTO Archives (renting_ID, booking_ID, customer_ID, total_price, booking_
 (NULL, NULL, 9, 800.0, '2024-03-29', '2024-04-03', '2024-04-10', '2024-04-18'),
 (NULL, NULL, 12, 850.0, '2024-02-14', '2024-02-19', '2024-02-23', '2024-03-01'),
 (NULL, NULL, 12, 200.0, '2024-09-08', '2024-09-13', '2024-09-19', '2024-09-25'),
-(4, 4, 14, 250.0, '2024-06-08', '2024-06-13', '2024-06-17', '2024-06-21'),
-(5, 5, 14, 600.0, '2024-03-18', '2024-03-23', '2024-03-29', '2024-04-04'),
-(6, 6, 15, 650.0, '2024-09-28', '2024-10-03', '2024-10-06', '2024-10-08'),
-(7, 7, 15, 300.0, '2024-04-26', '2024-05-01', '2024-05-03', '2024-05-08'),
+(4, 13, 14, 250.0, '2024-06-08', '2024-06-13', '2024-06-17', '2024-06-21'),
+(5, NULL, 14, 600.0, '2024-03-18', '2024-03-23', '2024-03-29', '2024-04-04'),
+(6, NULL, 15, 650.0, '2024-09-28', '2024-10-03', '2024-10-06', '2024-10-08'),
+(7, 16, 15, 300.0, '2024-04-26', '2024-05-01', '2024-05-03', '2024-05-08'),
 (NULL, NULL, 17, 150.0, '2024-02-11', '2024-02-16', '2024-02-21', '2024-02-28'),
 (NULL, NULL, 17, 200.0, '2024-04-01', '2024-04-06', '2024-04-11', '2024-04-17'),
 (NULL, NULL, 18, 900.0, '2024-08-11', '2024-08-16', '2024-08-20', '2024-08-26'),
 (NULL, NULL, 19, 950.0, '2024-08-11', '2024-08-16', '2024-08-23', '2024-08-31'),
-(8, 8, 19, 1000.0, '2024-03-21', '2024-03-26', '2024-03-31', '2024-04-01'),
-(9, 9, 20, 300.0, '2024-01-22', '2024-01-27', '2024-01-30', '2024-02-05');
+(8, 20, 19, 1000.0, '2024-03-21', '2024-03-26', '2024-03-31', '2024-04-01'),
+(9, NULL, 20, 300.0, '2024-01-22', '2024-01-27', '2024-01-30', '2024-02-05');
 
 /* Alters tables to connect the foreign keys */
 
