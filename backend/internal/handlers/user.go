@@ -47,8 +47,8 @@ func getCustomerHandler(ctx *internal.AppContext) http.HandlerFunc {
 		err := ctx.DB.QueryRow(queries.GetCustomerByName, userName).Scan(&customer.ID, &customer.FullName, &customer.IDType, &customer.IDNumber, &customer.Address, &customer.RegistrationDate)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				// Treat 0 rows error differently
-				// http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Account not found.", http.StatusNotFound)
+				return
 			}
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -242,7 +242,7 @@ func getEmployeesHandler(ctx *internal.AppContext) http.HandlerFunc {
 			} else if len(employees) == 1 {
 				json.NewEncoder(w).Encode(employees[0])
 			} else {
-				json.NewEncoder(w).Encode(nil)
+				http.Error(w, "Account not found.", http.StatusNotFound)
 			}
 			return
 		}
