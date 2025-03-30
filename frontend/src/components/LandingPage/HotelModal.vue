@@ -93,6 +93,9 @@ async function updateHotel() {
       const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hotels/${hotelData.value.hotel_ID}`,
           {
               method: 'PATCH',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
               body: JSON.stringify({
                   "hotel_name": hotelData.value.hotel_name,
                   address: hotelData.value.address,
