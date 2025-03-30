@@ -29,7 +29,7 @@
 import { reactive, ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import { getAuthCookie, setAuthCookie } from '../../utils/auth';
+import { getAuthCookie, removeAuthCookie, setAuthCookie } from '../../utils/auth';
 import type { ToastMessageOptions } from 'primevue';
 
 const props = defineProps<{
@@ -97,11 +97,22 @@ function closeButtonClicked() {
   props.toggleProfileModal()
 }
 
-function deleteAccount() {
+async function deleteAccount() {
   const confirmDelete = confirm("Are you sure you want to delete your account?");
   if (confirmDelete) {
-    console.log(`${props.role} account deleted.`);
-    alert("Your account has been deleted.");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${userCookie.role === "Employee" ? 'employees?employee' : 'customers?customer'}_ID=${userCookie.ID}`,
+          {
+              method: 'DELETE',
+          }
+      )
+      
+      if (res.ok) {
+          removeAuthCookie()
+      }
+    } catch (error) {
+        console.error('Error calling API:', error);
+    }
   }
 }
 </script>
