@@ -178,7 +178,6 @@ func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 		if rows, err := res.RowsAffected(); err != nil {
-			log.Printf("Error getting affected rows: %v", err.Error())
 			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
 			return
 		} else if rows == 0 {

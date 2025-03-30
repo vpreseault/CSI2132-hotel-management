@@ -40,7 +40,7 @@ const isModalOpen = ref(false)
 function confirmDelete() {
   const confirmed = confirm(`Are you sure you want to delete Room ${props.room.room_number}?`)
   if (confirmed) {
-    emit('delete', props.room.room_number)
+    emit('delete', props.room.room_ID)
   }
 }
 

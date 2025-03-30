@@ -88,14 +88,14 @@ async function updateRoom(updatedRoom: Room) {
 }
 
 const managerID = ref(getUserID())
-async function deleteRoom(roomNumber: string) {
+async function deleteRoom(id: number) {
     try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms?room_number=${roomNumber}`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms/${id}`, {
             method: 'DELETE'
         })
 
         if (res.ok) {
-            rooms.value = rooms.value.filter(room => room.room_number !== roomNumber)
+            rooms.value = rooms.value.filter(room => room.room_ID !== id)
             emit('delete', 'success')
         } else {
             emit('delete', 'error')
