@@ -35,7 +35,7 @@
                     :expandedCard="expandedCard"
                     @toggle="toggleCard"
                   />
-                  <p v-else class="text-center text-gray-500">You have no active rentals.</p>
+                  <NoResultsLabel v-else>You have no active rentals.</NoResultsLabel>
                 </AccordionContent>
             </AccordionPanel>
             <AccordionPanel value="1">
@@ -56,26 +56,26 @@
                     :expandedCard="expandedCard"
                     @toggle="toggleCard"
                   />
-                  <p v-else class="text-center text-gray-500">You have no upcoming bookings.</p>
+                  <NoResultsLabel v-else>You have no upcoming bookings.</NoResultsLabel>
                 </AccordionContent>
             </AccordionPanel>
             <AccordionPanel value="2">
                 <AccordionHeader>Archives</AccordionHeader>
                 <AccordionContent>
-                  <!-- <ActivityCard
-                    v-for="(booking, index) in customerBookings"
-                    :key="`booking-${index}`"
-                    :customerName="booking.customer_name"
-                    :hotelName="booking.hotel_name"
-                    :startDate="new Date(booking.start_date)"
-                    :endDate="new Date(booking.end_date)"
-                    :roomNumber="booking.room_number"
-                    :price="booking.total_price"
-                    :section="'booking'"
+                  <ArchiveCard
+                    v-if="customerArchives"
+                    v-for="(archive, index) in customerArchives"
+                    :key="`archive-${index}`"
+                    :id="archive.archive_ID"
+                    :startDate="new Date(archive.start_date)"
+                    :endDate="new Date(archive.end_date)"
+                    :price="archive.total_price"
+                    :section="'archive'"
                     :index="index"
                     :expandedCard="expandedCard"
                     @toggle="toggleCard"
-                  /> -->
+                  />
+                  <NoResultsLabel v-else >You have no archives.</NoResultsLabel>
                 </AccordionContent>
             </AccordionPanel>
         </Accordion>
@@ -90,7 +90,9 @@ import { onMounted, ref } from 'vue';
 import { getUserID } from '../utils/auth';
 import NavBar from '../components/LandingPage/NavBar.vue';
 import Profile from '../components/LandingPage/Profile.vue';
-import type { RentalItem, BookingItem } from '../types';
+import type { RentalItem, BookingItem, ArchiveItem } from '../types';
+import NoResultsLabel from '../components/Layout/NoResultsLabel.vue';
+import ArchiveCard from '../components/LandingPage/ArchiveCard.vue';
 
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
@@ -107,20 +109,18 @@ function toggleProfileModal() {
 
 const customerRentals = ref<Array<RentalItem>>([])
 const customerBookings = ref<Array<BookingItem>>([])
+const customerArchives = ref<Array<ArchiveItem>>([])
 onMounted(async () => {
   const customerID = getUserID()
   
   try {
-      const rentalResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rentings?customer_ID=${customerID}`)
-      if (rentalResponse.ok) {
-        customerRentals.value = await rentalResponse.json()
+      const activityResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity?customer_ID=${customerID}`)
+      if (activityResponse.ok) {
+        const {bookings, rentings, archives} = await activityResponse.json()
+        customerBookings.value = bookings
+        customerRentals.value = rentings
+        customerArchives.value = archives
       }
-
-      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings?customer_ID=${customerID}`)
-      if (bookingResponse.ok) {
-        customerBookings.value = await bookingResponse.json()
-      }
-
   } catch (error) {
       console.error('Error calling API:', error);
   }
