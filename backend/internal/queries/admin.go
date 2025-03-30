@@ -61,6 +61,15 @@ GROUP BY r.room_ID
 ORDER BY r.room_number
 `
 var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`
+var UpdateRoom = `UPDATE Rooms 
+SET 
+	room_number = $2, 
+    capacity = $3,
+    price = $4,
+    view_type = $5,
+    extendable = $6,
+    damaged = $7
+WHERE room_ID = $1`
 
 // Amenities
 var GetRoomAmenities = `SELECT 
@@ -74,3 +83,9 @@ JOIN RoomHasAmenities ra ON r.room_ID = ra.room_ID
 JOIN Amenities a ON ra.amenity_ID = a.amenity_ID
 `
 var GetAmenities = `SELECT * FROM Amenities`
+var DeleteRoomAmenities = `DELETE FROM Room_Has_Amenities WHERE room_ID = $1`
+var InsertRoomAmenity = `INSERT INTO Room_Has_Amenities (
+	room_ID,
+	amenity_ID
+) VALUES ($1, $2)
+`

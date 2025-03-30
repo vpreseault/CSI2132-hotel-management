@@ -81,26 +81,26 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		param := chi.URLParam(r, "hotel_ID")
-		hotelID, err := strconv.Atoi(param)
+		param := chi.URLParam(r, "room_ID")
+		roomID, err := strconv.Atoi(param)
 		if err != nil {
-			http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
+			http.Error(w, fmt.Errorf("provided room_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
 			return
 		}
 
-		var hotel internal.Hotel
-		if err := json.NewDecoder(r.Body).Decode(&hotel); err != nil {
+		var room internal.Room
+		if err := json.NewDecoder(r.Body).Decode(&room); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
 
-		if hotel.Name == "" || hotel.Address == "" || hotel.Phone == "" || hotel.Email == "" {
+		if room.RoomNumber == "" || room.ViewType == "" {
 			http.Error(w, "Missing required fields", http.StatusBadRequest)
 			return
 		}
 
-		if hotel.Category < 1 || hotel.Category > 5 {
-			http.Error(w, fmt.Sprintf("Invalid category value %v", hotel.Category), http.StatusBadRequest)
+		if room.Capacity < 1 || room.Capacity > 10 {
+			http.Error(w, fmt.Sprintf("Invalid Capacity value %v", room.Capacity), http.StatusBadRequest)
 			return
 		}
 
@@ -112,7 +112,16 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 		}
 		defer tx.Rollback()
 
-		res, err := tx.Exec(queries.UpdateHotel, hotel.Name, hotel.Address, hotel.Category, hotelID)
+		res, err := tx.Exec(
+			queries.UpdateRoom,
+			roomID,
+			room.RoomNumber,
+			room.Capacity,
+			room.Price,
+			room.ViewType,
+			room.Extendable,
+			room.Damaged,
+		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -122,37 +131,24 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 			http.Error(w, "Error checking update status", http.StatusInternalServerError)
 			return
 		} else if rows == 0 {
-			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
+			http.Error(w, fmt.Sprintf("Room with ID %v not found", roomID), http.StatusNotFound)
 			return
 		}
 
-		res, err = tx.Exec(queries.UpdateHotelPhone, hotel.Phone, hotelID)
+		// Delete existing amenities
+		_, err = tx.Exec(queries.DeleteRoomAmenities, roomID)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Errorf("could not delete old amenities: %v", err.Error()).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if rows, err := res.RowsAffected(); err != nil {
-			http.Error(w, "Error checking update status", http.StatusInternalServerError)
-			return
-		} else if rows == 0 {
-			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
-			return
-		}
-
-		res, err = tx.Exec(queries.UpdateHotelEmail, hotel.Email, hotelID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Check if any rows were affected
-		if rows, err := res.RowsAffected(); err != nil {
-			http.Error(w, "Error checking update status", http.StatusInternalServerError)
-			return
-		} else if rows == 0 {
-			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
-			return
+		// Add new amenities
+		for _, v := range room.Amenities {
+			_, err = tx.Exec(queries.InsertRoomAmenity, roomID, v.ID)
+			if err != nil {
+				http.Error(w, fmt.Errorf("could not insert new amenity: %v", err.Error()).Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		// Commit transaction
@@ -161,7 +157,7 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated hotel with ID: %v", hotelID)})
+		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated room with ID: %v", roomID)})
 	}
 }
 
