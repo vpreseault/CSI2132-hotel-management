@@ -36,6 +36,15 @@ type Room struct {
 	Damaged    bool    `json:"damaged"`
 }
 
+type Hotel struct {
+	ID       int    `json:"hotel_ID"`
+	Name     string `json:"hotel_name"`
+	Address  string `json:"address"`
+	Phone    string `json:"phone_number"`
+	Email    string `json:"email"`
+	Category int    `json:"category"`
+}
+
 type SearchResult struct {
 	ID         int     `json:"room_ID"`
 	HotelID    int     `json:"hotel_ID"`

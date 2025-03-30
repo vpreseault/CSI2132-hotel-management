@@ -12,7 +12,7 @@
         <p v-if="roomNumber"><strong>Room Number:</strong> {{ roomNumber }}</p>
         <p v-if="price"><strong>Total Price:</strong> ${{ price?.toFixed(2) }}</p>
         <p v-if="payment !== undefined"><strong>Payment:</strong> {{ payment ? 'Paid' : 'Pending' }}</p>
-        <slot name="bookingButton" />
+        <slot />
       </div>
   </div>
 </template>

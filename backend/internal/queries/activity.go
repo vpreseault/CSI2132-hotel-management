@@ -78,7 +78,7 @@ var GetRentingArchivesByCustomerID = `SELECT
 	a.total_price
 FROM (
 	SELECT * FROM Archives
-	WHERE customer_ID = $1 AND renting_ID IS NOT NULL
+	WHERE customer_ID = $1
 ) a
 JOIN Customers c ON a.customer_ID = c.customer_ID
 `
