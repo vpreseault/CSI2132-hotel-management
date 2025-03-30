@@ -101,7 +101,7 @@ async function deleteAccount() {
   const confirmDelete = confirm("Are you sure you want to delete your account?");
   if (confirmDelete) {
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${userCookie.role === "Employee" ? 'employees?employee' : 'customers?customer'}_ID=${userCookie.ID}`,
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${userCookie.role === "Employee" ? 'employees?employee_ID' : 'customers?customer_ID'}=${userCookie.ID}`,
           {
               method: 'DELETE',
           }
