@@ -8,7 +8,7 @@
     <NavBar :role="role === 'Manager' ? 'manager' : 'employee'" @toggleProfile="toggleProfileModal" @toggleHotel="toggleHotelModal" @toggleCreateEmployee="toggleCreateEmployeeModal" />
     
     <LayoutSection title="Current Rentals">
-      <div v-if="hotelRentals.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelRentals" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(rental, index) in hotelRentals"
           :key="`rental-${index}`"
@@ -29,7 +29,7 @@
       <p v-else class="flex justify-center mt-4">There are no current rentals.</p>
     </LayoutSection>
     <LayoutSection title="Upcoming Bookings">
-      <div v-if="hotelBookings.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelBookings" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(booking, index) in hotelBookings"
           :key="`booking-${index}`"
