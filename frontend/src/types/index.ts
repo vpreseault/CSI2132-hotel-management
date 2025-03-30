@@ -23,6 +23,13 @@ export type BookingItem = {
     total_price: number;
 };
 
+export type ArchiveItem = {
+    archive_ID: number,
+    start_date: string;
+    end_date: string;
+    total_price: number;
+};
+
 export type SearchResult = {
     room_ID: number,
     hotel_ID: number,

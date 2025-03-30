@@ -290,13 +290,13 @@ func getActivityHandler(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		payload := struct {
-			Bookings     []internal.BookingDisplay `json:"bookings"`
-			Rentings     []internal.RentingDisplay `json:"rentings"`
-			PastRentings []internal.ArchiveDisplay `json:"past_rentings"`
+			Bookings []internal.BookingDisplay `json:"bookings"`
+			Rentings []internal.RentingDisplay `json:"rentings"`
+			Archives []internal.ArchiveDisplay `json:"archives"`
 		}{
-			Bookings:     bookings,
-			Rentings:     rentings,
-			PastRentings: archives,
+			Bookings: bookings,
+			Rentings: rentings,
+			Archives: archives,
 		}
 
 		json.NewEncoder(w).Encode(payload)
