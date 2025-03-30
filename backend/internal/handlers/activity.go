@@ -163,8 +163,8 @@ func getRentings(ctx *internal.AppContext, query string, id int) ([]internal.Ren
 			&renting.CustomerName,
 			&renting.HotelName,
 			&renting.RoomNumber,
-			&renting.StartDate,
-			&renting.EndDate,
+			&renting.CheckInDate,
+			&renting.CheckOutDate,
 			&renting.Payment,
 			&renting.TotalPrice,
 		); err != nil {

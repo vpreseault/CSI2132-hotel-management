@@ -65,7 +65,7 @@ type BookingDisplay struct {
 	BookingID    int     `json:"booking_ID"`
 	CustomerName string  `json:"customer_name"`
 	HotelName    string  `json:"hotel_name"`
-	RoomNumber   int     `json:"room_number"`
+	RoomNumber   string  `json:"room_number"`
 	StartDate    string  `json:"start_date"`
 	EndDate      string  `json:"end_date"`
 	TotalPrice   float32 `json:"total_price"`
@@ -76,9 +76,9 @@ type RentingDisplay struct {
 	EmployeeName string  `json:"employee_name"`
 	CustomerName string  `json:"customer_name"`
 	HotelName    string  `json:"hotel_name"`
-	RoomNumber   int     `json:"room_number"`
-	StartDate    string  `json:"start_date"`
-	EndDate      string  `json:"end_date"`
+	RoomNumber   string  `json:"room_number"`
+	CheckInDate  string  `json:"check_in_date"`
+	CheckOutDate string  `json:"check_out_date"`
 	Payment      bool    `json:"payment"`
 	TotalPrice   float32 `json:"total_price"`
 }
