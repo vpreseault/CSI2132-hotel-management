@@ -68,11 +68,7 @@ func createRoomHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(struct {
-			Message string
-		}{
-			Message: fmt.Sprintf("Successfully created room with ID: %v", payload.ID),
-		})
+		json.NewEncoder(w).Encode(payload)
 	}
 }
 

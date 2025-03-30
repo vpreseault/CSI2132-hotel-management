@@ -69,7 +69,11 @@ async function handleCreateRoom(room: Room) {
         )
         
         if (res.ok) {
+            const data = await res.json()
+        
+            room.room_ID = data.room_ID
             rooms.value.push({ ...room })
+            
             emit('create', 'success')
             return
         }
