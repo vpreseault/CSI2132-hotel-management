@@ -152,6 +152,94 @@ func deleteHotelByID(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
+func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		param := chi.URLParam(r, "hotel_ID")
+		hotelID, err := strconv.Atoi(param)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
+			return
+		}
+
+		var hotel internal.Hotel
+		if err := json.NewDecoder(r.Body).Decode(&hotel); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if hotel.Name == "" || hotel.Address == "" || hotel.Phone == "" || hotel.Email == "" {
+			http.Error(w, "Missing required fields", http.StatusBadRequest)
+			return
+		}
+
+		if hotel.Category < 1 || hotel.Category > 5 {
+			http.Error(w, fmt.Sprintf("Invalid category value %v", hotel.Category), http.StatusBadRequest)
+			return
+		}
+
+		// Start transaction
+		tx, err := ctx.DB.Begin()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		res, err := tx.Exec(queries.UpdateHotel, hotel.Name, hotel.Address, hotel.Category, hotelID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if rows, err := res.RowsAffected(); err != nil {
+			http.Error(w, "Error checking update status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
+			return
+		}
+
+		res, err = tx.Exec(queries.UpdateHotelPhone, hotel.Phone, hotelID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if rows, err := res.RowsAffected(); err != nil {
+			http.Error(w, "Error checking update status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
+			return
+		}
+
+		res, err = tx.Exec(queries.UpdateHotelEmail, hotel.Email, hotelID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Check if any rows were affected
+		if rows, err := res.RowsAffected(); err != nil {
+			http.Error(w, "Error checking update status", http.StatusInternalServerError)
+			return
+		} else if rows == 0 {
+			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
+			return
+		}
+
+		// Commit transaction
+		if err := tx.Commit(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated hotel with ID: %v", hotelID)})
+	}
+}
+
 func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

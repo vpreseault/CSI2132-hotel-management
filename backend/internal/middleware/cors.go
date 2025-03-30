@@ -10,7 +10,7 @@ func CreateCorsMiddleware(allowedOrigins []string) func(http.Handler) http.Handl
 	return func(next http.Handler) http.Handler {
 		corsMiddleware := cors.Handler(cors.Options{
 			AllowedOrigins: allowedOrigins,
-			AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 			AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 			MaxAge:         300,
 		})
