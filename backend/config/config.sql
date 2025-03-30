@@ -1431,6 +1431,19 @@ ALTER TABLE Archives
     ADD FOREIGN KEY (booking_ID) REFERENCES Bookings(booking_ID) ON DELETE SET NULL,
     ADD FOREIGN KEY (customer_ID) REFERENCES Customers(customer_ID) ON DELETE SET NULL;
 
+/* Indexes */
+-- Index for date range queries on bookings 
+CREATE INDEX idx_bookings_dates ON Bookings(start_date, end_date);
+
+-- Index for date range queries on rentings
+CREATE INDEX idx_rentings_dates ON Rentings(check_in_date, check_out_date);
+
+-- Index to speed up filtering rooms by search criteria
+CREATE INDEX idx_rooms_search ON Rooms(hotel_ID, capacity, price, damaged);
+
+-- Index for quick lookup of customers by full name
+CREATE INDEX idx_customers_name ON Customers(full_name);
+
 /* Views */
 -- Create view for room search
 CREATE VIEW RoomSearchView AS
