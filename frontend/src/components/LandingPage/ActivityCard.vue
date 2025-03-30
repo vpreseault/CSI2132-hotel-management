@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white border rounded-lg p-4 shadow-md cursor-pointer transition hover:shadow-lg" @click="emit('toggle', section, index)">
+    <div class="bg-white border rounded-lg p-4 shadow-md cursor-pointer transition hover:shadow-lg mb-3" @click="emit('toggle', section, index)">
       <h3 v-if="roomNumber" class="text-lg font-semibold text-gray-800">{{ hotelName }}</h3>
       <p class="text-gray-600 mt-1">From {{startDate.toLocaleDateString()}} to {{endDate.toLocaleDateString()}}</p>
       <p class="text-gray-600 mt-1">Click for more info.</p>
@@ -12,7 +12,7 @@
         <p v-if="roomNumber"><strong>Room Number:</strong> {{ roomNumber }}</p>
         <p v-if="price"><strong>Total Price:</strong> ${{ price?.toFixed(2) }}</p>
         <p v-if="payment !== undefined"><strong>Payment:</strong> {{ payment ? 'Paid' : 'Pending' }}</p>
-        <Button v-if="section==='booking'" class="mt-3" label="Activate Booking" size="small" @click="" />
+        <slot />
       </div>
   </div>
 </template>

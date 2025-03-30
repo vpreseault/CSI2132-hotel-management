@@ -43,26 +43,28 @@
           :index="index"
           :expandedCard="expandedCard"
           @toggle="toggleCard"
-        />
+        >
+        <Button class="mt-3" label="Activate Booking" size="small" @click="openPaymentModal(booking)"/>
+        </ActivityCard>
       </div>
       <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal" @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
+    <PaymentModal v-if="isPaymentModalOpen" :booking="selectedBooking" @close="closePaymentModal" />
+    <!--@confirm="confirmPayment"-->
 
-    <div class="mt-16 text-center pb-3">
-        <button class="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="handleLogout">Logout</button>
-    </div>
     <Toast position="bottom-center" />
   </div>
 </template>
   
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { getUserID, getUserRole, removeAuthCookie } from '../utils/auth';
+import { getUserID, getUserRole } from '../utils/auth';
 import NavBar from '../components/LandingPage/NavBar.vue';
 import Profile from '../components/LandingPage/Profile.vue';
 import HotelModal from '../components/LandingPage/HotelModal.vue';
@@ -71,7 +73,10 @@ import LayoutSection from '../components/Layout/LayoutSection.vue';
 import { useToast } from "primevue/usetoast";
 import type { BookingItem, RentalItem } from '../types';
 import EmployeeList from '../components/LandingPage/EmployeeList.vue';
+import RoomList from '../components/LandingPage/RoomList.vue';
 import type { ToastMessageOptions } from 'primevue';
+import PaymentModal from '../components/LandingPage/PaymentModal.vue';
+
 
 const toast = useToast();
 
@@ -80,6 +85,50 @@ const isProfileModalOpen = ref(false);
 const isHotelModalOpen = ref(false);
 const isCreateEmployeeModalOpen = ref(false);
 const role = ref(getUserRole())
+
+const isPaymentModalOpen = ref(false);
+const selectedBooking = ref<BookingItem | null>(null);
+
+function openPaymentModal(booking: BookingItem) {
+  selectedBooking.value = booking;
+  isPaymentModalOpen.value = true;
+}
+
+function closePaymentModal() {
+  isPaymentModalOpen.value = false;
+  selectedBooking.value = null;
+}
+
+// function confirmPayment(updatedBooking: BookingItem & {
+//   room_number: number;
+//   start_date: string;
+//   end_date: string;
+//   total_price: number;
+//   card_type: string;
+//   card_number: string;
+// }) {
+//   hotelBookings.value = hotelBookings.value.filter(b => b.booking_id !== updatedBooking.booking_id);
+
+//   hotelRentals.value.push({
+//     customer_name: updatedBooking.customer_name,
+//     hotel_name: updatedBooking.hotel_name,
+//     room_number: updatedBooking.room_number,
+//     start_date: updatedBooking.start_date,
+//     end_date: updatedBooking.end_date,
+//     employee_name: "Current Employee",
+//     total_price: updatedBooking.total_price,
+//     payment: true,  
+//   });
+
+//   closePaymentModal();
+
+//   toast.add({
+//     severity: 'success',
+//     summary: 'Booking Activated',
+//     detail: 'Moved to current rentals.',
+//     life: 3000
+//   });
+// }
 
 function toggleProfileModal() {
   isProfileModalOpen.value = !isProfileModalOpen.value;
@@ -107,15 +156,19 @@ function showEmployeeDeletedToast(severity: ToastMessageOptions["severity"]) {
     });
 }
 
+function showRoomDeletedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Deleted room successfully.' : 'Failed to delete room.', 
+    life: 3000 
+  })
+}
+
 function toggleCard(section: string, index: number) {
   expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index 
     ? { section: null, index: null } 
     : { section, index };
-}
-
-function handleLogout() {
-  removeAuthCookie();
-  window.location.href = '/';
 }
 
 function handleEmployeeBooking(booking: {

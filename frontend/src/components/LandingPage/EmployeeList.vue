@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import EmployeeCard from './EmployeeCard.vue';
-import { getUserID } from '../../utils/auth';
+import { getUserID, removeAuthCookie } from '../../utils/auth';
 import type { ToastMessageOptions } from 'primevue';
 
 const emit = defineEmits<{
@@ -50,7 +50,6 @@ async function fetchEmployees() {
   }
 }
 
-
 async function deleteEmployee(id: number) {
   try {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/employees?employee_ID=${id}`,
@@ -60,6 +59,11 @@ async function deleteEmployee(id: number) {
     )
     
     if (res.ok) {
+        if (managerID.value === id) {
+          removeAuthCookie()
+          return
+        }
+        
         emit('delete', 'success')
         await fetchEmployees()
     } else {
