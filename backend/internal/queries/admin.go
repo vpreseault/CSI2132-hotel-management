@@ -60,8 +60,9 @@ WHERE r.hotel_ID = $1
 GROUP BY r.room_ID
 ORDER BY r.room_number
 `
+var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`
 
-// var GetRooms = `SELECT * FROM Rooms WHERE room_ID = $1`
+// Amenities
 var GetRoomAmenities = `SELECT 
 	a.amenity_ID,
 	a.amenity_name
@@ -72,4 +73,4 @@ FROM (
 JOIN RoomHasAmenities ra ON r.room_ID = ra.room_ID
 JOIN Amenities a ON ra.amenity_ID = a.amenity_ID
 `
-var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`
+var GetAmenities = `SELECT * FROM Amenities`

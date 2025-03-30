@@ -195,3 +195,37 @@ func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
 		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully deleted room with ID: %v", roomID)})
 	}
 }
+
+func getAmenitiesHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		rows, err := ctx.DB.Query(queries.GetAmenities)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		var amenities []internal.Amenity
+		for rows.Next() {
+			var amenity internal.Amenity
+			if err := rows.Scan(
+				&amenity.ID,
+				&amenity.Name,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			amenities = append(amenities, amenity)
+		}
+
+		if err = rows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(amenities)
+	}
+}
