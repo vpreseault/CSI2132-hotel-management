@@ -34,5 +34,42 @@ SET h_email = $1
 WHERE hotel_ID = $2`
 
 // Room
-var GetRooms = `SELECT * FROM Rooms`
+var GetRooms = `
+SELECT 
+	r.room_ID,
+	r.hotel_ID,
+	r.room_number,
+	r.capacity,
+	r.price,
+	r.view_type,
+	r.extendable,
+	r.damaged,
+	COALESCE(
+		json_agg(
+			json_build_object(
+				'amenity_ID', a.amenity_ID,
+				'amenity_name', a.amenity_name
+			)
+		) FILTER (WHERE a.amenity_ID IS NOT NULL),
+		'[]'::json
+	) as amenities
+FROM Rooms r
+LEFT JOIN Room_Has_Amenities ra ON r.room_ID = ra.room_ID
+LEFT JOIN Amenities a ON ra.amenity_ID = a.amenity_ID
+WHERE r.hotel_ID = $1
+GROUP BY r.room_ID
+ORDER BY r.room_number
+`
+
+// var GetRooms = `SELECT * FROM Rooms WHERE room_ID = $1`
+var GetRoomAmenities = `SELECT 
+	a.amenity_ID,
+	a.amenity_name
+FROM (
+	SELECT * FROM Rooms
+	WHERE room_ID = $1
+) r
+JOIN RoomHasAmenities ra ON r.room_ID = ra.room_ID
+JOIN Amenities a ON ra.amenity_ID = a.amenity_ID
+`
 var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`

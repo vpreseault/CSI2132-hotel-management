@@ -12,73 +12,68 @@ import (
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
-func getRoomsHandler(ctx *internal.AppContext) http.HandlerFunc {
+func getHotelRoomsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		managerID := r.URL.Query().Get("manager_ID")
-
-		if managerID == "" {
-			http.Error(w, "manager_ID must be provided", http.StatusInternalServerError)
+		param := r.URL.Query().Get("employee_ID")
+		if param == "" {
+			http.Error(w, "employee_ID must be provided", http.StatusInternalServerError)
 			return
 		}
 
-		param, err := strconv.Atoi(managerID)
+		employeeID, err := strconv.Atoi(param)
 		if err != nil {
-			http.Error(w, fmt.Errorf("provided manager_ID '%v' is not a number", managerID).Error(), http.StatusInternalServerError)
+			http.Error(w, fmt.Errorf("provided employee_ID '%v' is not a number", employeeID).Error(), http.StatusInternalServerError)
 			return
 		}
 
-		var hotel internal.Hotel
-		err = ctx.DB.QueryRow(
-			queries.GetHotelByManagerID,
-			param,
-		).Scan(
-			&hotel.ID,
-			&hotel.Name,
-			&hotel.Address,
-			&hotel.Phone,
-			&hotel.Email,
-			&hotel.Category,
-		)
+		hotelID, err := getHotelByEmployeeID(ctx, employeeID)
+		if err != nil {
+			http.Error(w, fmt.Errorf("could not get employee's hotel: %v", err.Error()).Error(), http.StatusInternalServerError)
+			return
+		}
 
+		rows, err := ctx.DB.Query(queries.GetRooms, hotelID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer rows.Close()
 
-		json.NewEncoder(w).Encode(hotel)
-	}
-}
+		var rooms []internal.Room
+		for rows.Next() {
+			var room internal.Room
+			var amenitiesJSON []byte
+			if err := rows.Scan(
+				&room.ID,
+				&room.HotelID,
+				&room.RoomNumber,
+				&room.Capacity,
+				&room.Price,
+				&room.ViewType,
+				&room.Extendable,
+				&room.Damaged,
+				&amenitiesJSON,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 
-func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+			if err := json.Unmarshal(amenitiesJSON, &room.Amenities); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 
-		param := chi.URLParam(r, "hotel_ID")
-		hotelID, err := strconv.Atoi(param)
-		if err != nil {
-			http.Error(w, fmt.Errorf("provided hotel_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
-			return
+			rooms = append(rooms, room)
 		}
 
-		res, err := ctx.DB.Exec(queries.DeleteHotelByID, hotelID)
-		if err != nil {
+		if err = rows.Err(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if rows, err := res.RowsAffected(); err != nil {
-			log.Printf("Error getting affected rows: %v", err.Error())
-			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
-			return
-		} else if rows == 0 {
-			http.Error(w, fmt.Sprintf("Hotel with ID %v not found", hotelID), http.StatusNotFound)
-			return
-		} else if rows > 1 {
-			log.Printf("Multiple hotels deleted from id: %v", hotelID)
-		}
 
-		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully deleted hotel with ID: %v", hotelID)})
+		json.NewEncoder(w).Encode(rooms)
 	}
 }
 

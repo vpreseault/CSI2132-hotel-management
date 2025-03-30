@@ -26,14 +26,20 @@ type Employee struct {
 }
 
 type Room struct {
-	ID         int     `json:"room_ID"`
-	HotelID    int     `json:"hotel_ID"`
-	RoomNumber string  `json:"room_number"`
-	Capacity   int     `json:"capacity"`
-	Price      float32 `json:"price"`
-	ViewType   string  `json:"view_type"`
-	Extendable bool    `json:"extendable"`
-	Damaged    bool    `json:"damaged"`
+	ID         int       `json:"room_ID"`
+	HotelID    int       `json:"hotel_ID"`
+	RoomNumber string    `json:"room_number"`
+	Capacity   int       `json:"capacity"`
+	Price      float32   `json:"price"`
+	ViewType   string    `json:"view_type"`
+	Extendable bool      `json:"extendable"`
+	Damaged    bool      `json:"damaged"`
+	Amenities  []Amenity `json:"amenities"`
+}
+
+type Amenity struct {
+	ID   int    `json:"amenity_ID"`
+	Name string `json:"amenity_name"`
 }
 
 type Hotel struct {
