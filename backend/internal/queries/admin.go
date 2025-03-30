@@ -36,14 +36,3 @@ WHERE hotel_ID = $2`
 // Room
 var GetRooms = `SELECT * FROM Rooms`
 var DeleteRoomByID = `DELETE FROM Rooms WHERE room_ID = $1`
-
-// Get Employee List
-var GetEmployeesByHotelID = `SELECT 
-	employee_ID, 
-	full_name, 
-	role, 
-	address
-FROM Employees
-WHERE hotel_ID = $1`
-
-var DeleteEmployeeByID = `DELETE FROM Employees WHERE employee_ID = $1`
