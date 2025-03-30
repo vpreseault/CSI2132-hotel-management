@@ -34,6 +34,7 @@ const emit = defineEmits<{
 
 const rooms = ref<Room[]>([])
 const isCreateModalOpen = ref(false)
+const managerID = ref(getUserID())
 
 const newRoom = ref<Room>({
     room_number: '',
@@ -53,9 +54,29 @@ function closeCreateModal() {
     isCreateModalOpen.value = false
 }
 
-function handleCreateRoom(room: Room) {
-    rooms.value.push({ ...room })
+async function handleCreateRoom(room: Room) {
     isCreateModalOpen.value = false
+    try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    ...room,
+                    employee_ID: managerID.value,
+                })
+            }
+        )
+        
+        if (res.ok) {
+            rooms.value.push({ ...room })
+            emit('create', 'success')
+            return
+        }
+        emit('create', 'error')
+    } catch (error) {
+        console.error('Error calling API:', error);
+        emit('create', 'error')
+    }
 }
 
 async function updateRoom(updatedRoom: Room) {
@@ -87,7 +108,6 @@ async function updateRoom(updatedRoom: Room) {
     }
 }
 
-const managerID = ref(getUserID())
 async function deleteRoom(id: number) {
     try {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms/${id}`, {

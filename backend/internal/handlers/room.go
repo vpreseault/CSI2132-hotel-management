@@ -12,6 +12,70 @@ import (
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
 
+func createRoomHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var payload struct {
+			EmployeeID int `json:"employee_ID"`
+			internal.Room
+		}
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		payload.HotelID, err = getHotelByEmployeeID(ctx, payload.EmployeeID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		tx, err := ctx.DB.Begin()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		err = tx.QueryRow(
+			queries.CreateRoom,
+			payload.HotelID,
+			payload.RoomNumber,
+			payload.Capacity,
+			payload.Price,
+			payload.ViewType,
+			payload.Extendable,
+			payload.Damaged,
+		).Scan(&payload.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Add new amenities
+		for _, v := range payload.Amenities {
+			_, err = tx.Exec(queries.InsertRoomAmenity, payload.ID, v.ID)
+			if err != nil {
+				http.Error(w, fmt.Errorf("could not insert new amenity (%v): %v", v.Name, err.Error()).Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Message string
+		}{
+			Message: fmt.Sprintf("Successfully created room with ID: %v", payload.ID),
+		})
+	}
+}
+
 func getHotelRoomsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -146,12 +210,11 @@ func updateRoom(ctx *internal.AppContext) http.HandlerFunc {
 		for _, v := range room.Amenities {
 			_, err = tx.Exec(queries.InsertRoomAmenity, roomID, v.ID)
 			if err != nil {
-				http.Error(w, fmt.Errorf("could not insert new amenity: %v", err.Error()).Error(), http.StatusInternalServerError)
+				http.Error(w, fmt.Errorf("could not insert new amenity (%v): %v", v.Name, err.Error()).Error(), http.StatusInternalServerError)
 				return
 			}
 		}
 
-		// Commit transaction
 		if err := tx.Commit(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

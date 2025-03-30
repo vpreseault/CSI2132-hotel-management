@@ -34,6 +34,18 @@ SET h_email = $1
 WHERE hotel_ID = $2`
 
 // Room
+var CreateRoom = `
+INSERT INTO Rooms (
+	hotel_ID,
+	room_number, 
+	capacity,
+	price,
+	view_type,
+	extendable,
+	damaged
+) VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING room_ID
+`
 var GetRooms = `
 SELECT 
 	r.room_ID,
