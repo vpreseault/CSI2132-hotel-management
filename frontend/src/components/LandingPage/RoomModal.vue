@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Slider from 'primevue/slider'
@@ -65,27 +65,16 @@ import type { Amenity, Room } from '../../types'
 
 const props = defineProps<{
   room: Room;
+  allAmenities: Amenity[]
   onClose: () => void;
   onSave: (updatedRoom: Room) => void;
 }>()
 
 const form = ref<Room>({ ...props.room })
 const selectedAmenities = ref(props.room.amenities.map((amenity) => amenity.amenity_name))
-const allAmenities = ref<Amenity[]>([])
-
-onMounted(async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/amenities`)
-    if (res.ok) {
-      allAmenities.value = await res.json()
-    }
-  } catch (error) {
-    console.error('Error fetching rooms:', error)
-  }
-})
 
 function save() {
-  form.value.amenities = allAmenities.value.filter(
+  form.value.amenities = props.allAmenities.filter(
     (amenity) => selectedAmenities.value.find(
       (selectedAmenity: string) =>
         selectedAmenity === amenity.amenity_name

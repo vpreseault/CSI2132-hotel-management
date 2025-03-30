@@ -20,17 +20,18 @@
         Room </button>
     </div>
 
-    <RoomModal v-if="isModalOpen" :room="room" :onClose="() => isModalOpen = false" :onSave="handleRoomSave" />
+    <RoomModal v-if="isModalOpen" :room="room" :allAmenities="allAmenities" :onClose="() => isModalOpen = false" :onSave="handleRoomSave" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import RoomModal from './RoomModal.vue'
-import type { Room } from '../../types';
+import type { Amenity, Room } from '../../types';
 
 const props = defineProps<{
   room: Room
+  allAmenities: Amenity[]
 }>()
 
 const emit = defineEmits(['delete', 'edit'])

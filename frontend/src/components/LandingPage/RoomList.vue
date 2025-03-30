@@ -8,12 +8,12 @@
         </div>
 
         <div v-if="rooms.length" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
-            <RoomCard v-for="room in rooms" :key="room.room_number" :room="room" @delete="deleteRoom"
+            <RoomCard v-for="room in rooms" :key="room.room_number" :room="room" :allAmenities="allAmenities" @delete="deleteRoom"
                 @edit="updateRoom" />
         </div>
         <p v-else class="text-center text-gray-500 mt-8">No rooms found.</p>
 
-        <RoomModal v-if="isCreateModalOpen" :room="newRoom" :onClose="closeCreateModal" :onSave="handleCreateRoom" />
+        <RoomModal v-if="isCreateModalOpen" :room="newRoom" :allAmenities="allAmenities" :onClose="closeCreateModal" :onSave="handleCreateRoom" />
     </div>
 </template>
 
@@ -24,7 +24,7 @@ import Button from 'primevue/button'
 import RoomCard from './RoomCard.vue'
 import RoomModal from './RoomModal.vue'
 import { getUserID } from '../../utils/auth'
-import type { Room } from '../../types'
+import type { Amenity, Room } from '../../types'
 
 const emit = defineEmits<{
     delete: [severity: ToastMessageOptions["severity"]]
@@ -33,6 +33,7 @@ const emit = defineEmits<{
 }>()
 
 const rooms = ref<Room[]>([])
+const allAmenities = ref<Amenity[]>([])
 const isCreateModalOpen = ref(false)
 const managerID = ref(getUserID())
 
@@ -128,6 +129,7 @@ async function deleteRoom(id: number) {
 
 onMounted(async () => {
     await fetchRooms()
+    await fetchAllAmenities()
 })
 
 async function fetchRooms() {
@@ -139,5 +141,16 @@ async function fetchRooms() {
     } catch (error) {
         console.error('Error fetching rooms:', error)
     }
+}
+
+async function fetchAllAmenities() {
+    try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/amenities`)
+    if (res.ok) {
+      allAmenities.value = await res.json()
+    }
+  } catch (error) {
+    console.error('Error fetching rooms:', error)
+  }
 }
 </script>
