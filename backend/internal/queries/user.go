@@ -13,6 +13,13 @@ RETURNING customer_ID
 
 var GetCustomerByName = `SELECT * FROM Customers WHERE full_name = $1`
 
+var UpdateCustomerByID = `UPDATE Customers 
+SET full_name = $1, address = $2
+WHERE customer_ID = $3
+`
+
+var DeleteCustomerByID = `DELETE FROM Customers WHERE customer_ID = $1`
+
 var CreateEmployee = `
 INSERT INTO Employees (
 	hotel_ID,
@@ -31,3 +38,19 @@ var GetEmployeeByName = `SELECT
 	role, 
 	address
 FROM Employees WHERE full_name = $1`
+
+var UpdateEmployeeByID = `UPDATE Employees 
+SET full_name = $1, address = $2
+WHERE employee_ID = $3
+`
+
+// Get Employee List
+var GetEmployeesByHotelID = `SELECT 
+	employee_ID, 
+	full_name, 
+	role, 
+	address
+FROM Employees
+WHERE hotel_ID = $1`
+
+var DeleteEmployeeByID = `DELETE FROM Employees WHERE employee_ID = $1`

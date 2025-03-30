@@ -56,6 +56,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
                     ID: props.employee ? data.employee_ID : data.customer_ID,
                     name: data.full_name,
                     role: data?.role ? data.role : 'Customer',
+                    address: data.address,
                 }
 
                 setAuthCookie(user)

@@ -7,11 +7,16 @@ import (
 )
 
 func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
-	// Auth
+	// Users
 	r.Post("/api/customers", createCustomerHandler(ctx))
 	r.Get("/api/customers/{name}", getCustomerHandler(ctx))
+	r.Patch("/api/customers/{customer_ID}", updateCustomerByID(ctx))
+	r.Delete("/api/customers", deleteCustomerByID(ctx))
+
 	r.Post("/api/employees", createEmployeeHandler(ctx))
 	r.Get("/api/employees", getEmployeesHandler(ctx))
+	r.Patch("/api/employees/{employee_ID}", updateEmployeeByID(ctx))
+	r.Delete("/api/employees", deleteEmployeeByID(ctx))
 
 	// Search
 	r.Post("/api/search", RoomSearchHandler(ctx))
@@ -25,11 +30,12 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	// Admin
 	r.Get("/api/chains", getChainsHandler(ctx))
 	r.Delete("/api/chains/{chain_ID}", deleteChainByID(ctx))
-	// r.Get("/api/hotels", getHotelsHandler(ctx))
+
+	r.Get("/api/hotels", getHotelsHandler(ctx))
 	r.Delete("/api/hotels/{hotel_ID}", deleteHotelByID(ctx))
+	r.Patch("/api/hotels/{hotel_ID}", updateHotel(ctx))
 	// r.Get("/api/rooms", getRoomsHandler(ctx))
 	r.Delete("/api/rooms/{room_ID}", deleteRoomByID(ctx))
-	r.Delete("/api/employees", deleteEmployeeByID(ctx))
 }
 
 func getHotelByEmployeeID(ctx *internal.AppContext, employeeID int) (int, error) {
