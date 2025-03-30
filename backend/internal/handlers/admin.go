@@ -82,6 +82,45 @@ func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
+func getHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		managerID := r.URL.Query().Get("manager_ID")
+
+		if managerID == "" {
+			http.Error(w, "manager_ID must be provided", http.StatusInternalServerError)
+			return
+		}
+
+		param, err := strconv.Atoi(managerID)
+		if err != nil {
+			http.Error(w, fmt.Errorf("provided manager_ID '%v' is not a number", managerID).Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var hotel internal.Hotel
+		err = ctx.DB.QueryRow(
+			queries.GetHotelByManagerID,
+			param,
+		).Scan(
+			&hotel.ID,
+			&hotel.Name,
+			&hotel.Address,
+			&hotel.Phone,
+			&hotel.Email,
+			&hotel.Category,
+		)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(hotel)
+	}
+}
+
 func deleteHotelByID(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
