@@ -1,18 +1,19 @@
 <template>
-    <div class="w-full m-auto">
+  <div class="min-h-screen w-full bg-gray-50">
+    <div class="w-full min-h-screen pt-30 pb-16 px-4 sm:px-8 max-w-7xl mx-auto">
       <NavBar role="customer" @toggleProfile="toggleProfileModal" />
-  
-      <div class="mt-16 text-center">
-        <h1 class="text-2xl mt-4">Welcome to your one-stop shop for all things Hotel Room Rentings!</h1>
-        <p class="mt-4">You are logged in!</p>
+
+      <div class="text-center mb-16">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-black mb-4 "> Welcome to Ω Hotel Management! </h1>
+        <p class="text-lg sm:text-xl text-gray-700 pi pi-building"> Your one-stop shop for all things hotel room rentings </p> 
       </div>
-      
-      <LayoutSection title="Search For Room">
+
+      <LayoutSection title="Search For Room" class="mb-12">
         <div class="mt-4">
           <SearchSection @bookingSubmitted="handleBookingSubmitted" />
         </div>
       </LayoutSection>
-      
+
       <LayoutSection title="Your Activity">
           <Accordion value="0">
             <AccordionPanel value="0">
@@ -80,11 +81,14 @@
             </AccordionPanel>
         </Accordion>
       </LayoutSection>
-      
+
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
       <Toast position="bottom-center" />
+      <Footnote />
     </div>
+  </div>
 </template>
+
   
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
@@ -95,6 +99,7 @@ import type { RentalItem, BookingItem, ArchiveItem } from '../types';
 import NoResultsLabel from '../components/Layout/NoResultsLabel.vue';
 import ArchiveCard from '../components/LandingPage/ArchiveCard.vue';
 import SearchSection from '../components/Search/SearchSection.vue'
+import Footnote from '../components/LandingPage/Footnote.vue';
 import { useToast } from "primevue/usetoast";
 import type { ToastMessageOptions } from 'primevue';
 
