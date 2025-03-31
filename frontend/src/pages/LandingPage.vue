@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen w-full bg-gray-50">
-    <div class="w-full min-h-screen pt-30 pb-16 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div class="w-full min-h-screen pt-30 pb-16 px-4 sm:px-8 max-w-screen-xl mx-auto">
       <NavBar role="customer" @toggleProfile="toggleProfileModal" />
 
       <div class="text-center mb-16">
@@ -9,7 +9,7 @@
       </div>
 
       <LayoutSection title="Search For Room" class="mb-12">
-        <div class="mt-4">
+        <div class="w-full mx-auto">
           <SearchSection @bookingSubmitted="handleBookingSubmitted" />
         </div>
       </LayoutSection>

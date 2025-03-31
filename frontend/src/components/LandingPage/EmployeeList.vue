@@ -1,5 +1,5 @@
 <template>
-    <div id="employee-list" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md mx-75">
+    <div id="employee-list" class="bg-green-100 p-6 rounded-lg shadow-md border border-gray-300 mb-10 max-w-5xl mx-auto">
       <h2 class="text-center text-xl text-gray-600 font-semibold">All Employees</h2>
       <div v-if="employees.length" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
         <EmployeeCard 
