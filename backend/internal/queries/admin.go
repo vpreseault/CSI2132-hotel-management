@@ -5,7 +5,18 @@ var GetChains = `SELECT chain_ID, chain_name FROM HotelChains`
 var DeleteChainByID = `DELETE FROM HotelChains WHERE chain_ID = $1`
 
 // Hotel
-var GetHotels = `SELECT * FROM Hotels`
+var GetHotels = `SELECT 
+	h.hotel_ID,
+	h.hotel_name,
+	h.address,
+	hp.h_phone,
+	he.h_email,
+	h.category
+FROM Hotels h
+JOIN HotelPhones hp ON h.hotel_ID = hp.hotel_ID
+JOIN HotelEmails he ON h.hotel_ID = he.hotel_ID
+ORDER BY h.hotel_ID DESC
+`
 var GetHotelByManagerID = `SELECT 
 	h.hotel_ID,
 	h.hotel_name,
@@ -19,6 +30,26 @@ JOIN HotelEmails he ON h.hotel_ID = he.hotel_ID
 WHERE h.manager_ID = $1
 `
 var DeleteHotelByID = `DELETE FROM Hotels WHERE hotel_ID = $1`
+var InsertHotel = `INSERT INTO Hotels (
+	chain_ID,
+	manager_ID,
+	hotel_name,
+	address,
+	category
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING hotel_ID
+`
+var InsertHotelPhone = `INSERT INTO HotelPhones (
+	hotel_ID,
+	h_phone
+) VALUES ($1, $2)
+`
+var InsertHotelEmail = `INSERT INTO HotelEmails (
+	hotel_ID,
+	h_email
+) VALUES ($1, $2)
+`
+
 var UpdateHotel = `UPDATE Hotels 
 SET hotel_name = $1, 
     address = $2,
@@ -101,3 +132,7 @@ var InsertRoomAmenity = `INSERT INTO Room_Has_Amenities (
 	amenity_ID
 ) VALUES ($1, $2)
 `
+
+// Select from views
+var GetRoomsPerAreaView = `SELECT * FROM RoomsPerAreaView`
+var GetHotelCapacityView = `SELECT * FROM HotelCapacityView`

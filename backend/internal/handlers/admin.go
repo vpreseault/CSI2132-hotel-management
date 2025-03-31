@@ -82,6 +82,62 @@ func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
+func createHotelHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var payload struct {
+			internal.Hotel
+			ChainID   int `json:"chain_ID"`
+			ManagerID int `json:"manager_ID"`
+		}
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		tx, err := ctx.DB.Begin()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		err = tx.QueryRow(
+			queries.InsertHotel,
+			payload.ChainID,
+			nil,
+			payload.Name,
+			payload.Address,
+			payload.Category,
+		).Scan(&payload.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = tx.Exec(queries.InsertHotelPhone, payload.ID, payload.Phone)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = tx.Exec(queries.InsertHotelEmail, payload.ID, payload.Email)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := tx.Commit(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(payload)
+	}
+}
+
 func getHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -118,6 +174,43 @@ func getHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		json.NewEncoder(w).Encode(hotel)
+	}
+}
+
+func getAllHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		rows, err := ctx.DB.Query(queries.GetHotels)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		var hotels []internal.Hotel
+		for rows.Next() {
+			var hotel internal.Hotel
+			if err := rows.Scan(
+				&hotel.ID,
+				&hotel.Name,
+				&hotel.Address,
+				&hotel.Phone,
+				&hotel.Email,
+				&hotel.Category,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hotels = append(hotels, hotel)
+		}
+
+		if err = rows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(hotels)
 	}
 }
 
@@ -234,5 +327,83 @@ func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
 		}
 
 		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated hotel with ID: %v", hotelID)})
+	}
+}
+
+func getViewsDataHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		roomsPerAreaRows, err := ctx.DB.Query(queries.GetRoomsPerAreaView)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer roomsPerAreaRows.Close()
+
+		hotelCapacityRows, err := ctx.DB.Query(queries.GetHotelCapacityView)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer hotelCapacityRows.Close()
+
+		var roomsPerArea []struct {
+			Area       string `json:"area"`
+			TotalRooms int    `json:"total_rooms"`
+		}
+
+		for roomsPerAreaRows.Next() {
+			var data struct {
+				Area       string `json:"area"`
+				TotalRooms int    `json:"total_rooms"`
+			}
+			if err := roomsPerAreaRows.Scan(&data.Area, &data.TotalRooms); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			roomsPerArea = append(roomsPerArea, data)
+		}
+
+		var hotelCapacity []struct {
+			HotelName     string `json:"hotel_name"`
+			TotalCapacity int    `json:"total_capacity"`
+		}
+
+		for hotelCapacityRows.Next() {
+			var data struct {
+				HotelName     string `json:"hotel_name"`
+				TotalCapacity int    `json:"total_capacity"`
+			}
+			if err := hotelCapacityRows.Scan(&data.HotelName, &data.TotalCapacity); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hotelCapacity = append(hotelCapacity, data)
+		}
+
+		if err = roomsPerAreaRows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err = hotelCapacityRows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			RoomsPerArea []struct {
+				Area       string `json:"area"`
+				TotalRooms int    `json:"total_rooms"`
+			} `json:"rooms_per_area"`
+			HotelCapacity []struct {
+				HotelName     string `json:"hotel_name"`
+				TotalCapacity int    `json:"total_capacity"`
+			} `json:"hotel_capacity"`
+		}{
+			RoomsPerArea:  roomsPerArea,
+			HotelCapacity: hotelCapacity,
+		})
 	}
 }

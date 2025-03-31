@@ -55,6 +55,8 @@ const editsMade = ref(false)
 
 const hotelData = ref<Hotel>({
   hotel_ID: 0,
+  chain_ID: 0,
+  manager_ID: 0,
   hotel_name: '',
   address: '',
   phone_number: '',
