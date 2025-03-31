@@ -52,6 +52,7 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/amenities", getAmenitiesHandler(ctx))
 
 	// Admin
+	r.Get("/api/admin/views", getViewsDataHandler(ctx))
 
 }
 

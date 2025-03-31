@@ -1468,14 +1468,17 @@ LEFT JOIN Rentings rt ON r.room_ID = rt.room_ID;
 -- Number of available rooms per area view
 CREATE VIEW RoomsPerAreaView AS
 SELECT 
-    SUM(h.number_of_rooms),
-    trim(split_part(h.address, ',', 2)) as area
+    trim(split_part(h.address, ',', 2)) as area,
+    SUM(h.number_of_rooms) as total_rooms
 FROM Hotels h
 GROUP BY area;
 
 -- Aggregated room capacity per hotel view
 CREATE VIEW HotelCapacityView AS
 SELECT 
-    SUM(r.capacity)
+    h.hotel_name,
+    SUM(r.capacity) as total_capacity
 FROM Rooms r
-WHERE r.hotel_ID = 1;
+JOIN Hotels h ON r.hotel_ID = h.hotel_ID
+GROUP BY h.chain_ID, h.hotel_name
+ORDER BY h.chain_ID, h.hotel_name;

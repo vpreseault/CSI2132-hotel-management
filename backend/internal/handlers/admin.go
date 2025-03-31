@@ -329,3 +329,81 @@ func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
 		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated hotel with ID: %v", hotelID)})
 	}
 }
+
+func getViewsDataHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		roomsPerAreaRows, err := ctx.DB.Query(queries.GetRoomsPerAreaView)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer roomsPerAreaRows.Close()
+
+		hotelCapacityRows, err := ctx.DB.Query(queries.GetHotelCapacityView)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer hotelCapacityRows.Close()
+
+		var roomsPerArea []struct {
+			Area       string `json:"area"`
+			TotalRooms int    `json:"total_rooms"`
+		}
+
+		for roomsPerAreaRows.Next() {
+			var data struct {
+				Area       string `json:"area"`
+				TotalRooms int    `json:"total_rooms"`
+			}
+			if err := roomsPerAreaRows.Scan(&data.Area, &data.TotalRooms); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			roomsPerArea = append(roomsPerArea, data)
+		}
+
+		var hotelCapacity []struct {
+			HotelName     string `json:"hotel_name"`
+			TotalCapacity int    `json:"total_capacity"`
+		}
+
+		for hotelCapacityRows.Next() {
+			var data struct {
+				HotelName     string `json:"hotel_name"`
+				TotalCapacity int    `json:"total_capacity"`
+			}
+			if err := hotelCapacityRows.Scan(&data.HotelName, &data.TotalCapacity); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hotelCapacity = append(hotelCapacity, data)
+		}
+
+		if err = roomsPerAreaRows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err = hotelCapacityRows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			RoomsPerArea []struct {
+				Area       string `json:"area"`
+				TotalRooms int    `json:"total_rooms"`
+			} `json:"rooms_per_area"`
+			HotelCapacity []struct {
+				HotelName     string `json:"hotel_name"`
+				TotalCapacity int    `json:"total_capacity"`
+			} `json:"hotel_capacity"`
+		}{
+			RoomsPerArea:  roomsPerArea,
+			HotelCapacity: hotelCapacity,
+		})
+	}
+}

@@ -132,3 +132,7 @@ var InsertRoomAmenity = `INSERT INTO Room_Has_Amenities (
 	amenity_ID
 ) VALUES ($1, $2)
 `
+
+// Select from views
+var GetRoomsPerAreaView = `SELECT * FROM RoomsPerAreaView`
+var GetHotelCapacityView = `SELECT * FROM HotelCapacityView`
