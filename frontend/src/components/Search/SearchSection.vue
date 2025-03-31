@@ -1,29 +1,25 @@
 <template>
   <div>
     <div class="mb-5">
-      <div class="flex flex-wrap justify-center gap-6 mb-5">
-        <!-- Dates -->
-        <div class="flex flex-col">
+      <div class="flex flex-col md:flex-row gap-4 justify-center mb-5 max-w-5xl mx-auto">
+        <div class="flex flex-col w-full md:w-1/3">
           <label class="font-medium">Dates</label>
-          <DatePicker v-model="filters.dates" selectionMode="range" :manualInput="false" showIcon fluid iconDisplay="input" placeholder="Select Dates" />
+          <DatePicker v-model="filters.dates" selectionMode="range" :manualInput="false" showIcon fluid iconDisplay="input" placeholder="Select Dates"/>
           <Message v-if="error" severity="error" size="small" variant="simple">{{ error }}</Message>
         </div>
-        
-        <!-- City -->
-        <div class="flex flex-col">
+
+        <div class="flex flex-col w-full md:w-1/3">
           <label class="font-medium">City</label>
           <InputText v-model="filters.city" placeholder="Enter City Name" class="w-full" />
         </div>
-  
-        <!-- Hotel Chain -->
-        <div class="flex flex-col">
+
+        <div class="flex flex-col w-full md:w-1/3">
           <label class="font-medium">Hotel Chain</label>
           <Select v-model="filters.chain" :options="chains" optionLabel="chain_name" optionValue="chain_name" placeholder="Select Hotel Chain" class="w-full"/>
         </div>
       </div>
-  
-    <!-- Sliders -->
-      <div class="flex flex-wrap justify-center gap-6 mb-10">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-2xl py-10 mx-auto justify-items-center">
         <div class="flex items-center gap-4">
           <div class="flex-1">
             <label class="font-medium">Max Room Price: {{filters.roomPrice ? `$${filters.roomPrice}`:'' }}</label>

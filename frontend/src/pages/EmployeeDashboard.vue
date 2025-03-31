@@ -1,16 +1,18 @@
 <template>
-  <div class="w-full m-auto">
-    <div class="mt-16 text-center">
-      <h1 class="text-2xl mt-4">{{ role }} View</h1>
-      <p class="mt-4">You are logged in!</p>
-    </div>
+  <div class="min-h-screen bg-gray-50 px-4 sm:px-8 pt-30 pb-20 mx-auto">
 
     <NavBar :role="role === 'Manager' ? 'manager' : 'employee'" @toggleProfile="toggleProfileModal"
       @toggleHotel="toggleHotelModal" @toggleCreateEmployee="toggleCreateEmployeeModal" />
 
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-black mb-2">Welcome to Ω Hotel Management!</h1>
+        <p class="text-lg text-gray-600">Manage rentals, bookings, and rooms with ease.</p>
+      </div>
+
+
     <LayoutSection title="Current Rentals">
       <div v-if="hotelRentals.length > 0"
-        class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+        class="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         <ActivityCard v-for="(rental, index) in hotelRentals" :key="`rental-${index}`"
           :customerName="rental.customer_name" :hotelName="rental.hotel_name" :startDate="new Date(rental.check_in_date)"
           :endDate="new Date(rental.check_out_date)" :employeeName="rental.employee_name" :roomNumber="rental.room_number"
@@ -21,7 +23,7 @@
     </LayoutSection>
     <LayoutSection title="Upcoming Bookings">
       <div v-if="hotelBookings.length > 0"
-        class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+        class="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         <ActivityCard v-for="(booking, index) in hotelBookings" :key="`booking-${index}`"
           :customerName="booking.customer_name" :hotelName="booking.hotel_name"
           :startDate="new Date(booking.start_date)" :endDate="new Date(booking.end_date)"
@@ -38,17 +40,20 @@
         <EmployeeSearchSection @bookingSubmitted="handleBookingSubmitted" />
       </div>
     </LayoutSection>
-
+    
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
     <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal"
-      @created="showEmployeeCreatedToast" />
+      @created="showEmployeeCreatedToast"  />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
     <PaymentModal v-if="isPaymentModalOpen" :booking="selectedBooking" @confirm="confirmPayment" @close="closePaymentModal" />
 
     <Toast position="bottom-center" />
   </div>
+
+  <Footnote class="mt-10" />
+
 </template>
 
 <script setup lang="ts">

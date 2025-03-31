@@ -1,5 +1,5 @@
 <template>
-    <div id="room-list" class="mt-16 p-8 bg-green-100 rounded-lg shadow-md mx-75">
+    <div id="room-list" class="bg-green-100 p-6 rounded-lg shadow-md border border-gray-300 mb-10 max-w-5xl mx-auto">
         <h2 class="text-center text-xl text-gray-600 font-semibold">All Rooms</h2>
 
         <div class="text-center mt-4">
