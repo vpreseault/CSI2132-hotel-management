@@ -128,7 +128,7 @@ async function updateHotel(): Promise<boolean> {
 
   if (!isValidEmail(hotelData.value.email)) {
     message.severity = 'warn';
-    message.text = 'Please enter a valid email address.';
+    message.text = 'Please enter a valid email address. (E.x. example@gmail.com)';
     return false;
   }
 
