@@ -6,6 +6,7 @@
   
       <li v-if="role === 'manager'" @click="emit('toggleHotel')" :class="navItemClass">Edit Hotel</li>
       <li v-if="role === 'manager'" @click="emit('toggleCreateEmployee')" :class="navItemClass" >Create Employee</li>
+      <li v-if="role === 'admin'" @click="emit('exitAdmin')" :class="navItemClass"> Exit Admin View</li>
   
       <li @click="emit('toggleProfile')" :class="navItemClass"> Profile </li>
       <button class="ml-8 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" @click="handleLogout">Logout</button>
@@ -21,7 +22,8 @@ import { removeAuthCookie } from '../../utils/auth';
 const emit = defineEmits<{
   toggleProfile: [],
   toggleHotel: [],
-  toggleCreateEmployee: []
+  toggleCreateEmployee: [],
+  exitAdmin: []
 }>()
 
 defineProps<{ role: string }>()

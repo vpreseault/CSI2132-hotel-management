@@ -90,6 +90,27 @@ export type SearchResult = {
 }
 
 export type Hotel = {
+    chain_ID: number,
+    hotel_ID: number,
+    hotel_name: string,
+    manager_ID: number,
+    address: string,
+    phone_number: string,
+    email: string,
+    category: number,
+}
+
+export type HotelPayload = {
+    chain_ID: number,
+    hotel_name: string,
+    manager_ID: number,
+    address: string,
+    phone_number: string,
+    email: string,
+    category: number,
+}
+
+export type HotelDisplay = {
     hotel_ID: number,
     hotel_name: string,
     address: string,
