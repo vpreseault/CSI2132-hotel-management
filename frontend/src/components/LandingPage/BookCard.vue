@@ -35,7 +35,7 @@
 
         <div class="flex justify-between mt-6">
           <Button type="button" label="Back to Results" icon="pi pi-arrow-left" class="p-button-secondary" @click="emit('close')" />
-          <Button type="submit" label="Confirm Booking" icon="pi pi-check" />
+          <Button type="submit" :label="`Confirm ${isRental ? 'Rental': 'Booking'}`" icon="pi pi-check" />
         </div>
       </Form>
     </template>
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed, reactive } from 'vue';
+import { defineProps, defineEmits, computed, reactive } from 'vue';
 import { Form } from '@primevue/forms';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
@@ -63,7 +63,7 @@ type FormError = { type: string; message: string }
 
 const emit = defineEmits<{
   close: []
-  bookingSubmitted: [ToastMessageOptions["severity"]]
+  bookingSubmitted: [severity: ToastMessageOptions["severity"], isRental: boolean]
 }>()
 
 const props = defineProps<{
@@ -80,9 +80,9 @@ const cardTypes = [
   { label: 'Discover', value: 'Discover' }
 ];
 
-const customerName = ref(getUserName())
+const customerName = computed(() => props.employee ? '': getUserName())
 const initialValues = reactive({
-  customer_name: customerName
+  customer_name: customerName.value
 })
 
 const totalNights = computed(() => {
@@ -116,7 +116,8 @@ const resolver = ({ values }: FormResolverOptions) => {
 
   // || !/^\d{4} \d{4} \d{4} \d{4}$/.test(values.card_number)
   if (props.employee && !values.card_number) {
-    errors.card_number.push({ type: 'invalid', message: 'Enter a valid card number (e.g., 1234 5678 9012 3456).' });
+    errors.card_number.push({ type: 'invalid', message: 'Card number is required.' });
+    // errors.card_number.push({ type: 'invalid', message: 'Enter a valid card number (e.g., 1234 5678 9012 3456).' });
   }
 
   return {
@@ -140,7 +141,7 @@ async function onFormSubmit(e: FormSubmitEvent) {
       }
 
       if (!customerNameResponse.ok) {
-        emit('bookingSubmitted', 'error')
+        emit('bookingSubmitted', 'error', isRental.value)
         return
       }
 
@@ -177,10 +178,10 @@ async function createBooking(customerID: number) {
       }
     )
     if (res.ok) {
-      emit('bookingSubmitted', 'success')
+      emit('bookingSubmitted', 'success', isRental.value)
       return 
     }
-    emit('bookingSubmitted', 'error')
+    emit('bookingSubmitted', 'error', isRental.value)
   } catch (error) {
     console.error('Error calling API:', error);
   }
@@ -208,10 +209,10 @@ async function createRental(customerID: number) {
       }
     )
     if (res.ok) {
-      emit('bookingSubmitted', 'success')
+      emit('bookingSubmitted', 'success', isRental.value)
       return 
     }
-    emit('bookingSubmitted', 'error')
+    emit('bookingSubmitted', 'error', isRental.value)
   } catch (error) {
     console.error('Error calling API:', error);
   }

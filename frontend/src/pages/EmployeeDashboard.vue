@@ -35,7 +35,7 @@
 
     <LayoutSection title="Search For Room">
       <div class="mt-4">
-        <EmployeeSearchSection />
+        <EmployeeSearchSection @bookingSubmitted="handleBookingSubmitted" />
       </div>
     </LayoutSection>
 
@@ -239,6 +239,26 @@ async function fetchBookings() {
   } catch (error) {
     console.error('Error calling API:', error);
   }
+}
+
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"], isRental: boolean) {
+  if (isRental) {
+    toast.add({
+      severity: severity,
+      summary: severity === 'success' ? 'Rental Created' : 'Failed',
+      detail: severity === 'success' ? 'Successfully created new rental.' : 'Could not create new rental.',
+      life: 3000
+    });
+    await fetchRentals()
+    return
+  }
+  toast.add({
+    severity: severity,
+    summary: severity === 'success' ? 'Booking Created' : 'Failed',
+    detail: severity === 'success' ? 'Successfully created new booking.' : 'Could not create new booking.',
+    life: 3000
+  });
+  await fetchBookings()
 }
 
 onMounted(async () => {

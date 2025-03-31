@@ -59,6 +59,7 @@
         :room="selectedRoom"
         :start_date="filters.dates[0]"
         :end_date="filters.dates[1]"
+        employee
         @close="bookingModalIsVisible = false"
         @bookingSubmitted="handleBookingSubmitted"
       />
@@ -76,7 +77,7 @@ import type { ToastMessageOptions } from 'primevue';
 import { getUserID } from '../../utils/auth';
 
 const emit = defineEmits<{
-  bookingSubmitted: [severity?: ToastMessageOptions["severity"]]
+  bookingSubmitted: [severity: ToastMessageOptions["severity"], isRental: boolean]
 }>()
 
 const filters = reactive<{
@@ -163,10 +164,10 @@ function showBookingModal(room: SearchResult) {
   bookingModalIsVisible.value = true
 }
 
-async function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"], isRental: boolean) {
   bookingModalIsVisible.value = false
   await submitSearch()
-  emit('bookingSubmitted', severity)
+  emit('bookingSubmitted', severity, isRental)
 }
 </script>
 
