@@ -26,7 +26,7 @@ const props = defineProps<{
   startDate: Date,
   endDate: Date,
   employeeName: string,
-  roomNumber?: number,
+  roomNumber?: string,
   price?: number,
   payment?: boolean,
   section: string;

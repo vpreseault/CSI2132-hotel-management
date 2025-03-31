@@ -163,8 +163,8 @@ func getRentings(ctx *internal.AppContext, query string, id int) ([]internal.Ren
 			&renting.CustomerName,
 			&renting.HotelName,
 			&renting.RoomNumber,
-			&renting.StartDate,
-			&renting.EndDate,
+			&renting.CheckInDate,
+			&renting.CheckOutDate,
 			&renting.Payment,
 			&renting.TotalPrice,
 		); err != nil {
@@ -179,6 +179,70 @@ func getRentings(ctx *internal.AppContext, query string, id int) ([]internal.Ren
 	}
 
 	return rentings, nil
+}
+
+func createRentingFromBookingHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var reqBody struct {
+			BookingID  *int `json:"booking_ID"`
+			EmployeeID *int `json:"employee_ID"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if reqBody.BookingID == nil || reqBody.EmployeeID == nil {
+			http.Error(w, "Missing required fields", http.StatusBadRequest)
+			return
+		}
+
+		var booking internal.Booking
+		err := ctx.DB.QueryRow(queries.GetBookingByID, *reqBody.BookingID).Scan(
+			&booking.ID,
+			&booking.CustomerID,
+			&booking.RoomID,
+			&booking.StartDate,
+			&booking.EndDate,
+			&booking.TotalPrice,
+		)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var renting = internal.Renting{
+			EmployeeID:   *reqBody.EmployeeID,
+			CustomerID:   booking.CustomerID,
+			RoomID:       booking.RoomID,
+			BookingID:    booking.ID,
+			CheckInDate:  booking.StartDate,
+			CheckOutDate: booking.EndDate,
+			Payment:      true,
+			TotalPrice:   booking.TotalPrice,
+		}
+
+		err = ctx.DB.QueryRow(
+			queries.CreateRenting,
+			renting.EmployeeID,
+			renting.CustomerID,
+			renting.RoomID,
+			renting.BookingID,
+			renting.CheckInDate,
+			renting.CheckOutDate,
+			renting.Payment,
+			renting.TotalPrice,
+		).Scan(&renting.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(renting)
+	}
 }
 
 func getArchivesHandler(ctx *internal.AppContext) http.HandlerFunc {

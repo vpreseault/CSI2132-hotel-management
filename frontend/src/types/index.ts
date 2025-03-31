@@ -3,25 +3,68 @@ export type FormError = {
     message: string;
 }
 
-export type RentalItem = {
+export type Rental = {
+    booking_ID?: number;
+    check_in_date: string;
+    check_out_date: string;
+    customer_ID: number;
     customer_name: string;
-    hotel_name: string;
-    start_date: string;
-    end_date: string;
+    employee_ID: number;
     employee_name: string;
-    room_number: number;
-    total_price: number;
+    hotel_name: string;
     payment: boolean;
+    room_ID: number;
+    room_number: string;
+    total_price: number;
 };
 
-export type BookingItem = {
+export type RentalItem = Pick<Rental,
+    "customer_name" |
+    "hotel_name" |
+    "check_in_date" |
+    "check_out_date" |
+    "employee_name" |
+    "room_number" |
+    "total_price" |
+    "payment"
+>
+
+export type RentalPayload = Pick<Rental,
+    "check_in_date" |
+    "check_out_date" |
+    "customer_ID" |
+    "employee_ID" |
+    "payment" |
+    "room_ID" |
+    "total_price"
+>
+
+export type RentalWithBookingPayload = Pick<Rental,
+    "booking_ID" |
+    "employee_ID" 
+>
+
+export type Booking = {
+    booking_ID: number;
+    customer_ID: number;
     customer_name: string;
-    hotel_name: string;
-    room_number: number;
-    start_date: string;
     end_date: string;
+    hotel_name: string;
+    room_ID: number;
+    room_number: string;
+    start_date: string;
     total_price: number;
 };
+
+export type BookingItem = Pick<Booking,
+    "booking_ID"|
+    "customer_name"|
+    "hotel_name"|
+    "room_number"|
+    "start_date"|
+    "end_date"|
+    "total_price"
+>
 
 export type ArchiveItem = {
     archive_ID: number,

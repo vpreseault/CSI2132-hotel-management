@@ -25,6 +25,7 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/activity", getActivityHandler(ctx))
 	r.Get("/api/bookings", getBookingsHandler(ctx))
 	r.Get("/api/rentings", getRentingsHandler(ctx))
+	r.Post("/api/renting-from-booking", createRentingFromBookingHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
 
 	// Chains
