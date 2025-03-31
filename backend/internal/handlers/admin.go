@@ -179,7 +179,6 @@ func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// Start transaction
 		tx, err := ctx.DB.Begin()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -221,7 +220,6 @@ func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// Check if any rows were affected
 		if rows, err := res.RowsAffected(); err != nil {
 			http.Error(w, "Error checking update status", http.StatusInternalServerError)
 			return
@@ -230,43 +228,11 @@ func updateHotel(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// Commit transaction
 		if err := tx.Commit(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully updated hotel with ID: %v", hotelID)})
-	}
-}
-
-func deleteRoomByID(ctx *internal.AppContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		param := chi.URLParam(r, "room_ID")
-		roomID, err := strconv.Atoi(param)
-		if err != nil {
-			http.Error(w, fmt.Errorf("provided room_ID '%v' is not a number", param).Error(), http.StatusBadRequest)
-			return
-		}
-
-		res, err := ctx.DB.Exec(queries.DeleteRoomByID, roomID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if rows, err := res.RowsAffected(); err != nil {
-			log.Printf("Error getting affected rows: %v", err.Error())
-			http.Error(w, "Error checking deletion status", http.StatusInternalServerError)
-			return
-		} else if rows == 0 {
-			http.Error(w, fmt.Sprintf("Room with ID %v not found", roomID), http.StatusNotFound)
-			return
-		} else if rows > 1 {
-			log.Printf("Multiple rooms deleted from id: %v", roomID)
-		}
-
-		json.NewEncoder(w).Encode(struct{ Message string }{Message: fmt.Sprintf("Successfully deleted room with ID: %v", roomID)})
 	}
 }

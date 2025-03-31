@@ -8,7 +8,7 @@
     <NavBar :role="role === 'Manager' ? 'manager' : 'employee'" @toggleProfile="toggleProfileModal" @toggleHotel="toggleHotelModal" @toggleCreateEmployee="toggleCreateEmployeeModal" />
     
     <LayoutSection title="Current Rentals">
-      <div v-if="hotelRentals.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelRentals?.length" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(rental, index) in hotelRentals"
           :key="`rental-${index}`"
@@ -29,7 +29,7 @@
       <p v-else class="flex justify-center mt-4">There are no current rentals.</p>
     </LayoutSection>
     <LayoutSection title="Upcoming Bookings">
-      <div v-if="hotelBookings.length > 0" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
+      <div v-if="hotelBookings?.length" class="mt-4 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 justify-center">
         <ActivityCard
           v-for="(booking, index) in hotelBookings"
           :key="`booking-${index}`"
@@ -51,7 +51,7 @@
     </LayoutSection>
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true" @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
-    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal" @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
     <HotelModal v-if="isHotelModalOpen" @close="toggleHotelModal" />
@@ -161,6 +161,24 @@ function showRoomDeletedToast(severity: ToastMessageOptions["severity"]) {
     severity, 
     summary: severity === 'success' ? 'Success' : 'Failed', 
     detail: severity === 'success' ? 'Deleted room successfully.' : 'Failed to delete room.', 
+    life: 3000 
+  })
+}
+
+function showRoomUpdatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Updated room successfully.' : 'Failed to update room.', 
+    life: 3000 
+  })
+}
+
+function showRoomCreatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Created room successfully.' : 'Failed to create room.', 
     life: 3000 
   })
 }
