@@ -5,7 +5,18 @@ var GetChains = `SELECT chain_ID, chain_name FROM HotelChains`
 var DeleteChainByID = `DELETE FROM HotelChains WHERE chain_ID = $1`
 
 // Hotel
-var GetHotels = `SELECT * FROM Hotels`
+var GetHotels = `SELECT 
+	h.hotel_ID,
+	h.hotel_name,
+	h.address,
+	hp.h_phone,
+	he.h_email,
+	h.category
+FROM Hotels h
+JOIN HotelPhones hp ON h.hotel_ID = hp.hotel_ID
+JOIN HotelEmails he ON h.hotel_ID = he.hotel_ID
+ORDER BY h.hotel_ID DESC
+`
 var GetHotelByManagerID = `SELECT 
 	h.hotel_ID,
 	h.hotel_name,

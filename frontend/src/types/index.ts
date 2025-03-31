@@ -96,6 +96,11 @@ export type SearchResult = {
     total_rooms: number,
 }
 
+export type Chain = {
+    chain_ID: number
+    chain_name: string
+}
+
 export type Hotel = {
     chain_ID: number,
     hotel_ID: number,

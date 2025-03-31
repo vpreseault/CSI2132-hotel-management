@@ -96,7 +96,7 @@ import SearchCard from './SearchCard.vue'
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
-import type { SearchResult } from '../../types';
+import type { Chain, SearchResult } from '../../types';
 import type { ToastMessageOptions } from 'primevue';
 
 const emit = defineEmits<{
@@ -126,11 +126,6 @@ function clearFilters() {
 
   searchResults.value = []
   showResults.value = false
-}
-
-type Chain = {
-  chain_ID: number
-  chain_name: string
 }
 
 const chains = ref<Chain[]>([]);

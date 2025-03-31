@@ -18,6 +18,7 @@
   
       <CreateHotels
         v-if="isCreateModalOpen"
+        :chains="chains"
         :onClose="closeCreateModal"
         :onCreate="handleHotelCreated"
       />
@@ -25,13 +26,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Button from 'primevue/button'
 import CreateHotels from './CreateHotels.vue'
 import HotelCard from './HotelCard.vue'
-import type { HotelDisplay } from '../../types'
+import type { Chain, HotelDisplay } from '../../types'
 
 const hotels = ref<HotelDisplay[]>([])
+
+const chains = ref<Chain[]>([]);
+onMounted(async () => {  
+  try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/chains`)
+      if (res.ok) {
+        chains.value = await res.json()
+      }
+      await fetchHotels()
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
+})
+
+async function fetchHotels() {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/all-hotels`)
+  if (res.ok) {
+    hotels.value = await res.json()
+  }
+}
 
 const isCreateModalOpen = ref(false)
 
