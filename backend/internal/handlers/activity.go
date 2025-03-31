@@ -1,14 +1,85 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/vpreseault/csi2132-project/backend/internal"
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
 )
+
+func createBookingHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var reqBody struct {
+			CustomerName *string `json:"customer_name"`
+			RoomID       *int    `json:"room_ID"`
+			StartDate    *string `json:"start_date"`
+			EndDate      *string `json:"end_date"`
+			TotalPrice   *int    `json:"total_price"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if reqBody.CustomerName == nil ||
+			*reqBody.CustomerName == "" ||
+			reqBody.RoomID == nil ||
+			reqBody.StartDate == nil ||
+			*reqBody.StartDate == "" ||
+			reqBody.EndDate == nil ||
+			*reqBody.EndDate == "" ||
+			reqBody.TotalPrice == nil {
+			http.Error(w, "Missing required fields", http.StatusBadRequest)
+			return
+		}
+
+		var customerID int
+		err := ctx.DB.QueryRow(queries.GetCustomerIDByName, *reqBody.CustomerName).Scan(
+			&customerID,
+		)
+
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, "Customer not found", http.StatusNotFound)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var newBooking = internal.Booking{
+			CustomerID:  customerID,
+			RoomID:      *reqBody.RoomID,
+			BookingDate: time.Now().UTC().Format("2006-01-02"),
+			StartDate:   *reqBody.StartDate,
+			EndDate:     *reqBody.EndDate,
+			TotalPrice:  float32(*reqBody.TotalPrice),
+		}
+
+		err = ctx.DB.QueryRow(
+			queries.CreateBooking,
+			newBooking.CustomerID,
+			newBooking.RoomID,
+			newBooking.BookingDate,
+			newBooking.StartDate,
+			newBooking.EndDate,
+			newBooking.TotalPrice,
+		).Scan(&newBooking.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(newBooking)
+	}
+}
 
 func getBookingsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

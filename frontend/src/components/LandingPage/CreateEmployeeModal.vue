@@ -111,6 +111,9 @@ async function onFormSubmit(e: FormSubmitEvent) {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/employees`,
                 {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         "manager_ID": managerID,
                         "full_name": e.values.fullName,

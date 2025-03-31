@@ -25,9 +25,9 @@ const props = defineProps<{
   customerName: string,
   startDate: Date,
   endDate: Date,
-  employeeName: string,
-  roomNumber?: string,
-  price?: number,
+  roomNumber: string,
+  price: number,
+  employeeName?: string,
   payment?: boolean,
   section: string;
   index: number;

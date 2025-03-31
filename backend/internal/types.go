@@ -68,12 +68,13 @@ type SearchResult struct {
 }
 
 type Booking struct {
-	ID         int     `json:"booking_ID"`
-	CustomerID int     `json:"customer_ID"`
-	RoomID     int     `json:"room_ID"`
-	StartDate  string  `json:"start_date"`
-	EndDate    string  `json:"end_date"`
-	TotalPrice float32 `json:"total_price"`
+	ID          int     `json:"booking_ID"`
+	CustomerID  int     `json:"customer_ID"`
+	RoomID      int     `json:"room_ID"`
+	BookingDate string  `json:"booking_date,omitempty"`
+	StartDate   string  `json:"start_date"`
+	EndDate     string  `json:"end_date"`
+	TotalPrice  float32 `json:"total_price"`
 }
 
 type Renting struct {
