@@ -67,10 +67,17 @@ const resolver = ({ values }: FormResolverOptions) => {
 
     if (!values.fullName) {
         errors.fullName.push({ type: 'required', message: 'Full name is required.' });
+    } else if (!/^[A-Za-z]+(?:[\s'-][A-Za-z]+)+$/.test(values.fullName.trim())) {
+        errors.fullName.push({
+            type: 'format',
+            message: 'Enter a valid full name (e.g., John Doe).',
+        });
     }
 
     if (!values.address) {
         errors.address.push({ type: 'required', message: 'Address is required.' });
+    } else if (!/^\d+\s+[A-Za-z]/.test(values.address)) {
+        errors.address.push({ type: 'format', message: 'Enter a valid address (e.g., 123 Main Street, City, State).' });
     }
 
     if (!values.idType) {

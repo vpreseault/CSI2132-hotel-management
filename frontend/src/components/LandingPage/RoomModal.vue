@@ -7,6 +7,8 @@
         <div class="flex flex-col gap-1">
           <label class="text-black font-medium">Room Number</label>
           <InputText v-model="form.room_number" class="w-full" />
+          <small v-if="isRoomNumberEmpty" class="text-red-600">Room number is required.</small>
+          <small v-else-if="roomNumberExists" class="text-red-600">Room number already exists in this hotel.</small>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -21,7 +23,12 @@
 
         <div class="flex flex-col gap-1">
           <label class="text-black font-medium">View Type</label>
-          <InputText v-model="form.view_type" class="w-full" />
+          <Dropdown v-model="form.view_type" :options="[{ label: 'Select View Type', value: '' }, ...viewOptions.map(v => ({ label: v, value: v }))]" 
+          optionLabel="label" 
+          optionValue="value"
+          class="w-full"
+          />
+          <small v-if="isViewTypeEmpty" class="text-red-600">View type is required.</small>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -47,7 +54,9 @@
       </div>
 
       <div class="flex justify-between mt-6">
-        <Button label="Save" icon="pi pi-check" class="bg-green-500 border-none hover:bg-green-600" @click="save" />
+        <Button label="Save" icon="pi pi-check" class="bg-green-500 border-none hover:bg-green-600" :disabled="roomNumberExists || isRoomNumberEmpty || isViewTypeEmpty"
+          @click="save"
+        />
         <Button label="Cancel" icon="pi pi-times" class="bg-red-500 border-none hover:bg-red-600" @click="close" />
       </div>
     </div>
@@ -55,23 +64,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Slider from 'primevue/slider'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Checkbox from 'primevue/checkbox'
 import type { Amenity, Room } from '../../types'
+import Dropdown from 'primevue/dropdown'
+
+const viewOptions = ['Mountain', 'Sea', 'None']
 
 const props = defineProps<{
   room: Room;
-  allAmenities: Amenity[]
+  allAmenities: Amenity[];
+  existingRooms: Room[];
   onClose: () => void;
   onSave: (updatedRoom: Room) => void;
 }>()
 
 const form = ref<Room>({ ...props.room })
 const selectedAmenities = ref(props.room.amenities.map((amenity) => amenity.amenity_name))
+
+const roomNumberExists = computed(() => {
+  return props.existingRooms.some(
+    (room) =>
+      room.room_number === form.value.room_number &&
+      room.room_ID !== form.value.room_ID
+  )
+})
+
+const isRoomNumberEmpty = computed(() => {
+  return !form.value.room_number || form.value.room_number.trim() === ''
+})
+
+const isViewTypeEmpty = computed(() => {
+  return !form.value.view_type || form.value.view_type === ''
+})
 
 function save() {
   form.value.amenities = props.allAmenities.filter(
@@ -88,4 +117,5 @@ function save() {
 function close() {
   props.onClose()
 }
+
 </script>
