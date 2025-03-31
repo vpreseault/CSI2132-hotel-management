@@ -273,7 +273,7 @@ func createRentingFromBookingHandler(ctx *internal.AppContext) http.HandlerFunc 
 			EmployeeID:   *reqBody.EmployeeID,
 			CustomerID:   booking.CustomerID,
 			RoomID:       booking.RoomID,
-			BookingID:    booking.ID,
+			BookingID:    &booking.ID,
 			CheckInDate:  booking.StartDate,
 			CheckOutDate: booking.EndDate,
 			Payment:      true,
@@ -281,6 +281,66 @@ func createRentingFromBookingHandler(ctx *internal.AppContext) http.HandlerFunc 
 		}
 
 		err = ctx.DB.QueryRow(
+			queries.CreateRenting,
+			renting.EmployeeID,
+			renting.CustomerID,
+			renting.RoomID,
+			renting.BookingID,
+			renting.CheckInDate,
+			renting.CheckOutDate,
+			renting.Payment,
+			renting.TotalPrice,
+		).Scan(&renting.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(renting)
+	}
+}
+
+func createRentingHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var reqBody struct {
+			CustomerID   *int     `json:"customer_ID"`
+			EmployeeID   *int     `json:"employee_ID"`
+			RoomID       *int     `json:"room_ID"`
+			CheckInDate  *string  `json:"check_in_date"`
+			CheckOutDate *string  `json:"check_out_date"`
+			TotalPrice   *float32 `json:"total_price"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if reqBody.CustomerID == nil ||
+			reqBody.EmployeeID == nil ||
+			reqBody.RoomID == nil ||
+			reqBody.CheckInDate == nil ||
+			*reqBody.CheckInDate == "" ||
+			reqBody.CheckOutDate == nil ||
+			*reqBody.CheckOutDate == "" ||
+			reqBody.TotalPrice == nil {
+			http.Error(w, "Missing required fields", http.StatusBadRequest)
+			return
+		}
+
+		var renting = internal.Renting{
+			EmployeeID:   *reqBody.EmployeeID,
+			CustomerID:   *reqBody.CustomerID,
+			RoomID:       *reqBody.RoomID,
+			BookingID:    nil,
+			CheckInDate:  *reqBody.CheckInDate,
+			CheckOutDate: *reqBody.CheckOutDate,
+			Payment:      true,
+			TotalPrice:   *reqBody.TotalPrice,
+		}
+
+		err := ctx.DB.QueryRow(
 			queries.CreateRenting,
 			renting.EmployeeID,
 			renting.CustomerID,

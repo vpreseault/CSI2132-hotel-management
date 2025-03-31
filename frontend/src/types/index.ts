@@ -34,7 +34,6 @@ export type RentalPayload = Pick<Rental,
     "check_out_date" |
     "customer_ID" |
     "employee_ID" |
-    "payment" |
     "room_ID" |
     "total_price"
 >

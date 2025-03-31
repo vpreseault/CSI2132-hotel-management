@@ -50,8 +50,8 @@ import Message from 'primevue/message';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms';
-import type { BookingPayload, SearchResult } from '../../types';
-import { getUserName } from '../../utils/auth';
+import type { BookingPayload, RentalPayload, SearchResult } from '../../types';
+import { getUserID, getUserName } from '../../utils/auth';
 import type { ToastMessageOptions } from 'primevue';
 
 type FormErrors = {
@@ -186,32 +186,34 @@ async function createBooking(customerID: number) {
   }
 }
 
+const employeeID = getUserID()
 async function createRental(customerID: number) {
-  // try {
-  //   const newBooking: BookingPayload = {
-  //     "customer_name": e.values.customer_name,
-  //     "room_ID": props.room.room_ID,
-  //     "start_date": props.start_date.toISOString().split('T')[0],
-  //     "end_date": props.end_date.toISOString().split('T')[0],
-  //     "total_price": totalPrice.value,
-  //   }
+  try {
+    const newRental: RentalPayload = {
+      "customer_ID": customerID,
+      "employee_ID": employeeID,
+      "room_ID": props.room.room_ID,
+      "check_in_date": props.start_date.toISOString().split('T')[0],
+      "check_out_date": props.end_date.toISOString().split('T')[0],
+      "total_price": totalPrice.value,
+    }
   
-  //   const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings`,
-  //     {
-  //       method: 'POST',
-  //       headers: {
-  //           'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(newBooking)
-  //     }
-  //   )
-  //   if (res.ok) {
-  //     emit('bookingSubmitted', 'success')
-  //     return 
-  //   }
-  //   emit('bookingSubmitted', 'error')
-  // } catch (error) {
-  //   console.error('Error calling API:', error);
-  // }
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rentings`,
+      {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newRental)
+      }
+    )
+    if (res.ok) {
+      emit('bookingSubmitted', 'success')
+      return 
+    }
+    emit('bookingSubmitted', 'error')
+  } catch (error) {
+    console.error('Error calling API:', error);
+  }
 }
 </script>

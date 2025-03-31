@@ -82,7 +82,7 @@ type Renting struct {
 	EmployeeID   int     `json:"employee_ID"`
 	CustomerID   int     `json:"customer_ID"`
 	RoomID       int     `json:"room_ID"`
-	BookingID    int     `json:"booking_ID,omitempty"`
+	BookingID    *int    `json:"booking_ID,omitempty"`
 	CheckInDate  string  `json:"check_in_date"`
 	CheckOutDate string  `json:"check_out_date"`
 	Payment      bool    `json:"payment"`
