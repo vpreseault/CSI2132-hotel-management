@@ -75,50 +75,93 @@ onMounted(async () => {
   }
 })
 
-
 const message = reactive<{
   severity?: ToastMessageOptions["severity"],
   text?: string,
 }>({})
 
-function toggleEdit() {
+function isValidAddress(address: string): boolean {
+  const addressRegex = /^\d+\s+[A-Za-z\s]+,\s*[A-Za-z]+,\s*[A-Z]{2}$/;
+  return addressRegex.test(address.trim());
+}
+
+function isValidPhoneNumber(phone: string): boolean {
+  const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+  return phoneRegex.test(phone.trim());
+}
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+}
+
+async function toggleEdit() {
   if (isEditing.value) {
-    updateHotel()
+    const success = await updateHotel();
+    if (!success) return;  
   }
   isEditing.value = !isEditing.value;
 }
 
-async function updateHotel() {
-  try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hotels/${hotelData.value.hotel_ID}`,
-          {
-              method: 'PATCH',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  "hotel_name": hotelData.value.hotel_name,
-                  address: hotelData.value.address,
-                  'phone_number': hotelData.value.phone_number,
-                  email: hotelData.value.email,
-                  category: hotelData.value.category,
-              })
-          }
-      )
-      
-      if (res.ok) {
-          editsMade.value = true
+async function updateHotel(): Promise<boolean> {
+  hotelData.value.address = hotelData.value.address.trim();
+  hotelData.value.phone_number = hotelData.value.phone_number.trim();
+  hotelData.value.email = hotelData.value.email.trim();
 
-          message.severity = 'success'
-          message.text = 'Hotel information updated successfully.'
-          return
-      }
-      message.severity = 'error'
-      message.text = 'Failed to update hotel information.'
+  if (!hotelData.value.address || !hotelData.value.phone_number || !hotelData.value.email) {
+    message.severity = 'warn';
+    message.text = 'All fields must be filled out.';
+    return false;
+  }
+
+  if (!isValidAddress(hotelData.value.address)) {
+    message.severity = 'warn';
+    message.text = 'Address must follow the format: "123 Main Street, City, State".';
+    return false;
+  }
+
+  if (!isValidPhoneNumber(hotelData.value.phone_number)) {
+    message.severity = 'warn';
+    message.text = 'Phone number must be 10 digits with optional country code.';
+    return false;
+  }
+
+  if (!isValidEmail(hotelData.value.email)) {
+    message.severity = 'warn';
+    message.text = 'Please enter a valid email address.';
+    return false;
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hotels/${hotelData.value.hotel_ID}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        hotel_name: hotelData.value.hotel_name,
+        address: hotelData.value.address,
+        phone_number: hotelData.value.phone_number,
+        email: hotelData.value.email,
+        category: hotelData.value.category,
+      })
+    });
+
+    if (res.ok) {
+      editsMade.value = true;
+      message.severity = 'success';
+      message.text = 'Hotel information updated successfully.';
+      return true;
+    }
+
+    message.severity = 'error';
+    message.text = 'Failed to update hotel information.';
+    return false;
   } catch (error) {
-      console.error('Error calling API:', error);
-      message.severity = 'error'
-      message.text = 'Failed to update hotel information.'
+    console.error('Error calling API:', error);
+    message.severity = 'error';
+    message.text = 'Failed to update hotel information.';
+    return false;
   }
 }
 

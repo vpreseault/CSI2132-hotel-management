@@ -20,7 +20,14 @@
         Room </button>
     </div>
 
-    <RoomModal v-if="isModalOpen" :room="room" :allAmenities="allAmenities" :onClose="() => isModalOpen = false" :onSave="handleRoomSave" />
+    <RoomModal
+      v-if="isModalOpen"
+      :room="room"
+      :allAmenities="allAmenities"
+      :existingRooms="props.existingRooms"
+      :onClose="() => isModalOpen = false"
+      :onSave="handleRoomSave"
+    />
   </div>
 </template>
 
@@ -32,7 +39,9 @@ import type { Amenity, Room } from '../../types';
 const props = defineProps<{
   room: Room
   allAmenities: Amenity[]
+  existingRooms: Room[]
 }>()
+
 
 const emit = defineEmits(['delete', 'edit'])
 
