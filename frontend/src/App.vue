@@ -2,6 +2,7 @@
 import AuthPage from './pages/Auth.vue';
 import LandingPage from './pages/LandingPage.vue';
 import EmployeeDashboard from './pages/EmployeeDashboard.vue';
+import AdminPage from './pages/Admin.vue'
 import { computed } from 'vue'
 import { getAuthCookie, getUserRole } from './utils/auth';
 
@@ -14,6 +15,7 @@ const userRole = computed(() => getUserRole())
     <div>
         <AuthPage v-if="!authenticated" />
         <LandingPage v-else-if="userRole === 'Customer'" />
-        <EmployeeDashboard v-else />
+        <EmployeeDashboard v-else-if="userRole === 'Employee'" />
+        <AdminPage v-else />
     </div>
 </template>

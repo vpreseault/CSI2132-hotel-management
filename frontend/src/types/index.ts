@@ -96,7 +96,33 @@ export type SearchResult = {
     total_rooms: number,
 }
 
+export type Chain = {
+    chain_ID: number
+    chain_name: string
+}
+
 export type Hotel = {
+    chain_ID: number,
+    hotel_ID: number,
+    hotel_name: string,
+    manager_ID: number,
+    address: string,
+    phone_number: string,
+    email: string,
+    category: number,
+}
+
+export type HotelPayload = {
+    chain_ID: number,
+    hotel_name: string,
+    manager_ID: number,
+    address: string,
+    phone_number: string,
+    email: string,
+    category: number,
+}
+
+export type HotelDisplay = {
     hotel_ID: number,
     hotel_name: string,
     address: string,
