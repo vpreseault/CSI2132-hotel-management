@@ -23,6 +23,7 @@
         :onCreate="handleHotelCreated"
       />
     </div>
+    <Toast position="bottom-center" />
 </template>
 
 <script setup lang="ts">
@@ -31,6 +32,8 @@ import Button from 'primevue/button'
 import CreateHotels from './CreateHotels.vue'
 import HotelCard from './HotelCard.vue'
 import type { Chain, HotelDisplay } from '../../types'
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 
 const hotels = ref<HotelDisplay[]>([])
 
@@ -68,8 +71,33 @@ function handleHotelCreated(hotel: HotelDisplay) {
   hotels.value.push(hotel)
 }
 
-function deleteHotel(id: number) {
-hotels.value = hotels.value.filter(h => h.hotel_ID !== id)
+async function deleteHotel(id: number) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hotels/${id}`,
+        {
+            method: 'DELETE',
+        }
+    )
+    
+    if (res.ok) {
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Hotel was deleted successfully.',
+          life: 3000
+        });
+        await fetchHotels()
+        return
+    }
+    toast.add({
+      severity: 'error',
+      summary: 'Failed',
+      detail: 'Failed to delete hotel.',
+      life: 3000
+    });
+  } catch (error) {
+      console.error('Error calling API:', error);
+  }
 }
 </script>
   
