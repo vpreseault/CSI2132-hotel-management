@@ -1,5 +1,5 @@
 <template>
-  <Card class="w-full max-w-2xl mx-auto">
+  <Card class="w-full max-w-2xl mx-auto shadow-none rounded-none border-x-1 border-[#b4b4b4]">
     <template #title>Book Room</template>
     <template #content>
       <div class="mb-6 space-y-1 text-gray-700">
