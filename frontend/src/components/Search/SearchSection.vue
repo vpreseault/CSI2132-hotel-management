@@ -52,7 +52,7 @@
       <!-- Search Button -->
       <div class="flex justify-center gap-6">
         <Button label="Search" icon="pi pi-search" @click="submitSearch" />
-        <Button label="Clear Filters"severity="secondary" icon="pi pi-times" @click="clearFilters" />
+        <Button label="Clear Filters" severity="secondary" icon="pi pi-times" @click="clearFilters" />
       </div>
     </div>
     
@@ -150,6 +150,8 @@ function validate() {
     error.value  = 'Dates are required.'
     return false
   }
+  filters.dates[0].setHours(0,0,0,0)
+  filters.dates[1].setHours(0,0,0,0)
   const oneDay = 24 * 60 * 60 * 1000;
   const duration = (filters.dates[1].getTime() - filters.dates[0].getTime()) / oneDay;
   if (duration < 1) {
@@ -158,7 +160,8 @@ function validate() {
   } 
 
   const today = new Date()
-  if (filters.dates[0].getDay() - today.getDay() < 0) {
+  today.setHours(0, 0, 0, 0)
+  if (filters.dates[0] < today) {
     error.value = 'Dates cannot be in the past.'
     return false
   }

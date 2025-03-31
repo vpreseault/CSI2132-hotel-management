@@ -86,8 +86,33 @@ func buildSearchQuery(params searchParams) *searchQuery {
 	}
 
 	if params.StartDate != nil && params.EndDate != nil {
-		sq.addFilter(fmt.Sprintf("(is_available = true OR ((renting_start NOT BETWEEN $%v AND $%v) AND (renting_end NOT BETWEEN $%v AND $%v)))",
-			sq.filterCount, sq.filterCount+1, sq.filterCount, sq.filterCount+1))
+		sq.addFilter(fmt.Sprintf(`(
+			is_available = true 
+			OR (
+				(
+					renting_start IS NULL 
+					AND renting_end IS NULL
+				) 
+				OR (
+					(renting_start NOT BETWEEN $%v AND $%v) 
+					AND (renting_end NOT BETWEEN $%v AND $%v)
+				)
+			) AND (
+				(
+					booking_start IS NULL 
+					AND booking_end IS NULL
+				) 
+				OR (
+					(booking_start NOT BETWEEN $%v AND $%v) 
+					AND (booking_end NOT BETWEEN $%v AND $%v)
+				) 	
+			)
+		)`,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+		))
 		sq.filterCount++
 		sq.args = append(sq.args, *params.StartDate)
 		sq.args = append(sq.args, *params.EndDate)
