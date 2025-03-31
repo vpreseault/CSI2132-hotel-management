@@ -13,6 +13,8 @@ RETURNING customer_ID
 
 var GetCustomerByName = `SELECT * FROM Customers WHERE full_name = $1`
 
+var GetCustomerIDByName = `SELECT customer_ID FROM Customers WHERE full_name = $1`
+
 var UpdateCustomerByID = `UPDATE Customers 
 SET full_name = $1, address = $2
 WHERE customer_ID = $3
