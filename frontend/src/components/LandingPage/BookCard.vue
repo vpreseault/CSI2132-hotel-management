@@ -98,6 +98,9 @@ async function onFormSubmit(e: FormSubmitEvent) {
       const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings`,
         {
           method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
           body: JSON.stringify(newBooking)
         }
       )
@@ -114,7 +117,6 @@ async function onFormSubmit(e: FormSubmitEvent) {
         e.states.customer_name.invalid = true
         e.states.customer_name.valid = false
         e.states.customer_name.error = error
-        e.values.customer_name.touch()
         return
       }
 

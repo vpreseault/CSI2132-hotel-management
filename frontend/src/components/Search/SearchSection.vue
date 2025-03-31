@@ -179,6 +179,9 @@ async function submitSearch() {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/search`,
             {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                   "start_date": filters.dates[0],
                   "end_date": filters.dates[1],

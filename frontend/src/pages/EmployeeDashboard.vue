@@ -101,6 +101,9 @@ async function confirmPayment(booking: BookingItem) {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/renting-from-booking`,
       {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
       }
     )
