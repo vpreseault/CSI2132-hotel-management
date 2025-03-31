@@ -122,7 +122,7 @@ async function updateHotel(): Promise<boolean> {
 
   if (!isValidPhoneNumber(hotelData.value.phone_number)) {
     message.severity = 'warn';
-    message.text = 'Phone number must be 10 digits with optional country code.';
+    message.text = 'Phone number must be 10 digits with optional country code. (E.x. 123-456-7890)';
     return false;
   }
 
