@@ -167,6 +167,24 @@ function showRoomDeletedToast(severity: ToastMessageOptions["severity"]) {
   })
 }
 
+function showRoomUpdatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Updated room successfully.' : 'Failed to update room.', 
+    life: 3000 
+  })
+}
+
+function showRoomCreatedToast(severity: ToastMessageOptions["severity"]) {
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Created room successfully.' : 'Failed to create room.', 
+    life: 3000 
+  })
+}
+
 function toggleCard(section: string, index: number) {
   expandedCard.value = expandedCard.value.section === section && expandedCard.value.index === index
     ? { section: null, index: null }

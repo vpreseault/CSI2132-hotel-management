@@ -19,7 +19,7 @@
                 <AccordionHeader>Rentals</AccordionHeader>
                 <AccordionContent>
                   <ActivityCard
-                    v-if="customerRentals"
+                    v-if="customerRentals?.length"
                     v-for="(rental, index) in customerRentals"
                     :key="`rental-${index}`"
                     :customerName="rental.customer_name"
@@ -42,7 +42,7 @@
                 <AccordionHeader>Bookings</AccordionHeader>
                 <AccordionContent>
                   <ActivityCard
-                    v-if="customerBookings"
+                    v-if="customerBookings?.length"
                     v-for="(booking, index) in customerBookings"
                     :key="`booking-${index}`"
                     :customerName="booking.customer_name"
@@ -63,7 +63,7 @@
                 <AccordionHeader>Archives</AccordionHeader>
                 <AccordionContent>
                   <ArchiveCard
-                    v-if="customerArchives"
+                    v-if="customerArchives?.length"
                     v-for="(archive, index) in customerArchives"
                     :key="`archive-${index}`"
                     :id="archive.archive_ID"
@@ -75,7 +75,7 @@
                     :expandedCard="expandedCard"
                     @toggle="toggleCard"
                   />
-                  <NoResultsLabel v-else >You have no archives.</NoResultsLabel>
+                  <NoResultsLabel v-else>You have no archives.</NoResultsLabel>
                 </AccordionContent>
             </AccordionPanel>
         </Accordion>

@@ -28,15 +28,26 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Post("/api/renting-from-booking", createRentingFromBookingHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
 
-	// Admin
+	// Chains
 	r.Get("/api/chains", getChainsHandler(ctx))
 	r.Delete("/api/chains/{chain_ID}", deleteChainByID(ctx))
 
+	// Hotels
 	r.Get("/api/hotels", getHotelsHandler(ctx))
 	r.Delete("/api/hotels/{hotel_ID}", deleteHotelByID(ctx))
 	r.Patch("/api/hotels/{hotel_ID}", updateHotel(ctx))
-	// r.Get("/api/rooms", getRoomsHandler(ctx))
+
+	// Rooms
+	r.Post("/api/rooms", createRoomHandler(ctx))
+	r.Get("/api/rooms", getHotelRoomsHandler(ctx))
 	r.Delete("/api/rooms/{room_ID}", deleteRoomByID(ctx))
+	r.Patch("/api/rooms/{room_ID}", updateRoom(ctx))
+
+	// Amenities
+	r.Get("/api/amenities", getAmenitiesHandler(ctx))
+
+	// Admin
+
 }
 
 func getHotelByEmployeeID(ctx *internal.AppContext, employeeID int) (int, error) {

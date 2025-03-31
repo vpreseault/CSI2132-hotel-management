@@ -56,8 +56,6 @@
 import { ref, computed } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
 import type { BookingItem } from '../../types';
 
 const props = defineProps<{
