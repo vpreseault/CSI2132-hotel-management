@@ -34,7 +34,6 @@ export type RentalPayload = Pick<Rental,
     "check_out_date" |
     "customer_ID" |
     "employee_ID" |
-    "payment" |
     "room_ID" |
     "total_price"
 >
@@ -61,6 +60,14 @@ export type BookingItem = Pick<Booking,
     "customer_name"|
     "hotel_name"|
     "room_number"|
+    "start_date"|
+    "end_date"|
+    "total_price"
+>
+
+export type BookingPayload = Pick<Booking,
+    "customer_ID"|
+    "room_ID"|
     "start_date"|
     "end_date"|
     "total_price"

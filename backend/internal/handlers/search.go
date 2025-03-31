@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/vpreseault/csi2132-project/backend/internal"
 	"github.com/vpreseault/csi2132-project/backend/internal/queries"
@@ -18,6 +19,8 @@ type searchQuery struct {
 type searchParams struct {
 	Capacity   *int    `json:"capacity,omitempty"`
 	ChainName  *string `json:"chain_name,omitempty"`
+	EmployeeID *int    `json:"employee_ID,omitempty"`
+	HotelID    *int    `json:"hotel_ID,omitempty"`
 	Area       *string `json:"area,omitempty"`
 	Category   *int    `json:"category,omitempty"`
 	MaxPrice   *int    `json:"max_price,omitempty"`
@@ -37,7 +40,25 @@ func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
 			return
 		}
 
-		query := buildSearchQuery(params)
+		path := r.URL.Path
+		var role string
+		if strings.HasSuffix(path, "/customer") {
+			role = "customer"
+		} else if strings.HasSuffix(path, "/employee") && params.EmployeeID != nil {
+			role = "employee"
+
+			hotelID, err := getHotelByEmployeeID(ctx, *params.EmployeeID)
+			if err != nil {
+				http.Error(w, "Invalid employee_ID", http.StatusBadRequest)
+				return
+			}
+			params.HotelID = &hotelID
+		} else {
+			http.Error(w, "Invalid search path", http.StatusBadRequest)
+			return
+		}
+
+		query := buildSearchQuery(params, role)
 
 		rooms, err := query.executeQuery(ctx)
 		if err != nil {
@@ -49,10 +70,15 @@ func RoomSearchHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
-func buildSearchQuery(params searchParams) *searchQuery {
+func buildSearchQuery(params searchParams, role string) *searchQuery {
 	sq := &searchQuery{
 		query:       queries.BaseRoomSearch,
 		filterCount: 1,
+	}
+
+	if role == "employee" && params.EmployeeID != nil && params.HotelID != nil {
+		sq.addFilter(fmt.Sprintf("hotel_ID = $%v", sq.filterCount))
+		sq.args = append(sq.args, *params.HotelID)
 	}
 
 	if params.Capacity != nil {
@@ -86,14 +112,39 @@ func buildSearchQuery(params searchParams) *searchQuery {
 	}
 
 	if params.StartDate != nil && params.EndDate != nil {
-		sq.addFilter(fmt.Sprintf("(is_available = true OR ((renting_start NOT BETWEEN $%v AND $%v) AND (renting_end NOT BETWEEN $%v AND $%v)))",
-			sq.filterCount, sq.filterCount+1, sq.filterCount, sq.filterCount+1))
+		sq.addFilter(fmt.Sprintf(`(
+			is_available = true 
+			OR (
+				(
+					renting_start IS NULL 
+					AND renting_end IS NULL
+				) 
+				OR (
+					(renting_start NOT BETWEEN $%v AND $%v) 
+					AND (renting_end NOT BETWEEN $%v AND $%v)
+				)
+			) AND (
+				(
+					booking_start IS NULL 
+					AND booking_end IS NULL
+				) 
+				OR (
+					(booking_start NOT BETWEEN $%v AND $%v) 
+					AND (booking_end NOT BETWEEN $%v AND $%v)
+				) 	
+			)
+		)`,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+			sq.filterCount, sq.filterCount+1,
+		))
 		sq.filterCount++
 		sq.args = append(sq.args, *params.StartDate)
 		sq.args = append(sq.args, *params.EndDate)
 	}
 
-	sq.query += " LIMIT 6"
+	sq.query += " ORDER BY room_number LIMIT 6"
 
 	return sq
 }

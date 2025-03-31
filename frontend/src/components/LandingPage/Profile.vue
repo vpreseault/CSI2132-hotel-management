@@ -50,14 +50,36 @@ const message = reactive<{
   text?: string,
 }>({})
 
-function toggleEdit() {
+async function toggleEdit() {
   if (isEditing.value) {
-    updateAccount()
+    const success = await updateAccount();
+    if (!success) return;  
   }
   isEditing.value = !isEditing.value;
 }
 
+
+function isValidAddress(address: string): boolean {
+  const addressRegex = /^\d+\s+[A-Za-z\s]+,\s*[A-Za-z]+,\s*[A-Z]{2}$/;
+  return addressRegex.test(address.trim());
+}
+
 async function updateAccount() {
+  profileData.value.name = profileData.value.name.trim();
+  profileData.value.address = profileData.value.address.trim();
+
+  if (!profileData.value.address) {
+    message.severity = 'warn';
+    message.text = 'Address is required.';
+    return false;  
+  }
+
+  if (!isValidAddress(profileData.value.address)) {
+    message.severity = 'warn';
+    message.text = 'Address must follow the format: "123 Main Street, City, State".';
+    return false;  
+  }
+  
   try {
       const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/${userCookie.role === "Employee" ? 'employees' : 'customers'}/${userCookie.ID}`,
           {
@@ -71,21 +93,21 @@ async function updateAccount() {
       
       if (res.ok) {
           editsMade.value = true
-
           message.severity = 'success'
           message.text = 'Account updated successfully.'
-          
           userCookie.name = profileData.value.name
           userCookie.address = profileData.value.address
           setAuthCookie(userCookie)
-          return
+          return true 
       }
       message.severity = 'error'
       message.text = 'Account update failed.'
+      return false
   } catch (error) {
       console.error('Error calling API:', error);
       message.severity = 'error'
       message.text = 'Account update failed.'
+      return false
   }
 }
 

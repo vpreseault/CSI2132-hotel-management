@@ -32,10 +32,15 @@
       </div>
       <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>
-    <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true"
-      @createBooking="handleEmployeeBooking" />
+
+    <LayoutSection title="Search For Room">
+      <div class="mt-4">
+        <EmployeeSearchSection @bookingSubmitted="handleBookingSubmitted" />
+      </div>
+    </LayoutSection>
+
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
-    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal"
       @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
@@ -60,6 +65,7 @@ import EmployeeList from '../components/LandingPage/EmployeeList.vue';
 import RoomList from '../components/LandingPage/RoomList.vue';
 import type { ToastMessageOptions } from 'primevue';
 import PaymentModal from '../components/LandingPage/PaymentModal.vue';
+import EmployeeSearchSection from '../components/Search/EmployeeSearchSection.vue';
 
 
 const toast = useToast();
@@ -101,6 +107,9 @@ async function confirmPayment(booking: BookingItem) {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/renting-from-booking`,
       {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
       }
     )
@@ -230,6 +239,26 @@ async function fetchBookings() {
   } catch (error) {
     console.error('Error calling API:', error);
   }
+}
+
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"], isRental: boolean) {
+  if (isRental) {
+    toast.add({
+      severity: severity,
+      summary: severity === 'success' ? 'Rental Created' : 'Failed',
+      detail: severity === 'success' ? 'Successfully created new rental.' : 'Could not create new rental.',
+      life: 3000
+    });
+    await fetchRentals()
+    return
+  }
+  toast.add({
+    severity: severity,
+    summary: severity === 'success' ? 'Booking Created' : 'Failed',
+    detail: severity === 'success' ? 'Successfully created new booking.' : 'Could not create new booking.',
+    life: 3000
+  });
+  await fetchBookings()
 }
 
 onMounted(async () => {

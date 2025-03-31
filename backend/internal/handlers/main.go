@@ -19,12 +19,15 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Delete("/api/employees", deleteEmployeeByID(ctx))
 
 	// Search
-	r.Post("/api/search", RoomSearchHandler(ctx))
+	r.Post("/api/search/customer", RoomSearchHandler(ctx))
+	r.Post("/api/search/employee", RoomSearchHandler(ctx))
 
 	// Activity
 	r.Get("/api/activity", getActivityHandler(ctx))
 	r.Get("/api/bookings", getBookingsHandler(ctx))
+	r.Post("/api/bookings", createBookingHandler(ctx))
 	r.Get("/api/rentings", getRentingsHandler(ctx))
+	r.Post("/api/rentings", createRentingHandler(ctx))
 	r.Post("/api/renting-from-booking", createRentingFromBookingHandler(ctx))
 	r.Get("/api/archives", getArchivesHandler(ctx))
 

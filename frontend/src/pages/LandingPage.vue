@@ -10,83 +10,81 @@
 
       <LayoutSection title="Search For Room" class="mb-12">
         <div class="mt-4">
-          <SearchSection />
+          <SearchSection @bookingSubmitted="handleBookingSubmitted" />
         </div>
       </LayoutSection>
 
       <LayoutSection title="Your Activity">
-        <Accordion value="0">
-          <AccordionPanel value="0">
-            <AccordionHeader>Rentals</AccordionHeader>
-            <AccordionContent>
-              <ActivityCard
-                v-if="customerRentals?.length"
-                v-for="(rental, index) in customerRentals"
-                :key="`rental-${index}`"
-                :customerName="rental.customer_name"
-                :hotelName="rental.hotel_name"
-                :startDate="new Date(rental.check_in_date)"
-                :endDate="new Date(rental.check_out_date)"
-                :employeeName="rental.employee_name"
-                :roomNumber="rental.room_number"
-                :price="rental.total_price"
-                :payment="rental.payment"
-                :section="'rental'"
-                :index="index"
-                :expandedCard="expandedCard"
-                @toggle="toggleCard"
-              />
-              <NoResultsLabel v-else>You have no active rentals.</NoResultsLabel>
-            </AccordionContent>
-          </AccordionPanel>
-
-          <AccordionPanel value="1">
-            <AccordionHeader>Bookings</AccordionHeader>
-            <AccordionContent>
-              <ActivityCard
-                v-if="customerBookings?.length"
-                v-for="(booking, index) in customerBookings"
-                :key="`booking-${index}`"
-                :customerName="booking.customer_name"
-                :hotelName="booking.hotel_name"
-                :startDate="new Date(booking.start_date)"
-                :endDate="new Date(booking.end_date)"
-                :roomNumber="booking.room_number"
-                :price="booking.total_price"
-                :section="'booking'"
-                :index="index"
-                :expandedCard="expandedCard"
-                @toggle="toggleCard"
-              />
-              <NoResultsLabel v-else>You have no upcoming bookings.</NoResultsLabel>
-            </AccordionContent>
-          </AccordionPanel>
-
-          <AccordionPanel value="2">
-            <AccordionHeader>Archives</AccordionHeader>
-            <AccordionContent>
-              <ArchiveCard
-                v-if="customerArchives?.length"
-                v-for="(archive, index) in customerArchives"
-                :key="`archive-${index}`"
-                :id="archive.archive_ID"
-                :startDate="new Date(archive.start_date)"
-                :endDate="new Date(archive.end_date)"
-                :price="archive.total_price"
-                :section="'archive'"
-                :index="index"
-                :expandedCard="expandedCard"
-                @toggle="toggleCard"
-              />
-              <NoResultsLabel v-else>You have no archives.</NoResultsLabel>
-            </AccordionContent>
-          </AccordionPanel>
+          <Accordion value="0">
+            <AccordionPanel value="0">
+                <AccordionHeader>Rentals</AccordionHeader>
+                <AccordionContent>
+                  <ActivityCard
+                    v-if="customerRentals?.length"
+                    v-for="(rental, index) in customerRentals"
+                    :key="`rental-${index}`"
+                    :customerName="rental.customer_name"
+                    :hotelName="rental.hotel_name"
+                    :startDate="new Date(rental.check_in_date)"
+                    :endDate="new Date(rental.check_out_date)"
+                    :employeeName="rental.employee_name"
+                    :roomNumber="String(rental.room_number)"
+                    :price="rental.total_price"
+                    :payment="rental.payment"
+                    :section="'rental'"
+                    :index="index"
+                    :expandedCard="expandedCard"
+                    @toggle="toggleCard"
+                  />
+                  <NoResultsLabel v-else>You have no active rentals.</NoResultsLabel>
+                </AccordionContent>
+            </AccordionPanel>
+            <AccordionPanel value="1">
+                <AccordionHeader>Bookings</AccordionHeader>
+                <AccordionContent>
+                  <ActivityCard
+                    v-if="customerBookings?.length"
+                    v-for="(booking, index) in customerBookings"
+                    :key="`booking-${index}`"
+                    :customerName="booking.customer_name"
+                    :hotelName="booking.hotel_name"
+                    :startDate="new Date(booking.start_date)"
+                    :endDate="new Date(booking.end_date)"
+                    :roomNumber="booking.room_number"
+                    :price="booking.total_price"
+                    :section="'booking'"
+                    :index="index"
+                    :expandedCard="expandedCard"
+                    @toggle="toggleCard"
+                  />
+                  <NoResultsLabel v-else>You have no upcoming bookings.</NoResultsLabel>
+                </AccordionContent>
+            </AccordionPanel>
+            <AccordionPanel value="2">
+                <AccordionHeader>Archives</AccordionHeader>
+                <AccordionContent>
+                  <ArchiveCard
+                    v-if="customerArchives?.length"
+                    v-for="(archive, index) in customerArchives"
+                    :key="`archive-${index}`"
+                    :id="archive.archive_ID"
+                    :startDate="new Date(archive.start_date)"
+                    :endDate="new Date(archive.end_date)"
+                    :price="archive.total_price"
+                    :section="'archive'"
+                    :index="index"
+                    :expandedCard="expandedCard"
+                    @toggle="toggleCard"
+                  />
+                  <NoResultsLabel v-else>You have no archives.</NoResultsLabel>
+                </AccordionContent>
+            </AccordionPanel>
         </Accordion>
       </LayoutSection>
 
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
+      <Toast position="bottom-center" />
       <Footnote />
-
     </div>
   </div>
 </template>
@@ -100,7 +98,12 @@ import Profile from '../components/LandingPage/Profile.vue';
 import type { RentalItem, BookingItem, ArchiveItem } from '../types';
 import NoResultsLabel from '../components/Layout/NoResultsLabel.vue';
 import ArchiveCard from '../components/LandingPage/ArchiveCard.vue';
+import SearchSection from '../components/Search/SearchSection.vue'
 import Footnote from '../components/LandingPage/Footnote.vue';
+import { useToast } from "primevue/usetoast";
+import type { ToastMessageOptions } from 'primevue';
+
+const toast = useToast();
 
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
@@ -115,12 +118,11 @@ function toggleProfileModal() {
   isProfileModalOpen.value = !isProfileModalOpen.value;
 }
 
+const customerID = getUserID()
 const customerRentals = ref<Array<RentalItem>>([])
 const customerBookings = ref<Array<BookingItem>>([])
 const customerArchives = ref<Array<ArchiveItem>>([])
 onMounted(async () => {
-  const customerID = getUserID()
-  
   try {
       const activityResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity?customer_ID=${customerID}`)
       if (activityResponse.ok) {
@@ -133,4 +135,21 @@ onMounted(async () => {
       console.error('Error calling API:', error);
   }
 })
+
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+  toast.add({
+    severity: severity,
+    summary: severity === 'success' ? 'Booking Created' : 'Failed',
+    detail: severity === 'success' ? 'Successfully created new booking.' : 'Could not create new booking.',
+    life: 3000
+  });
+  try {
+    const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings?customer_ID=${customerID}`)
+    if (bookingResponse.ok) {
+      customerBookings.value = await bookingResponse.json()
+    }
+  } catch (error) {
+    console.error('Error calling API:', error);
+  }
+}
 </script>
