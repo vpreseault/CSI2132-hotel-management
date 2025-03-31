@@ -32,8 +32,13 @@
       </div>
       <p v-else class="flex justify-center mt-4">There are no upcoming bookings.</p>
     </LayoutSection>
-    <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true"
-      @createBooking="handleEmployeeBooking" />
+
+    <LayoutSection title="Search For Room">
+      <div class="mt-4">
+        <EmployeeSearchSection />
+      </div>
+    </LayoutSection>
+
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
     <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal"
@@ -60,6 +65,7 @@ import EmployeeList from '../components/LandingPage/EmployeeList.vue';
 import RoomList from '../components/LandingPage/RoomList.vue';
 import type { ToastMessageOptions } from 'primevue';
 import PaymentModal from '../components/LandingPage/PaymentModal.vue';
+import EmployeeSearchSection from '../components/Search/EmployeeSearchSection.vue';
 
 
 const toast = useToast();
