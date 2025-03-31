@@ -247,6 +247,11 @@ CREATE TABLE Employees (
 
 -- Insert into Employee
 INSERT INTO Employees (hotel_ID, full_name, address, ID_type, ID_number, role) VALUES
+(NULL, 'Lebron James', '123 Main St, Ottawa, ON', 'SIN', '123-45-6789', 'Manager'),
+(NULL, 'Gerard Butler', '123 Main St, Ottawa, ON', 'SIN', '123-45-6789', 'Manager'),
+(NULL, 'Luffy Monkey', '123 Main St, Ottawa, ON', 'SIN', '123-45-6789', 'Manager'),
+(NULL, 'Ariana Grande', '123 Main St, Ottawa, ON', 'SIN', '123-45-6789', 'Manager'),
+(NULL, 'Troye Sivan', '123 Main St, Ottawa, ON', 'SIN', '123-45-6789', 'Manager'),
 (1, 'Brandi Stewart', '947 Main St, Boston, MA', 'SIN', '328-48-9432', 'Manager'),
 (1, 'Gail Morrow', '717 Main St, Boston, MA', 'SSN', '119-72-7960', 'Employee'),
 (1, 'Jeremy Patel', '882 Main St, Boston, MA', 'SIN', '777-64-7061', 'Employee'),
