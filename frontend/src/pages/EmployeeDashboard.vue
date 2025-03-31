@@ -35,7 +35,7 @@
     <Booking :expandedCard="expandedCard" :toggleCard="toggleCard" :isEmployee="true"
       @createBooking="handleEmployeeBooking" />
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
-    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal"
       @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
