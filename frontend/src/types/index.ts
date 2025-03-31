@@ -67,7 +67,7 @@ export type BookingItem = Pick<Booking,
 >
 
 export type BookingPayload = Pick<Booking,
-    "customer_name"|
+    "customer_ID"|
     "room_ID"|
     "start_date"|
     "end_date"|
