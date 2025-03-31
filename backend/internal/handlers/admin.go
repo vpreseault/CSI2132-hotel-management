@@ -82,6 +82,62 @@ func deleteChainByID(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
+func createHotelHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var payload struct {
+			internal.Hotel
+			ChainID   int `json:"chain_ID"`
+			ManagerID int `json:"manager_ID"`
+		}
+		err := json.NewDecoder(r.Body).Decode(&payload)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		tx, err := ctx.DB.Begin()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		err = tx.QueryRow(
+			queries.InsertHotel,
+			payload.ChainID,
+			nil,
+			payload.Name,
+			payload.Address,
+			payload.Category,
+		).Scan(&payload.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = tx.Exec(queries.InsertHotelPhone, payload.ID, payload.Phone)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = tx.Exec(queries.InsertHotelEmail, payload.ID, payload.Email)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := tx.Commit(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(payload)
+	}
+}
+
 func getHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

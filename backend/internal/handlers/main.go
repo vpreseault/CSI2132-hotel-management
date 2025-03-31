@@ -40,6 +40,7 @@ func InitHandlers(r *chi.Mux, ctx *internal.AppContext) {
 	r.Get("/api/all-hotels", getAllHotelsHandler(ctx))
 	r.Delete("/api/hotels/{hotel_ID}", deleteHotelByID(ctx))
 	r.Patch("/api/hotels/{hotel_ID}", updateHotel(ctx))
+	r.Post("/api/hotels", createHotelHandler(ctx))
 
 	// Rooms
 	r.Post("/api/rooms", createRoomHandler(ctx))

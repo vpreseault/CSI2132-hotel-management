@@ -19,8 +19,8 @@
       <CreateHotels
         v-if="isCreateModalOpen"
         :chains="chains"
-        :onClose="closeCreateModal"
-        :onCreate="handleHotelCreated"
+        @close="closeCreateModal"
+        @create="handleHotelCreated"
       />
     </div>
     <Toast position="bottom-center" />
@@ -33,6 +33,7 @@ import CreateHotels from './CreateHotels.vue'
 import HotelCard from './HotelCard.vue'
 import type { Chain, HotelDisplay } from '../../types'
 import { useToast } from "primevue/usetoast";
+import type { ToastMessageOptions } from 'primevue'
 const toast = useToast();
 
 const hotels = ref<HotelDisplay[]>([])
@@ -67,8 +68,15 @@ function closeCreateModal() {
 isCreateModalOpen.value = false
 }
 
-function handleHotelCreated(hotel: HotelDisplay) {
-  hotels.value.push(hotel)
+async function handleHotelCreated(severity: ToastMessageOptions["severity"]) {
+  closeCreateModal()
+  toast.add({ 
+    severity, 
+    summary: severity === 'success' ? 'Success' : 'Failed', 
+    detail: severity === 'success' ? 'Created hotel successfully.' : 'Failed to create hotel.', 
+    life: 3000 
+  })
+  await fetchHotels()
 }
 
 async function deleteHotel(id: number) {

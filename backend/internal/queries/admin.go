@@ -30,6 +30,26 @@ JOIN HotelEmails he ON h.hotel_ID = he.hotel_ID
 WHERE h.manager_ID = $1
 `
 var DeleteHotelByID = `DELETE FROM Hotels WHERE hotel_ID = $1`
+var InsertHotel = `INSERT INTO Hotels (
+	chain_ID,
+	manager_ID,
+	hotel_name,
+	address,
+	category
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING hotel_ID
+`
+var InsertHotelPhone = `INSERT INTO HotelPhones (
+	hotel_ID,
+	h_phone
+) VALUES ($1, $2)
+`
+var InsertHotelEmail = `INSERT INTO HotelEmails (
+	hotel_ID,
+	h_email
+) VALUES ($1, $2)
+`
+
 var UpdateHotel = `UPDATE Hotels 
 SET hotel_name = $1, 
     address = $2,

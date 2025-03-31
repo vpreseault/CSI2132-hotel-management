@@ -4,20 +4,14 @@
       <h2 class="text-center text-xl text-black font-semibold mb-4">Create Hotel</h2>
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
-          <label class="text-black font-medium">Chain ID</label>
-          <InputNumber v-model="form.chain_ID" class="w-full" inputClass="w-full" />
-          <p v-if="validationErrors.chain_ID" class="text-sm text-red-600">{{ validationErrors.chain_ID }}</p>
+          <label class="text-black font-medium">Chain Name</label>
+          <Select v-model="form.chain_ID" :options="chains" optionLabel="chain_name" optionValue="chain_ID" class="w-full"/>
         </div>
 
         <div class="flex flex-col gap-1">
           <label class="text-black font-medium">Hotel Name</label>
           <InputText v-model="form.hotel_name" class="w-full" />
           <p v-if="validationErrors.hotel_name" class="text-sm text-red-600">{{ validationErrors.hotel_name }}</p>
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="text-black font-medium">Manager</label>
-          <Dropdown v-model="form.manager_ID" :options="managers" optionLabel="name" optionValue="id" class="w-full"/>
         </div>
 
         <div class="flex flex-col gap-1">
@@ -54,17 +48,21 @@
 
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, } from 'vue'
 import InputText from 'primevue/inputtext'
-import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
-import Dropdown from 'primevue/dropdown'
+import Select from 'primevue/select'
 import Button from 'primevue/button'
-import type { HotelPayload, HotelDisplay } from '../../types'
+import type { HotelPayload, Chain } from '../../types'
+import type { ToastMessageOptions } from 'primevue'
 
-const props = defineProps<{
-  onClose: () => void
-  onCreate: (hotel: HotelDisplay) => void
+defineProps<{
+  chains: Chain[]
+}>()
+
+const emit = defineEmits<{
+  close: []
+  create: [severity: ToastMessageOptions["severity"]]
 }>()
 
 const form = ref<HotelPayload>({
@@ -121,12 +119,6 @@ function validateField(field: keyof HotelPayload, value: any) {
   }
 }
 
-watch(form, (newForm) => {
-  for (const field in newForm) {
-    validateField(field as keyof HotelPayload, newForm[field as keyof HotelPayload])
-  }
-}, { deep: true })
-
 function validateForm(): boolean {
   for (const field in form.value) {
     validateField(field as keyof HotelPayload, form.value[field as keyof HotelPayload])
@@ -138,19 +130,30 @@ function validateForm(): boolean {
 async function save() {
   if (!validateForm()) return
 
-  await new Promise(resolve => setTimeout(resolve, 300))
-
-  const fakeHotel: HotelDisplay = {
-    hotel_ID: Math.floor(Math.random() * 10000),
-    ...form.value
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/hotels`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(form.value)
+        }
+    )
+    
+    if (res.ok) {      
+        emit('create', 'success')
+        return
+    }
+    emit('create', 'error')
+  } catch (error) {
+      console.error('Error calling API:', error);
+      emit('create', 'error')
   }
-
-  props.onCreate(fakeHotel)
-  props.onClose()
 }
 
 function close() {
-  props.onClose()
+  emit('close')
 }
 </script>
 
