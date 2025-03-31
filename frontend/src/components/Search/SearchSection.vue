@@ -209,8 +209,9 @@ function showBookingModal(room: SearchResult) {
   bookingModalIsVisible.value = true
 }
 
-function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
   bookingModalIsVisible.value = false
+  await submitSearch()
   emit('bookingSubmitted', severity)
 }
 </script>

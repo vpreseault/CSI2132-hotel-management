@@ -113,12 +113,11 @@ function toggleProfileModal() {
   isProfileModalOpen.value = !isProfileModalOpen.value;
 }
 
+const customerID = getUserID()
 const customerRentals = ref<Array<RentalItem>>([])
 const customerBookings = ref<Array<BookingItem>>([])
 const customerArchives = ref<Array<ArchiveItem>>([])
 onMounted(async () => {
-  const customerID = getUserID()
-  
   try {
       const activityResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity?customer_ID=${customerID}`)
       if (activityResponse.ok) {
@@ -132,12 +131,20 @@ onMounted(async () => {
   }
 })
 
-function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
   toast.add({
     severity: severity,
     summary: severity === 'success' ? 'Booking Created' : 'Failed',
     detail: severity === 'success' ? 'Successfully created new booking.' : 'Could not create new booking.',
     life: 3000
   });
+  try {
+    const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings?customer_ID=${customerID}`)
+    if (bookingResponse.ok) {
+      customerBookings.value = await bookingResponse.json()
+    }
+  } catch (error) {
+    console.error('Error calling API:', error);
+  }
 }
 </script>
