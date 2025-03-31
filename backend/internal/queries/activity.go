@@ -1,5 +1,16 @@
 package queries
 
+var CreateBooking = `INSERT INTO Bookings (
+	customer_ID, 
+	room_ID, 
+	booking_date,
+	start_date,
+	end_date,
+	total_price
+) VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING booking_ID
+`
+
 var GetBookingsByCustomerID = `SELECT 
 	b.booking_ID,
 	c.full_name,

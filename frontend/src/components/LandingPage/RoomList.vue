@@ -8,12 +8,27 @@
         </div>
 
         <div v-if="rooms.length" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
-            <RoomCard v-for="room in rooms" :key="room.room_number" :room="room" :allAmenities="allAmenities" @delete="deleteRoom"
-                @edit="updateRoom" />
+            <RoomCard
+                v-for="room in rooms"
+                :key="room.room_number"
+                :room="room"
+                :allAmenities="allAmenities"
+                :existingRooms="rooms"
+                @delete="deleteRoom"
+                @edit="updateRoom"
+            />
         </div>
         <p v-else class="text-center text-gray-500 mt-8">No rooms found.</p>
 
-        <RoomModal v-if="isCreateModalOpen" :room="newRoom" :allAmenities="allAmenities" :onClose="closeCreateModal" :onSave="handleCreateRoom" />
+        <RoomModal
+            v-if="isCreateModalOpen"
+            :room="newRoom"
+            :allAmenities="allAmenities"
+            :existingRooms="rooms"
+            :onClose="closeCreateModal"
+            :onSave="handleCreateRoom"
+        />
+
     </div>
 </template>
 
@@ -61,6 +76,9 @@ async function handleCreateRoom(room: Room) {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/rooms`,
             {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({
                     ...room,
                     employee_ID: managerID.value,
@@ -99,7 +117,7 @@ async function updateRoom(updatedRoom: Room) {
         if (res.ok) {
             emit('update', 'success')
 
-            const index = rooms.value.findIndex(r => r.room_number === updatedRoom.room_number)
+            const index = rooms.value.findIndex(r => r.room_ID === updatedRoom.room_ID)
             if (index !== -1) {
                 rooms.value[index] = { ...updatedRoom }
             }
