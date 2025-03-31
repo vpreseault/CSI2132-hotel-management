@@ -121,6 +121,43 @@ func getHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
 	}
 }
 
+func getAllHotelsHandler(ctx *internal.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		rows, err := ctx.DB.Query(queries.GetHotels)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		var hotels []internal.Hotel
+		for rows.Next() {
+			var hotel internal.Hotel
+			if err := rows.Scan(
+				&hotel.ID,
+				&hotel.Name,
+				&hotel.Address,
+				&hotel.Phone,
+				&hotel.Email,
+				&hotel.Category,
+			); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hotels = append(hotels, hotel)
+		}
+
+		if err = rows.Err(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(hotels)
+	}
+}
+
 func deleteHotelByID(ctx *internal.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
