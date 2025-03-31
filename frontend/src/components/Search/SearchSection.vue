@@ -83,7 +83,8 @@
         :room="selectedRoom"
         :start_date="filters.dates[0]"
         :end_date="filters.dates[1]"
-        @close="bookingModalIsVisible = false" 
+        @close="bookingModalIsVisible = false"
+        @bookingSubmitted="handleBookingSubmitted"
       />
     </Dialog>
   </div>
@@ -96,6 +97,11 @@ import Slider from 'primevue/slider';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import type { SearchResult } from '../../types';
+import type { ToastMessageOptions } from 'primevue';
+
+const emit = defineEmits<{
+  bookingSubmitted: [severity?: ToastMessageOptions["severity"]]
+}>()
 
 const filters = reactive<{
   dates: Date[],
@@ -201,6 +207,11 @@ const selectedRoom = ref<SearchResult>()
 function showBookingModal(room: SearchResult) {
   selectedRoom.value = room
   bookingModalIsVisible.value = true
+}
+
+function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+  bookingModalIsVisible.value = false
+  emit('bookingSubmitted', severity)
 }
 </script>
 
