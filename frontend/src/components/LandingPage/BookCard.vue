@@ -2,14 +2,14 @@
   <Card class="w-full max-w-2xl mx-auto">
     <template #title>Book Room</template>
     <template #content>
-      <div class="mb-6 space-y-1 text-gray-700 text-sm">
+      <div class="mb-6 space-y-1 text-gray-700">
         <p><strong>Hotel:</strong> {{ room.hotel_name }}</p>
         <p><strong>Address:</strong> {{ room.address }}</p>
         <p><strong>Room Number:</strong> {{ room.room_number }}</p>
         <p><strong>Capacity:</strong> {{ room.capacity }}</p>
         <p><strong>Booking Dates:</strong> from {{ props.start_date.toDateString() }} to {{ props.end_date.toDateString() }}</p>
-        <p><strong>Price per Night:</strong> ${{ room.price }}</p>
-        <p><strong>Total Prive:</strong> ${{ totalPrice }}</p>
+        <p><strong>Room Price:</strong> ${{ room.price }}/night</p>
+        <p><strong>Total Price:</strong> ${{ totalPrice }}</p>
       </div>
 
       <Form v-slot="$form" :initialValues :resolver="resolver" @submit="onFormSubmit" class="flex flex-col gap-4">
@@ -18,19 +18,6 @@
           <InputText name="customer_name" placeholder="Enter customer name" class="w-full" />
           <Message v-if="$form.customer_name?.invalid" severity="error">{{ $form.customer_name.error?.message }}</Message>
         </div>
-
-        <!-- <div class="flex flex-col gap-1">
-          <label class="font-medium">Card Type</label>
-          <Select name="card_type" :options="cardTypes" optionLabel="label" placeholder="Select card type" class="w-full" />
-          <Message v-if="$form.card_type?.invalid" severity="error">{{ $form.card_type.error?.message }}</Message>
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label class="font-medium">Card Number</label>
-          <InputText name="card_number" placeholder="1234 5678 9012 3456" class="w-full" />
-          <Message v-if="$form.card_number?.invalid" severity="error">{{ $form.card_number.error?.message }}</Message>
-        </div> -->
-
         <div class="flex justify-between mt-6">
           <Button type="button" label="Back to Results" icon="pi pi-arrow-left" class="p-button-secondary" @click="emit('close')" />
           <Button type="submit" label="Confirm Booking" icon="pi pi-check" />
@@ -52,6 +39,11 @@ import type { BookingPayload, SearchResult } from '../../types';
 import { getUserName } from '../../utils/auth';
 import type { ToastMessageOptions } from 'primevue';
 
+type FormErrors = {
+  customer_name: FormError[];
+}
+type FormError = { type: string; message: string }
+
 const emit = defineEmits<{
   close: []
   bookingSubmitted: [ToastMessageOptions["severity"]]
@@ -63,14 +55,6 @@ const props = defineProps<{
   end_date: Date,
 }>();
 
-const cardTypes = [
-  { label: 'Visa', value: 'Visa' },
-  { label: 'Mastercard', value: 'Mastercard' },
-  { label: 'Amex', value: 'Amex' },
-  { label: 'Discover', value: 'Discover' }
-];
-
-const dates = ref<[Date, Date]>([props.start_date, props.end_date]);
 const customerName = ref(getUserName())
 const initialValues = reactive({
   customer_name: customerName
@@ -86,7 +70,7 @@ const totalPrice = computed(() => {
 });
 
 const resolver = ({ values }: FormResolverOptions) => {
-  const errors: Record<string, { type: string; message: string }[]> = {
+  const errors: FormErrors = {
     customer_name: [],
   };
 
@@ -123,14 +107,20 @@ async function onFormSubmit(e: FormSubmitEvent) {
       }
       
       const errorMsg = await res.text()
-      if (res.status === 404 && errorMsg === "Customer not found") {
-        e.errors.push({ type: 'required', message: 'Customer name not found.' })
-      } else {
-        emit('bookingSubmitted', 'error')
+      console.log(res.status, errorMsg, e.errors)
+      if (res.status === 404 && errorMsg.trim() === "Customer not found") {
+        const error = { type: 'required', message: 'Customer name not found.' } as FormError
+        ((e.errors as unknown) as FormErrors).customer_name.push(error)
+        e.states.customer_name.invalid = true
+        e.states.customer_name.valid = false
+        e.states.customer_name.error = error
+        e.values.customer_name.touch()
+        return
       }
+
+      emit('bookingSubmitted', 'error')
     } catch (error) {
       console.error('Error calling API:', error);
-      emit('bookingSubmitted', 'error')
     }
   }
 }
