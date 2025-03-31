@@ -34,6 +34,10 @@ import { useToast } from "primevue/usetoast";
 import type { ToastMessageOptions } from 'primevue'
 const toast = useToast();
 
+const emit = defineEmits<{
+  hotelsUpdated: []
+}>()
+
 const hotels = ref<HotelDisplay[]>([])
 
 const chains = ref<Chain[]>([]);
@@ -54,6 +58,7 @@ async function fetchHotels() {
   if (res.ok) {
     hotels.value = await res.json()
   }
+  emit('hotelsUpdated')
 }
 
 const isCreateModalOpen = ref(false)

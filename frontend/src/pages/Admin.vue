@@ -11,7 +11,7 @@
             <AccordionPanel value="0">
                 <AccordionHeader>All Hotels</AccordionHeader>
                 <AccordionContent>
-                  <HotelList />
+                  <HotelList @hotelsUpdated="fetchViewsData" />
                 </AccordionContent>
             </AccordionPanel>
             <AccordionPanel value="1">
@@ -91,9 +91,4 @@ async function fetchViewsData() {
     })
   }
 }
-
-onMounted(() => {
-  fetchViewsData()
-})
-
 </script>
