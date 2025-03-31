@@ -54,3 +54,19 @@ export type Hotel = {
     email: string,
     category: number,
 }
+
+export type Room = {
+    room_ID?: number;
+    room_number: string;
+    capacity: number;
+    price: number;
+    view_type: string;
+    extendable: boolean;
+    damaged: boolean;
+    amenities: Amenity[];
+};
+
+export type Amenity = {
+    amenity_ID: number,
+    amenity_name: string,
+}

@@ -23,7 +23,7 @@
 
         <div class="flex flex-col gap-1">
           <label class="font-medium">Booking Dates</label>
-          <Calendar name="dates" selectionMode="range" v-model="dates" showIcon :manualInput="false" class="w-full" />
+          <DatePicker name="dates" selectionMode="range" v-model="dates" showIcon :manualInput="false" class="w-full" />
           <Message v-if="$form.dates?.invalid" severity="error">{{ $form.dates.error?.message }}</Message>
         </div>
 
@@ -34,7 +34,7 @@
 
         <div class="flex flex-col gap-1">
           <label class="font-medium">Card Type</label>
-          <Dropdown name="card_type" :options="cardTypes" optionLabel="label" placeholder="Select card type" class="w-full" />
+          <Select name="card_type" :options="cardTypes" optionLabel="label" placeholder="Select card type" class="w-full" />
           <Message v-if="$form.card_type?.invalid" severity="error">{{ $form.card_type.error?.message }}</Message>
         </div>
 
@@ -57,8 +57,8 @@
 import { defineProps, defineEmits, ref, computed } from 'vue';
 import { Form } from '@primevue/forms';
 import InputText from 'primevue/inputtext';
-import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
+import Select from 'primevue/select';
+import DatePicker from 'primevue/datepicker';
 import Message from 'primevue/message';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
