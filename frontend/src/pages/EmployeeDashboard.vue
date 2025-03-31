@@ -40,7 +40,7 @@
     </LayoutSection>
 
     <EmployeeList v-if="role === 'Manager'" @delete="showEmployeeDeletedToast" />
-    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" />
+    <RoomList v-if="role === 'Manager'" @delete="showRoomDeletedToast" @update="showRoomUpdatedToast" @create="showRoomCreatedToast" />
     <CreateEmployeeModal v-if="isCreateEmployeeModalOpen && role === 'Manager'" @close="toggleCreateEmployeeModal"
       @created="showEmployeeCreatedToast" />
     <Profile v-if="isProfileModalOpen" role="employee" :toggleProfileModal="toggleProfileModal" />
@@ -107,6 +107,9 @@ async function confirmPayment(booking: BookingItem) {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/renting-from-booking`,
       {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
       }
     )

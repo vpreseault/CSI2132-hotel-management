@@ -66,6 +66,14 @@ export type BookingItem = Pick<Booking,
     "total_price"
 >
 
+export type BookingPayload = Pick<Booking,
+    "customer_name"|
+    "room_ID"|
+    "start_date"|
+    "end_date"|
+    "total_price"
+>
+
 export type ArchiveItem = {
     archive_ID: number,
     start_date: string;

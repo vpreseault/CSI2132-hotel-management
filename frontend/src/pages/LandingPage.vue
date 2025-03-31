@@ -9,7 +9,7 @@
       
       <LayoutSection title="Search For Room">
         <div class="mt-4">
-          <SearchSection />
+          <SearchSection @bookingSubmitted="handleBookingSubmitted" />
         </div>
       </LayoutSection>
       
@@ -27,7 +27,7 @@
                     :startDate="new Date(rental.check_in_date)"
                     :endDate="new Date(rental.check_out_date)"
                     :employeeName="rental.employee_name"
-                    :roomNumber="rental.room_number"
+                    :roomNumber="String(rental.room_number)"
                     :price="rental.total_price"
                     :payment="rental.payment"
                     :section="'rental'"
@@ -82,6 +82,7 @@
       </LayoutSection>
       
       <Profile v-if="isProfileModalOpen" role="customer" :toggleProfileModal="toggleProfileModal" />
+      <Toast position="bottom-center" />
     </div>
 </template>
   
@@ -93,6 +94,11 @@ import Profile from '../components/LandingPage/Profile.vue';
 import type { RentalItem, BookingItem, ArchiveItem } from '../types';
 import NoResultsLabel from '../components/Layout/NoResultsLabel.vue';
 import ArchiveCard from '../components/LandingPage/ArchiveCard.vue';
+import SearchSection from '../components/Search/SearchSection.vue'
+import { useToast } from "primevue/usetoast";
+import type { ToastMessageOptions } from 'primevue';
+
+const toast = useToast();
 
 const expandedCard = ref<{ section: string | null; index: number | null }>({ section: null, index: null });
 const isProfileModalOpen = ref(false);
@@ -107,12 +113,11 @@ function toggleProfileModal() {
   isProfileModalOpen.value = !isProfileModalOpen.value;
 }
 
+const customerID = getUserID()
 const customerRentals = ref<Array<RentalItem>>([])
 const customerBookings = ref<Array<BookingItem>>([])
 const customerArchives = ref<Array<ArchiveItem>>([])
 onMounted(async () => {
-  const customerID = getUserID()
-  
   try {
       const activityResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/activity?customer_ID=${customerID}`)
       if (activityResponse.ok) {
@@ -125,4 +130,21 @@ onMounted(async () => {
       console.error('Error calling API:', error);
   }
 })
+
+async function handleBookingSubmitted(severity: ToastMessageOptions["severity"]) {
+  toast.add({
+    severity: severity,
+    summary: severity === 'success' ? 'Booking Created' : 'Failed',
+    detail: severity === 'success' ? 'Successfully created new booking.' : 'Could not create new booking.',
+    life: 3000
+  });
+  try {
+    const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/bookings?customer_ID=${customerID}`)
+    if (bookingResponse.ok) {
+      customerBookings.value = await bookingResponse.json()
+    }
+  } catch (error) {
+    console.error('Error calling API:', error);
+  }
+}
 </script>
