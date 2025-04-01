@@ -45,7 +45,6 @@ const emit = defineEmits<{
 const idTypes = ref([
     { type: 'SSN' },
     { type: 'SIN' },
-    { type: 'Drivers License' },
 ]);
 
 const roles = ref([

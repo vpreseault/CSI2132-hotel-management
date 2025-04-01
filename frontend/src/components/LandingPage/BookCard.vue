@@ -92,7 +92,7 @@ const totalNights = computed(() => {
 
 const isRental = computed(() => {
   const today = new Date();
-  return props.start_date.toDateString() === today.toDateString();
+  return props.employee && props.start_date.toDateString() === today.toDateString();
 });
 
 const totalPrice = computed(() => {

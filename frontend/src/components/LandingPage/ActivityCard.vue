@@ -1,14 +1,14 @@
 <template>
     <div class="bg-white border rounded-lg p-4 shadow-md cursor-pointer transition hover:shadow-lg mb-3" @click="emit('toggle', section, index)">
       <h3 v-if="roomNumber" class="text-lg font-semibold text-gray-800">{{ hotelName }}</h3>
-      <p class="text-gray-600 mt-1">From {{startDate.toLocaleDateString()}} to {{endDate.toLocaleDateString()}}</p>
+      <p class="text-gray-600 mt-1">From {{startDate.toISOString().split('T')[0]}} to {{endDate.toISOString().split('T')[0]}}</p>
       <p class="text-gray-600 mt-1">Click for more info.</p>
   
       <div v-if="isExpanded" class="mt-4 space-y-1 text-sm text-gray-700 whitespace-pre-line">
         <p><strong>Customer Name:</strong> {{ customerName }}</p>
         <p v-if="employeeName"><strong>Employee Name:</strong> {{ employeeName }}</p>
-        <p><strong>Start Date:</strong> {{ startDate.toDateString() }}</p>
-        <p><strong>End Date:</strong> {{ endDate.toDateString() }}</p>
+        <p><strong>Start Date:</strong> {{ startDate.toISOString().split('T')[0] }}</p>
+        <p><strong>End Date:</strong> {{ endDate.toISOString().split('T')[0] }}</p>
         <p v-if="roomNumber"><strong>Room Number:</strong> {{ roomNumber }}</p>
         <p v-if="price"><strong>Total Price:</strong> ${{ price?.toFixed(2) }}</p>
         <p v-if="payment !== undefined"><strong>Payment:</strong> {{ payment ? 'Paid' : 'Pending' }}</p>
