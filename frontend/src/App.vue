@@ -15,7 +15,7 @@ const userRole = computed(() => getUserRole())
     <div>
         <AuthPage v-if="!authenticated" />
         <LandingPage v-else-if="userRole === 'Customer'" />
-        <EmployeeDashboard v-else-if="userRole === 'Employee'" />
+        <EmployeeDashboard v-else-if="userRole === 'Employee' || userRole === 'Manager'" />
         <AdminPage v-else />
     </div>
 </template>

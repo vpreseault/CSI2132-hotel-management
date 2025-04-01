@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS Hotels CASCADE;
 DROP TABLE IF EXISTS HotelChains CASCADE;
 DROP TABLE IF EXISTS Customers CASCADE;
 DROP VIEW IF EXISTS RoomSearchView CASCADE;
+DROP VIEW IF EXISTS RoomsPerAreaView CASCADE;
+DROP VIEW IF EXISTS HotelCapacityView CASCADE;
 
 /* Create tables without connecting the foreign keys */
 
@@ -116,11 +118,11 @@ CREATE TABLE ChainPhones (
 
 -- Insert into ChainPhone
 INSERT INTO ChainPhones (chain_ID, c_phone) VALUES
-(1, '416-555-1000'),
-(2, '613-555-2000'),
-(3, '514-555-3000'),
-(4, '604-555-4000'),
-(5, '780-555-5000');
+(1, '4165551000'),
+(2, '6135552000'),
+(3, '5145553000'),
+(4, '6045554000'),
+(5, '7805555000');
 
 CREATE TABLE ChainEmails (
     chain_ID INT NOT NULL,
@@ -250,7 +252,7 @@ INSERT INTO Employees (hotel_ID, full_name, address, ID_type, ID_number, role) V
 (1, 'Brandi Stewart', '947 Main St, Boston, MA', 'SIN', '328-48-9432', 'Manager'),
 (1, 'Gail Morrow', '717 Main St, Boston, MA', 'SSN', '119-72-7960', 'Employee'),
 (1, 'Jeremy Patel', '882 Main St, Boston, MA', 'SIN', '777-64-7061', 'Employee'),
-(2, 'Bryan Smith', '932 Main St, Montreal', 'SSN', '720-54-9106', 'Manager'),
+(2, 'Bryan Smith', '932 Main St, Montreal, QC', 'SSN', '720-54-9106', 'Manager'),
 (2, 'Lawrence Chang', '665 Main St, Montreal, QC', 'SIN', '246-78-2837', 'Employee'),
 (2, 'Robert Bailey', '628 Main St, Montreal, QC', 'SSN', '639-90-4450', 'Employee'),
 (2, 'Brenda Acevedo', '748 Main St, Montreal, QC', 'SSN', '602-14-8901', 'Employee'),
@@ -1290,8 +1292,6 @@ INSERT INTO Bookings (customer_ID, room_ID, booking_date, start_date, end_date, 
 (17, 57, '2025-09-09', '2025-09-11', '2025-09-17', 1800.0),
 (10, 118, '2025-11-16', '2025-11-18', '2025-11-20', 300.0),
 (13, 110, '2025-04-09', '2025-04-25', '2025-04-27', 300.0),
-(3, 21, '2025-08-08', '2025-08-28', '2025-09-01', 600.0),
-(3, 33, '2025-08-07', '2025-08-27', '2025-08-31', 1000.0),
 (11, 98, '2025-11-01', '2025-11-18', '2025-11-24', 1650.0),
 (15, 130, '2025-09-15', '2025-09-29', '2025-10-05', 1200.0),
 (4, 168, '2025-09-29', '2025-10-23', '2025-10-29', 1500.0),
@@ -1299,7 +1299,6 @@ INSERT INTO Bookings (customer_ID, room_ID, booking_date, start_date, end_date, 
 (15, 103, '2025-10-08', '2025-11-01', '2025-11-06', 500.0),
 (11, 110, '2025-03-14', '2025-04-05', '2025-04-09', 600.0),
 (12, 40, '2025-05-12', '2025-05-15', '2025-05-20', 1250.0),
-(3, 24, '2025-10-22', '2025-10-26', '2025-10-31', 1250.0),
 (5, 143, '2025-06-24', '2025-07-13', '2025-07-15', 600.0),
 (4, 106, '2025-11-07', '2025-12-05', '2025-12-09', 400.0),
 (2, 74, '2025-08-01', '2025-08-11', '2025-08-17', 1050.0),
@@ -1326,12 +1325,12 @@ CREATE TABLE Rentings (
 -- Insert into Rentings
 INSERT INTO Rentings (employee_ID, customer_ID, room_ID, booking_ID, check_in_date, check_out_date, payment, total_price) VALUES
 (76, 1, 120, 10, '2025-06-09', '2025-06-12', TRUE, 450.0),
-(115, 3, 113, NULL, '2025-11-23', '2025-11-28', TRUE, 1125.0),
+(115, 3, 113, NULL, '2025-03-23', '2025-04-28', TRUE, 5580.0),
 (136, 4, 139, 12, '2025-06-02', '2025-06-07', TRUE, 1000.0),
 (132, 6, 26, 13, '2025-08-04', '2025-08-08', TRUE, 600.0),
 (24, 6, 106, NULL, '2025-10-07', '2025-10-10', TRUE, 450.0),
 (96, 7, 69, NULL, '2025-05-14', '2025-05-19', TRUE, 1250.0),
-(17, 11, 7, 16, '2025-04-27', '2025-05-03', TRUE, 1350.0),
+(17, 11, 7, 16, '2025-03-27', '2025-04-03', TRUE, 1350.0),
 (37, 12, 143, 20, '2025-05-19', '2025-05-25', TRUE, 1800.0),
 (100, 13, 74, NULL, '2025-07-12', '2025-07-18', TRUE, 1050.0),
 (47, 15, 49, NULL, '2025-06-18', '2025-06-23', TRUE, 1125.0),
